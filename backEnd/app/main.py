@@ -5,8 +5,9 @@ from .db.base import Base
 from .api.api import api_router
 from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
+Base.metadata.create_all(bind=engine)
 app = FastAPIOffline()
-app.include_router(api_router)
+
 
 # Allow CORS for specific origins
 app.add_middleware(
@@ -17,6 +18,7 @@ app.add_middleware(
     allow_headers=["*"],  # HTTP headers allowed
 )
 
+app.include_router(api_router)
 
 @app.get("/")
 def read_root():
