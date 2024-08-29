@@ -11,7 +11,10 @@ import {
   Card,
   CardBody,
   Heading,
+  CardFooter,
+  CardHeader,
 } from "@chakra-ui/react";
+import { easeIn } from "framer-motion";
 
 const Product = ({ products }) => {
   const location = useLocation();
@@ -40,98 +43,70 @@ const Product = ({ products }) => {
       {products.map((product, index) => (
         <Card
           _hover={{
-            boxShadow: "md",
+            borderColor: "brand.primary",
+            boxShadow: "lg",
+            transition: easeIn,
           }}
-          key={index}
-          border="1px"
-          borderColor="gray.300"
-          color="gray.500"
-          overflow="hidden"
-          height="400px" // Example height for the card
-          // maxW={{ base: "400px", md: "500px" }}
+          overflow={"hidden"}
+          border={"1px"}
+          borderColor={"gray.300"}
         >
-          <CardBody p={1}>
-            <Box overflow={"hidden"} h={"45%"} width={"100%"}>
-              {/* This makes the image take 50% of the card's height */}
-              <Image
-                src={product.image_url}
-                rounded={"md"}
-                alt={product.name}
-                objectFit="cover"
-                height="100%" // Ensure the image takes up the full height of the Box
-                width="100%" // Ensure the image takes up the full width of the Box
-                maxHeight="200px" // Example maximum height to prevent unwanted behaviors
-              />
-            </Box>
-            <Box p={1}>
-              <Text
-                color={"blue.400"}
-                fontWeight={"bold"}
-                fontSize={"24px"}
-                noOfLines={1}
-              >
+          <CardBody pt={1}>
+            <Image
+              mx={"auto"}
+              width={"100"}
+              maxH={200}
+              objectFit={"center"}
+              src={product.image_url}
+            />
+            <Flex direction={"column"}>
+              <Heading color={"brand.primary"} mx={"auto"} size={["md", "lg"]}>
                 {product.name}
-              </Text>
+              </Heading>
               <Text
-                fontWeight={"semibold"}
-                color={"green.500"}
-                fontSize={"20px"}
-              >
-                Kshs {product.price}
-              </Text>
-              <Flex
-                fontSize={"14px"}
-                fontWeight={"normal"}
-                justifyContent={"space-between"}
-              >
-                <Text fontSize={"14px"} color={"gray.400"}>
-                  Discount: 0.0%
-                </Text>
-                {/* <Text color={"green"}>in stock</Text> */}
-              </Flex>
-              <Text
-                pt={1}
-                fontWeight={"normal"}
+                fontSize={"md"}
+                h={"64px"}
                 noOfLines={2}
-                color={"gray.500"}
-                fontSize={"14px"}
+                p={1}
+                overflow={"hidden"}
+                textAlign={"center"}
               >
                 {product.description}
               </Text>
-            </Box>
-            <Flex
-              mt={2}
-              p={1}
-              direction={"row"}
-              justifyContent={"space-evenly"}
-              width={"100%"}
-            >
-              {location.pathname === "/manage" ? (
-                <Flex p={2} width={"100%"} justifyContent={"space-evenly"}>
-                  <Button size={"lg"} color={"white"} bg={"blue.300"}>
-                    Edit
-                  </Button>
-                  <Button size={"lg"} color={"white"} bg={"red.500"}>
-                    Delete
-                  </Button>
-                </Flex>
-              ) : (
-                <Flex p={2} width={"100%"} justifyContent={"space-between"}>
-                  <Button size={"lg"} onClick={() => addToCart(product)}>
-                    Cart
-                  </Button>
-                  <Button
-                    size={"lg"}
-                    onClick={() => handleOrder(product)}
-                    bg={"green.500"}
-                    color={"white"}
-                  >
-                    Order
-                  </Button>
-                </Flex>
-              )}
+              <Heading
+                textAlign={"center"}
+                size={"md"}
+                fontWeight={"bold"}
+                color={"green.500"}
+              >
+                Kshs {product.price}
+              </Heading>
             </Flex>
           </CardBody>
+          <CardFooter pt={0} bg={"gray.50"}>
+            <Box
+              p={2}
+              justifyContent={"space-between"}
+              width="100%"
+              display={"flex"}
+            >
+              <Button size={["md", "lg"]} transition={easeIn}>
+                Cart
+              </Button>
+              <Button
+                size={["md", "lg"]}
+                transition={easeIn}
+                bg={"blue.500"}
+                color={"white"}
+                _hover={{
+                  color: "brand.primary",
+                  bg: "gray.200",
+                }}
+              >
+                Order
+              </Button>
+            </Box>
+          </CardFooter>
         </Card>
       ))}
     </SimpleGrid>
