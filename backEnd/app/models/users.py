@@ -1,13 +1,16 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from ..db.base import Base
 
 
 
 class User(Base):
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), unique=True, nullable=False)
+    name = Column(String(50), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
-    hashed_password = Column(String(100), nullable=False)
+    hashed_password = Column(String(300), nullable=False)
     is_active = Column(Boolean, default=True)
     createdAt = Column(DateTime, server_default=func.now(), nullable=False)
+
+    products = relationship('Product', backref='user', lazy='dynamic')

@@ -6,8 +6,9 @@ from .api.api import api_router
 from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
 Base.metadata.create_all(bind=engine)
-app = FastAPIOffline()
 
+
+app = FastAPI()
 
 # Allow CORS for specific origins
 app.add_middleware(

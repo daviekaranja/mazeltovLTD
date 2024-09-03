@@ -1,4 +1,7 @@
 import React from "react";
+import { FaFacebook } from "react-icons/fa";
+import { FaSquareInstagram, FaXTwitter } from "react-icons/fa6";
+import { AiFillTikTok } from "react-icons/ai";
 
 import {
   Box,
@@ -12,6 +15,7 @@ import {
   Textarea,
   Button,
   Link,
+  Icon,
 } from "@chakra-ui/react";
 
 const ContactForm = () => {
@@ -50,10 +54,19 @@ const ContactForm = () => {
         <Text textAlign={"center"} fontSize={"sm"}>
           You can also reach us through our social media pages
         </Text>
-        <Flex mt={2} justifyContent={"center"} gap={2}>
-          <Link>Facebook</Link>
-          <Link>WhatsApp</Link>
-          <Link>Instagram</Link>
+        <Flex mt={4} gap={4} justifyContent={"center"}>
+          <Link target="blank" href="https://web.facebook.com/mazeltov34">
+            <Icon boxSize={6} as={FaFacebook} />
+          </Link>
+          <Link>
+            <Icon boxSize={6} as={FaSquareInstagram} />
+          </Link>
+          <Link>
+            <Icon boxSize={6} as={AiFillTikTok} />
+          </Link>
+          <Link>
+            <Icon boxSize={6} as={FaXTwitter} />
+          </Link>
         </Flex>
       </Box>
     </Box>

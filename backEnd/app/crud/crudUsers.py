@@ -13,18 +13,29 @@ from ..schemas.user import UserCreate, UserUpdate, UserResponse
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def create_user(self, db: Session, obj_in: UserCreate) -> User:
-        obj_in.password = get_password_hash(obj_in.password) ; user_data = obj_in.model_dump()
-        user_data['hashed_password'] = get_password_hash(obj_in.password)
-        del user_data['password']
+        # Hash the password once
+        hashed_password = get_password_hash(obj_in.password)
+
+        # Prepare user data and ensure the hashed password is set correctly
+        user_data = obj_in.model_dump()
+        user_data['hashed_password'] = hashed_password
+
+        # Remove plain password from user data
+        if 'password' in user_data:
+            del user_data['password']
+
+        # Create a new user instance
         db_obj = self.model(**user_data)
+
         try:
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
+            return db_obj
         except exc.IntegrityError as error:
-            print(f'An error occurred{error}')
+            print(f'An error occurred: {error}')
             db.rollback()
-            raise HTTPException(status_code=500, detail='an error occured')
+            raise HTTPException(status_code=500, detail='An error occurred')
 
     # def create_superuser(self, db, obj_in: CreateSuperUser):
     #     obj_in.hashed_password = get_password_hash(obj_in.hashed_password)
@@ -40,7 +51,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return user_by_email
 
     def authenticate(self, db: Session, email: EmailStr, password) -> Type[User]:
-        user = self.get_by_email(db, email)
+        user = self.get_by_email(db, email) ; print(user.email)
         if not verify_password(password, user.hashed_password):
             return None
         return user

@@ -97,7 +97,7 @@ const AboutUs = () => {
             his passion for financial inclusion, has driven Mazeltov’s growth
             and success.
           </Text>
-          <Image h={["100%", 300]} rounded={"lg"} src={dan} />
+          <Image mt={4} h={["100%", 300]} rounded={"lg"} src={dan} />
         </Box>
 
         <Box>
@@ -116,7 +116,7 @@ const AboutUs = () => {
             commitment to financial empowerment have positioned Mazeltov as a
             leader in the loan items sector in Embu, Makutano.
           </Text>
-          <Image h={["100%", 300]} rounded={"lg"} src={dorcas} />
+          <Image mt={4} h={["100%", 300]} rounded={"lg"} src={dorcas} />
         </Box>
       </Flex>
       <Box m={4}>

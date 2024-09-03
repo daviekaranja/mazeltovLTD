@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
-import axiosClient from "../api/axiosClient";
 import {
   Box,
   Text,
@@ -12,13 +11,10 @@ import {
   CardBody,
   Heading,
   CardFooter,
-  CardHeader,
 } from "@chakra-ui/react";
 import { easeIn } from "framer-motion";
 
-const Product = ({ products }) => {
-  const location = useLocation();
-
+const Product = ({ products, renderButtons }) => {
   const addToCart = (product) => {
     const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
     existingCart.push(product);
@@ -26,86 +22,81 @@ const Product = ({ products }) => {
   };
 
   const handleOrder = (product) => {
-    // Generate a WhatsApp message
     const message = `
-    Hello, I'm interested in this product
-    Product Name: ${product.name}
-    Price: Kshs ${product.price}
-    Image: ${product.image_url}
-  `;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-
+      Hello, I'm interested in this product
+      Product Name: ${product.name}
+      Price: Kshs ${product.price}
+      Image: ${product.image_url}
+    `;
+    const whatsappUrl = `https://wa.me/${
+      product.phone_number
+    }?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
+
+  const defaultButtons = (product) => (
+    <Box p={2} justifyContent={"space-between"} width="100%" display={"flex"}>
+      <Button
+        color={"gray.700"}
+        size={"md"}
+        transition={easeIn}
+        bg={"gray.200"}
+        onClick={() => addToCart(product)}
+      >
+        add to cart
+      </Button>
+      <Button
+        onClick={() => handleOrder(product)}
+        size={"md"}
+        transition={easeIn}
+        bg={"blue.500"}
+        color={"white"}
+        _hover={{
+          color: "white",
+          bg: "blue.600",
+        }}
+      >
+        Order
+      </Button>
+    </Box>
+  );
 
   return (
     <SimpleGrid gap={2} columns={[1, 3, 4]} p={1} bg={"gray.50"}>
       {products.map((product, index) => (
         <Card
-          _hover={{
-            borderColor: "brand.primary",
-            boxShadow: "lg",
-            transition: easeIn,
-          }}
+          key={index}
+          height={["350px", "450px"]}
+          border="1px"
+          borderColor="gray.200"
+          width={["100%", "300px"]}
           overflow={"hidden"}
-          border={"1px"}
-          borderColor={"gray.300"}
         >
-          <CardBody pt={1}>
+          <CardBody p={0}>
             <Image
-              mx={"auto"}
-              width={"100"}
-              maxH={200}
-              objectFit={"center"}
               src={product.image_url}
+              width="100%"
+              height={["170px", "250px"]}
+              objectFit="cover"
             />
-            <Flex direction={"column"}>
-              <Heading color={"brand.primary"} mx={"auto"} size={["md", "lg"]}>
+            <Flex p={2} direction={"column"}>
+              <Text pb={3} fontSize={["md", "lg"]}>
                 {product.name}
-              </Heading>
-              <Text
-                fontSize={"md"}
-                h={"64px"}
-                noOfLines={2}
-                p={1}
-                overflow={"hidden"}
-                textAlign={"center"}
-              >
-                {product.description}
               </Text>
-              <Heading
-                textAlign={"center"}
-                size={"md"}
-                fontWeight={"bold"}
-                color={"green.500"}
+              <Text
+                fontSize={["18px", "18px"]}
+                color="blue.500"
+                fontWeight="bold"
               >
                 Kshs {product.price}
-              </Heading>
+              </Text>
+              <Text fontSize={"12px"} color="gray.400">
+                Discount: 0.00%
+              </Text>
             </Flex>
           </CardBody>
-          <CardFooter pt={0} bg={"gray.50"}>
-            <Box
-              p={2}
-              justifyContent={"space-between"}
-              width="100%"
-              display={"flex"}
-            >
-              <Button size={["md", "lg"]} transition={easeIn}>
-                Cart
-              </Button>
-              <Button
-                size={["md", "lg"]}
-                transition={easeIn}
-                bg={"blue.500"}
-                color={"white"}
-                _hover={{
-                  color: "brand.primary",
-                  bg: "gray.200",
-                }}
-              >
-                Order
-              </Button>
-            </Box>
+          <CardFooter p={1}>
+            {renderButtons ? renderButtons(product) : defaultButtons(product)}
           </CardFooter>
         </Card>
       ))}

@@ -89,11 +89,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             db.delete(obj)
             db.commit()
             return obj
-        except exc.IntegrityError as e:
-            db.rollback()
-            # logger.error("Integrity error: %s", e)
-            raise HTTPException(status_code=409, detail='An Error occured')
         except exc.NoResultFound as e:
             db.rollback()
-            # logger.error("NoResultFound Error: %s", e)
             raise HTTPException(status_code=404,  detail='Not Found!')

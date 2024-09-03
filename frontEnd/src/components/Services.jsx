@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Flex, Text, Select } from "@chakra-ui/react";
+import { Flex, Text, Select, Box, Button } from "@chakra-ui/react";
 import Product from "./Product";
 import axiosClient from "../api/axiosClient";
 
-const Services = () => {
+const Services = ({ renderButtons }) => {
   const [localProds, setLocalProds] = useState(() => {
     const savedProds = localStorage.getItem("products");
     return savedProds ? JSON.parse(savedProds) : [];
   });
-
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -60,7 +59,7 @@ const Services = () => {
         </Select>
       </Flex>
       {/* Product List */}
-      <Product products={filteredProducts} />
+      <Product products={filteredProducts} renderButtons={renderButtons} />
     </Flex>
   );
 };

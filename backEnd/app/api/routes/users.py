@@ -37,3 +37,4 @@ def update_user(db: Session = Depends(dependancies.get_db),*, obj_in: UserUpdate
 @router.delete('/remove_user/{user_id}', status_code=204)
 def remove_user(db: Session = Depends(dependancies.get_db),*, user_id: int):
     remove = crudUsers.user.remove(db, id=user_id)
+    return remove

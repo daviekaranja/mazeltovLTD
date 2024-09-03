@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ProductManager from "../ProductManager";
 import Services from "../Services";
 import Dashboard from "../DashBoard";
+import AddUser from "../AddUser";
 import {
   Box,
   Heading,
@@ -24,13 +25,36 @@ const AdminPage = () => {
   const tabs = ["Home", "Access", "Products", "Settings"];
   const [activeTab, setActiveTab] = useState(null);
 
+  const CustomButtons = (product) => {
+    return (
+      <Flex
+        justifyContent={"space-between"}
+        direction={"row"}
+        width={"100%"}
+        p={2}
+      >
+        <Button
+          onClick={() =>
+            setActiveComponent(<ProductManager initialProduct={product} />)
+          }
+          color={"white"}
+          bg={"blue.500"}
+        >
+          Update
+        </Button>
+        <Button color={"white"} bg={"red"}>
+          Delete
+        </Button>
+      </Flex>
+    );
+  };
   const linksComponents = {
     0: <Dashboard />,
     1: () => {
       return (
         <Box width={"100%"} p={2} rounded={"lg"} h={"70vh"} bg={"gray.50"}>
           <Box h={"70vh"} overflow={"auto"}>
-            <Services />
+            <Services renderButtons={CustomButtons} />
           </Box>
 
           <Flex justifyContent={"center"} p={"2"} width={"100%"}>
@@ -45,17 +69,17 @@ const AdminPage = () => {
         </Box>
       );
     },
+
+    2: (product) => {
+      <Box>
+        <ProductManager initialProduct={product} />
+      </Box>;
+    },
+    2: <AddUser />,
   };
   const [activeComponent, setActiveComponent] = useState(linksComponents[0]);
 
-  const links = [
-    "Dashboard",
-    "Products",
-    "Access",
-    "Roles",
-    "Social",
-    "Settings",
-  ];
+  const links = ["Dashboard", "Products", "Roles", "Social", "Settings"];
 
   const pages = ["Landing", "Hero", "Services", "About"];
   const pagesMap = pages.map((page, index) => {
@@ -68,6 +92,7 @@ const AdminPage = () => {
         }}
         _active={{
           color: "brand.primary",
+          padding: 2,
         }}
         key={index}
       >

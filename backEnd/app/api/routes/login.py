@@ -11,7 +11,7 @@ from app.schemas.user import UserResponse
 router = APIRouter()
 
 
-@router.post("/access-token", status_code=200, name="login-token")
+@router.post("/access-token", status_code=200)
 def login(
     db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):

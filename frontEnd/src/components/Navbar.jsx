@@ -35,9 +35,9 @@ const NavBar = () => {
 
   return (
     <Box
-      width={"100%"}
+      w={"100%"}
       position={"fixed"}
-      h={["16", "20"]}
+      h={20}
       p={2}
       color={"white"}
       bg={"brand.primary"}

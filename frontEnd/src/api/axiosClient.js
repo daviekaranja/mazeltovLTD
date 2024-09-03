@@ -10,7 +10,7 @@ const axiosClient = axios.create({
 // Request interceptor
 axiosClient.interceptors.request.use(
   (config) => {
-    console.log(`baseUrl: ${config.baseURL}`);
+    console.log(`: ${config.baseURL}`);
     return config;
   },
   (error) => {

@@ -20,9 +20,9 @@ def create_access_token(
     subject: Union[str, Any], expires_delta: timedelta = None
 ) -> str:
     if expires_delta:
-        expire = settings.get_local_time_with_timezone() + expires_delta
+        expire = datetime.utcnow() + expires_delta
     else:
-        expire = settings.get_local_time_with_timezone() + timedelta(
+        expire = datetime.utcnow() + timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
     to_encode = {"exp": expire, "sub": str(subject)}
@@ -33,7 +33,13 @@ def create_access_token(
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        result = pwd_context.verify(plain_password, hashed_password)
+        print(f"Verification result: {result}")  # Debugging step
+        return result
+    except Exception as e:
+        print(f"Verification failed: {e}")  # Debugging step
+        return False
 
 
 def get_password_hash(password: str) -> str:

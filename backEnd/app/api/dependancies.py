@@ -16,7 +16,7 @@ from ..models.users import User
 
 
 reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"/auth/access-token"
+    tokenUrl=f"{settings.api_string}/auth/access-token"
 )
 
 
