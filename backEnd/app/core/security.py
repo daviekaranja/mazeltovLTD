@@ -35,10 +35,8 @@ def create_access_token(
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     try:
         result = pwd_context.verify(plain_password, hashed_password)
-        print(f"Verification result: {result}")  # Debugging step
         return result
     except Exception as e:
-        print(f"Verification failed: {e}")  # Debugging step
         return False
 
 

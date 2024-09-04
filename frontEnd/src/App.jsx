@@ -5,11 +5,11 @@ import Home from "./components/Home";
 import NotFound from "./components/NotFound";
 import ContactForm from "./components/pages/ContactUs";
 import AboutUs from "./components/pages/AboutUs";
+import { AuthProvider } from "./components/AuthProvider";
 import ProductManager from "./components/ProductManager";
 import AdminPage from "./components/pages/Admin";
-import { AuthProvider } from "./components/AuthProvider";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./components/Login";
+import ProtectedRoute from "./components/ProtectRoute";
 const App = () => {
   return (
     <AuthProvider>
@@ -20,6 +20,7 @@ const App = () => {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/support" element={<ContactForm />} />
             <Route path="/login" element={<Login />} />
+
             <Route
               path="/manage"
               element={

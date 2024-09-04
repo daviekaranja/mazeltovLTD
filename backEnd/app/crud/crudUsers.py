@@ -51,7 +51,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return user_by_email
 
     def authenticate(self, db: Session, email: EmailStr, password) -> Type[User]:
-        user = self.get_by_email(db, email) ; print(user.email)
+        user = self.get_by_email(db, email)
         if not verify_password(password, user.hashed_password):
             return None
         return user

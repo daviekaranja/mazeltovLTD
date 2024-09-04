@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa";
 import { FaSquareInstagram, FaXTwitter } from "react-icons/fa6";
 import { AiFillTikTok } from "react-icons/ai";
@@ -18,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <Box fontSize={"sm"} color={"gray.500"} bg={"gray.900"}>
       <Flex
@@ -65,7 +67,7 @@ const Footer = () => {
           <Link>Services</Link>
           <Link>About</Link>
           <Link>Buy Airtime Online</Link>
-          <Link display={["none", "flex"]} onClick={() => console.log("wait")}>
+          <Link display={["none", "flex"]} onClick={() => navigate("/manage")}>
             Admin
           </Link>
         </Flex>

@@ -73,7 +73,7 @@ const AddUser = () => {
               value={user.password}
               onChange={handleChange} // Use the handleChange function
               width={64}
-              type="password"
+              type="text"
               placeholder="password"
             />
           </FormControl>

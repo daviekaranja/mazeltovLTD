@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],  # HTTP headers allowed
 )
 
-app.include_router(api_router)
+app.include_router(api_router, prefix=settings.api_string)
 
 @app.get("/")
 def read_root():

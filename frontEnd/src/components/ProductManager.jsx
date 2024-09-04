@@ -228,6 +228,7 @@
 
 // export default ProductManager;
 
+import { useAuth } from "./AuthProvider";
 import React, { useState, useEffect } from "react";
 import { categories } from "../utils/utilities";
 import axiosClient from "../api/axiosClient";
@@ -245,6 +246,7 @@ import {
 } from "@chakra-ui/react";
 
 const ProductManager = ({ initialProduct }) => {
+  const { authToken, user, isLoading } = useAuth();
   // Initialize the newProduct state with the provided product or an empty object
   const [newProduct, setNewProduct] = useState(
     initialProduct || {
@@ -253,19 +255,28 @@ const ProductManager = ({ initialProduct }) => {
       image_url: "",
       category: "",
       phone_number: "",
+      owner_id: user.id,
       description: "",
     }
   );
 
   const validateForm = () => {
-    const { name, price, image_url, category, phone_number, description } =
-      newProduct;
+    const {
+      name,
+      price,
+      image_url,
+      category,
+      phone_number,
+      owner_id,
+      description,
+    } = newProduct;
     if (
       !name ||
       !price ||
       !image_url ||
       !category ||
       !phone_number ||
+      !owner_id ||
       !description
     ) {
       alert("Please fill in all the fields.");
@@ -279,7 +290,6 @@ const ProductManager = ({ initialProduct }) => {
 
     try {
       if (initialProduct) {
-        // Update existing product
         await axiosClient.put(
           `/products/update_product/${initialProduct.id}`,
           newProduct
