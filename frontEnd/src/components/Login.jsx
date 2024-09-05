@@ -38,7 +38,7 @@ const Login = () => {
 
       if (response.status === 200) {
         const { access_token } = response.data;
-        login(access_token); // Update auth state
+        login(access_token);
         localStorage.setItem("authToken", access_token); // Store access token in localStorage
         navigate(from, { replace: true });
       }
@@ -49,18 +49,15 @@ const Login = () => {
 
   return (
     <Flex mt={6} direction="column" minH="100vh" alignItems="center">
+      <Heading color={"gray.400"}>Please login to continue</Heading>
       <Flex
         direction="column"
         alignItems="center"
         p={4}
         rounded="lg"
-        minW={400}
-        border="1px"
-        borderColor="gray.300"
         boxShadow="sm"
         mx="auto"
       >
-        <Heading>Login</Heading>
         {error && (
           <Text p={2} color="red.500">
             {error}
@@ -69,7 +66,7 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <Flex width="100%" gap={4} direction="column">
             <FormControl isRequired>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <Input
                 id="username"
                 value={username}

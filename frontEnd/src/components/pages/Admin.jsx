@@ -3,6 +3,8 @@ import ProductManager from "../ProductManager";
 import Services from "../Services";
 import Dashboard from "../DashBoard";
 import AddUser from "../AddUser";
+import Users from "../Users";
+
 import {
   Box,
   Heading,
@@ -21,6 +23,7 @@ import {
 import { HamburgerIcon } from "@chakra-ui/icons";
 
 const AdminPage = () => {
+  const [userData, setUserData] = useState(null);
   const [navSize, changeNavSize] = useState("large");
   const tabs = ["Home", "Access", "Products", "Settings"];
   const [activeTab, setActiveTab] = useState(null);
@@ -75,7 +78,7 @@ const AdminPage = () => {
         <ProductManager initialProduct={product} />
       </Box>;
     },
-    2: <AddUser />,
+    2: <Users />,
   };
   const [activeComponent, setActiveComponent] = useState(linksComponents[0]);
 

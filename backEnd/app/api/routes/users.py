@@ -21,7 +21,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(dependancies.get_db)):
     return user_by_id
 
 
-@router.post('/create_user', status_code=201)
+@router.post('/create-user', status_code=201)
 def create_user(db: Session = Depends(dependancies.get_db) ,*, obj_in: UserCreate):
     new_user = crudUsers.user.create_user(db, obj_in=obj_in)
     return new_user

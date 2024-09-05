@@ -1,25 +1,34 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from fastapi_offline import FastAPIOffline
-from .db.session import engine
-from .db.base import Base
-from .api.api import api_router
 from fastapi.middleware.cors import CORSMiddleware
+from .api.api import api_router
 from .core.config import settings
-Base.metadata.create_all(bind=engine)
+# from .db.base_class import Base
+# from .db.session import engine
+from .db.initDb import main
 
 
-app = FastAPI()
 
-# Allow CORS for specific origins
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    main()
+    yield
+    # Shutdown code
+    print("Shutting down!")
+
+
+app = FastAPI(lifespan=lifespan)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_origin],  # List of allowed origins
+    allow_origins=[settings.frontend_origin],
     allow_credentials=True,
-    allow_methods=["*"],  # HTTP methods allowed
-    allow_headers=["*"],  # HTTP headers allowed
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(api_router, prefix=settings.api_string)
+
 
 @app.get("/")
 def read_root():

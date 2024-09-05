@@ -3,9 +3,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from ..core.config import settings
+from .base_class import Base
+from ..models import users, products
 
 
-# Ensure the 'data' directory exists
 def create_data_folder(data_dir):
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
@@ -21,3 +22,7 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread
 
 # Create a SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def init_db():
+    Base.metadata.create_all(bind=engine)

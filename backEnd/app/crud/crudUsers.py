@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from pydantic import EmailStr
 from sqlalchemy import exc
 from sqlalchemy.orm import Session
+from ..core.config import settings
 
 from .base import CRUDBase
 from ..core.security import verify_password, get_password_hash
@@ -13,12 +14,16 @@ from ..schemas.user import UserCreate, UserUpdate, UserResponse
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def create_user(self, db: Session, obj_in: UserCreate) -> User:
-        # Hash the password once
         hashed_password = get_password_hash(obj_in.password)
 
         # Prepare user data and ensure the hashed password is set correctly
         user_data = obj_in.model_dump()
         user_data['hashed_password'] = hashed_password
+
+        if user_data['email'] == settings.admin_email:
+            user_data['super_user'] = True
+        else:
+            user_data['super_user'] = False
 
         # Remove plain password from user data
         if 'password' in user_data:

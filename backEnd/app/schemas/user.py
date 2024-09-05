@@ -11,10 +11,12 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+
 class UserUpdate(UserBase):
     pass
+
 
 class UserResponse(UserBase):
     id: int
     is_active: bool
-    createdAt: datetime
+    super_user: bool

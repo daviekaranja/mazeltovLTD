@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta
 from typing import Any, Union
+from fastapi import Depends
 
 from fastapi import HTTPException
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from pydantic import EmailStr
+from sqlalchemy.orm import Session
 from starlette import status
 from ..crud import crudUsers
 
@@ -42,3 +45,5 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+
+

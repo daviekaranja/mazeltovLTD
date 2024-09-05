@@ -4,13 +4,13 @@ const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
+    withCredentials: true,
   },
 });
 
 // Request interceptor
 axiosClient.interceptors.request.use(
   (config) => {
-    console.log(`: ${config.baseURL}`);
     return config;
   },
   (error) => {
