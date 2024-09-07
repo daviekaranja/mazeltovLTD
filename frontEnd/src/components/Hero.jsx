@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Text, Heading, Flex, Button, Link } from "@chakra-ui/react";
-import { useDisclosure } from "@chakra-ui/react";
 
 const Hero = () => {
   return (
@@ -24,7 +23,7 @@ const Hero = () => {
           left={0}
           right={0}
           bottom={0}
-          bgColor={"rgba(0, 0, 0, 0.6)"} // Black with 50% opacity
+          bgColor={"rgba(0, 0, 0, 0.25)"} // Black with 50% opacity
           zIndex={1} // Ensure the overlay is above the background image
         />
 

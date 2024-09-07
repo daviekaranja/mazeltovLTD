@@ -1,5 +1,4 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
 import {
   Box,
   Text,
@@ -9,7 +8,6 @@ import {
   Button,
   Card,
   CardBody,
-  Heading,
   CardFooter,
 } from "@chakra-ui/react";
 import { easeIn } from "framer-motion";
@@ -66,11 +64,12 @@ const Product = ({ products, renderButtons }) => {
       {products.map((product, index) => (
         <Card
           key={index}
-          height={["350px", "450px"]}
-          border="1px"
-          borderColor="gray.200"
+          bg={"white"}
+          border={"1px"}
+          borderColor={"gray.300"}
           width={["100%", "300px"]}
           overflow={"hidden"}
+          _hover={{ borderColor: "brand.primary" }}
         >
           <CardBody p={0}>
             <Image
@@ -78,16 +77,13 @@ const Product = ({ products, renderButtons }) => {
               width="100%"
               height={["170px", "250px"]}
               objectFit="cover"
+              transition={"ease-in-out"}
             />
             <Flex p={2} direction={"column"}>
-              <Text pb={3} fontSize={["md", "lg"]}>
+              <Text color={"gray.600"} fontSize={[25, 35]}>
                 {product.name}
               </Text>
-              <Text
-                fontSize={["18px", "18px"]}
-                color="blue.500"
-                fontWeight="bold"
-              >
+              <Text fontSize={["16px", "20px"]} color="gray.500">
                 Kshs {product.price}
               </Text>
               <Text fontSize={"12px"} color="gray.400">

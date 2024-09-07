@@ -15,19 +15,19 @@ def get_users_multi(db: Session = Depends(dependancies.get_db)):
     return users
 
 
-@router.get('/get-user/{user_id}', status_code=200)
+@router.get('/get-user/{user_id}', status_code=200, response_model=UserResponse)
 def get_user_by_id(user_id: int, db: Session = Depends(dependancies.get_db)):
     user_by_id = crudUsers.user.get(db, id=user_id)
     return user_by_id
 
 
-@router.post('/create-user', status_code=201)
+@router.post('/create-user', status_code=201, response_model=UserResponse)
 def create_user(db: Session = Depends(dependancies.get_db) ,*, obj_in: UserCreate):
     new_user = crudUsers.user.create_user(db, obj_in=obj_in)
     return new_user
 
 
-@router.put('/update-user/{user_id}', status_code=201)
+@router.put('/update-user/{user_id}', status_code=201, response_model=UserResponse)
 def update_user(db: Session = Depends(dependancies.get_db),*, obj_in: UserUpdate, user_id: int):
     db_obj = crudUsers.user.get(db, id=user_id)
     updated_user = crudUsers.user.update(db, db_obj=db_obj, obj_in=obj_in)
