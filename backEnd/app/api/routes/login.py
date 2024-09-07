@@ -38,6 +38,6 @@ def login(
 
 
 
-@router.get('/get-current-user', status_code=200)
+@router.get('/get-current-user', status_code=200, response_model=UserResponse)
 def get_current_user(current_user: User = Depends(deps.get_current_user)):
     return current_user
