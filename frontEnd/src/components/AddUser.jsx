@@ -1,5 +1,4 @@
-// import React from "react";
-// import { useState } from "react";
+// import React, { useState } from "react";
 // import axiosClient from "../api/axiosClient";
 // import {
 //   Box,
@@ -14,10 +13,11 @@
 // } from "@chakra-ui/react";
 
 // const AddUser = () => {
+//   const [get, setGet] = useState(localStorage.setItem("get", false));
 //   const [user, setUser] = useState({
 //     name: "",
 //     email: "",
-//     password: "@Mazeltov24",
+//     password: "@Mazeltov24", // Default password
 //   });
 
 //   const handleChange = (e) => {
@@ -33,8 +33,12 @@
 //       const response = await axiosClient.post("/users/create-user", userData);
 
 //       if (response.status === 201) {
-//         // Check for 201 status code
-//         console.log("User created successfully:", response.data);
+//         setUser({
+//           name: "",
+//           email: "",
+//           password: "",
+//         });
+//         setGet(true);
 //       } else {
 //         console.log("Unexpected status code:", response.status);
 //       }
@@ -48,50 +52,46 @@
 
 //   return (
 //     <Box p={2}>
-//       <Box p={4} bg={"white"}>
-//         <Text>Active Users</Text>
-//         <Text fontSize={"sm"}>
-//           {" "}
-//           you have 0 active users, will appear here once you add them
-//         </Text>
-//       </Box>
-//       <Heading mt={2} textAlign={"center"} mb={4} size={"md"}>
+//       <Text textAlign={"center"} color={"gray.600"}>
 //         Add a new user
-//       </Heading>
+//       </Text>
 //       <Box mt={2} p={2} bg={"white"}>
-//         <Flex alignItems={"center"}>
+//         <Flex alignItems={"center"} gap={4}>
+//           {/* Name */}
 //           <FormControl isRequired>
 //             <FormLabel>Name</FormLabel>
 //             <Input
-//               name="name" // Added name attribute to match the handleChange function
+//               h={8}
+//               name="name"
 //               value={user.name}
-//               onChange={handleChange} // Use the handleChange function
+//               onChange={handleChange}
 //               width={64}
 //               type="text"
 //               placeholder="John Doe"
 //             />
 //           </FormControl>
 
-//           {/* email */}
+//           {/* Email */}
 //           <FormControl isRequired>
 //             <FormLabel>Email</FormLabel>
 //             <Input
-//               name="email" // Added name attribute to match the handleChange function
+//               name="email"
 //               value={user.email}
-//               onChange={handleChange} // Use the handleChange function
+//               onChange={handleChange}
 //               width={64}
 //               type="email"
 //               placeholder="user@example.com"
 //             />
 //           </FormControl>
 
+//           {/* Password */}
 //           <FormControl isRequired>
 //             <FormLabel>Password</FormLabel>
 //             <FormHelperText>The default password is @Mazeltov24</FormHelperText>
 //             <Input
-//               name="password" // Added name attribute to match the handleChange function
+//               name="password"
 //               value={user.password}
-//               onChange={handleChange} // Use the handleChange function
+//               onChange={handleChange}
 //               width={64}
 //               type="text"
 //               placeholder="password"
@@ -103,7 +103,7 @@
 //             color={"white"}
 //             bg={"brand.primary"}
 //             mx={"auto"}
-//             onClick={() => newUser(user)}
+//             onClick={() => newUser(user)} // Call newUser with user data
 //           >
 //             Add User
 //           </Button>
@@ -125,11 +125,10 @@ import {
   FormLabel,
   Input,
   Button,
-  Heading,
   FormHelperText,
 } from "@chakra-ui/react";
 
-const AddUser = () => {
+const AddUser = ({ onUserAdded }) => {
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -149,8 +148,14 @@ const AddUser = () => {
       const response = await axiosClient.post("/users/create-user", userData);
 
       if (response.status === 201) {
-        // Check for 201 status code
-        console.log("User created successfully:", response.data);
+        setUser({
+          name: "",
+          email: "",
+          password: "",
+        });
+        if (onUserAdded) {
+          onUserAdded(); // Call the callback function to refresh the user list
+        }
       } else {
         console.log("Unexpected status code:", response.status);
       }
@@ -164,21 +169,16 @@ const AddUser = () => {
 
   return (
     <Box p={2}>
-      <Box p={4} bg={"white"}>
-        <Text>Active Users</Text>
-        <Text fontSize={"sm"}>
-          You have 0 active users. They will appear here once you add them.
-        </Text>
-      </Box>
-      <Heading mt={2} textAlign={"center"} mb={4} size={"md"}>
+      <Text textAlign={"center"} color={"gray.600"}>
         Add a new user
-      </Heading>
+      </Text>
       <Box mt={2} p={2} bg={"white"}>
         <Flex alignItems={"center"} gap={4}>
           {/* Name */}
           <FormControl isRequired>
             <FormLabel>Name</FormLabel>
             <Input
+              h={8}
               name="name"
               value={user.name}
               onChange={handleChange}
