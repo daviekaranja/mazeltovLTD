@@ -1,5 +1,4 @@
 import { extendTheme } from "@chakra-ui/react";
-import { Component } from "react";
 
 const colors = {
   brand: {
@@ -21,7 +20,7 @@ const CustomTheme = extendTheme({
         bg: "white",
         color: "gray",
         fontFamily: "body",
-        fontSize: "lg",
+        fontSize: { base: "md", md: "lg" },
       },
     },
   },

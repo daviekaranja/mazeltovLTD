@@ -1,34 +1,3 @@
-// import React from "react";
-// import { Box, Flex, Heading, Button, Text } from "@chakra-ui/react";
-// import { useNavigate } from "react-router-dom";
-
-// const NotFound = () => {
-//   return (
-//     <Flex
-//       p={4}
-//       gap={6}
-//       justifyContent={"space-between"}
-//       alignItems={"center"}
-//       direction={"column"}
-//       mt={2}
-//       color={"white"}
-//       bg={"brand.primary"}
-//     >
-//       <Heading>Oops</Heading>
-//       <Heading>Nothing here...</Heading>
-//       <Text>we cant see to find the page youre looking for</Text>
-//       <Text>
-//         try going back to the previous page or contact us for more informatiom
-//       </Text>
-//       <Button m={4} width={"50%"}>
-//         Go Back
-//       </Button>
-//     </Flex>
-//   );
-// };
-
-// export default NotFound;
-
 import React from "react";
 import { Box, Flex, Heading, Button, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";

@@ -1,7 +1,5 @@
 import React from "react";
 import { Box, Heading, Text, Flex, Image, Divider } from "@chakra-ui/react";
-import dan from "/src/assets/dan.jpg";
-import dorcas from "/src/assets/dorcas.jpg";
 
 const AboutUs = () => {
   return (
@@ -97,7 +95,12 @@ const AboutUs = () => {
             his passion for financial inclusion, has driven Mazeltov’s growth
             and success.
           </Text>
-          <Image mt={4} h={["100%", 300]} rounded={"lg"} src={dan} />
+          <Image
+            mt={4}
+            h={["100%", 300]}
+            rounded={"lg"}
+            src={"https://i.postimg.cc/P55B7YP3/dan.jpg"}
+          />
         </Box>
 
         <Box>
@@ -116,7 +119,12 @@ const AboutUs = () => {
             commitment to financial empowerment have positioned Mazeltov as a
             leader in the loan items sector in Embu, Makutano.
           </Text>
-          <Image mt={4} h={["100%", 300]} rounded={"lg"} src={dorcas} />
+          <Image
+            mt={4}
+            h={["100%", 300]}
+            rounded={"lg"}
+            src={"https://i.postimg.cc/wj4SYMN6/dorcas.jpg"}
+          />
         </Box>
       </Flex>
       <Box m={4}>
