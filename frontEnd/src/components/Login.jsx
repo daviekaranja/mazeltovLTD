@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "./AuthProvider.jsx";
+import { useAuth } from "./AuthProvider";
 import axiosClient from "../api/axiosClient";
 import {
   FormControl,
@@ -38,11 +38,11 @@ const Login = () => {
 
       if (response.status === 200) {
         const { access_token } = response.data;
-        login(access_token);
-        localStorage.setItem("authToken", access_token); // Store access token in localStorage
+        login(access_token); // Call login from AuthProvider
         navigate(from, { replace: true });
       }
     } catch (err) {
+      console.error("Error during API request:", err);
       setError(err.response?.statusText || "Login failed");
     }
   };

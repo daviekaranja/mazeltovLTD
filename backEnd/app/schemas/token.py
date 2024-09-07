@@ -13,3 +13,9 @@ class Token(BaseModel):
 class TokenPayLoad(BaseModel):
     exp: datetime.datetime
     sub: Union[str, int]
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+    expires_in: int

@@ -1,7 +1,7 @@
 import datetime
-from typing import Generator
+from typing import Generator, Optional
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request, Cookie
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from pydantic import EmailStr
@@ -15,9 +15,7 @@ from ..schemas.token import TokenPayLoad
 from ..crud import crudUsers
 from ..models.users import User
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.api_string}/auth/access-token"
-)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/access-token")
 
 
 def get_db() -> Generator:
@@ -28,13 +26,13 @@ def get_db() -> Generator:
         db.close()
 
 
-def get_current_user(
-        db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
-) -> User:
+def get_current_user(db: Session = Depends(get_db),token: str = Depends(oauth2_scheme)):
     token_data = validate_access_token(token)
-    user = crudUsers.user.get(db, int(token_data.sub))
+    user = crudUsers.user.get(db, id=int(token_data.sub))
+    if user is None:
+        raise HTTPException(status_code=401, detail='Not Authenticated')
     if not user.is_active:
-        raise HTTPException(status_code=403, detail="Inactive user")
+        raise HTTPException(status_code=403, detail='Inactive User')
     return user
 
 

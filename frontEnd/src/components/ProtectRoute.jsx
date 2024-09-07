@@ -1,15 +1,15 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
+import Login from "./Login";
 
 const ProtectedRoute = ({ children }) => {
-  const { authToken, user, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div>Loading...</div>; // Replace with a spinner or loading indicator if desired
+    return <div>Loading...</div>;
   }
 
-  return authToken && user ? children : <Navigate to="/login" replace />;
+  return user ? children : <Login />;
 };
 
 export default ProtectedRoute;
