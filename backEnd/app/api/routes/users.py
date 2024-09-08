@@ -5,6 +5,7 @@ from app.api import dependancies
 from app.crud import crudUsers
 from app.schemas.user import UserResponse, UserUpdate, UserCreate
 from typing import List
+from  fastapi.encoders import jsonable_encoder
 
 router = APIRouter()
 
@@ -24,7 +25,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(dependancies.get_db)):
 @router.post('/create-user', status_code=201, response_model=UserResponse)
 def create_user(db: Session = Depends(dependancies.get_db) ,*, obj_in: UserCreate):
     new_user = crudUsers.user.create_user(db, obj_in=obj_in)
-    return new_user
+    return jsonable_encoder(new_user)
 
 
 @router.put('/update-user/{user_id}', status_code=201, response_model=UserResponse)

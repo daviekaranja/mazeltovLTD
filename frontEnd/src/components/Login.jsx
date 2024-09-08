@@ -42,7 +42,7 @@ const Login = () => {
         navigate(from, { replace: true });
       }
     } catch (err) {
-      console.error("Error during API request:", err);
+      // console.error("Error during API request:", err);
       setError(err.response?.statusText || "Login failed");
     }
   };

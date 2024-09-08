@@ -3,6 +3,7 @@ import { Box, Flex, Link } from "@chakra-ui/react";
 import { easeIn } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { HamburgerIcon } from "@chakra-ui/icons";
+import Toast from "./Alerts/Toast";
 
 const NavBar = () => {
   const navigate = useNavigate(); // Correctly get the navigate function
@@ -75,6 +76,7 @@ const NavBar = () => {
           bg={"white"}
           color={"brand.primary"}
           transition={easeIn}
+          onClick={Toast("Hello", "welcome", "success")}
         >
           Buy Airtime
         </Link>

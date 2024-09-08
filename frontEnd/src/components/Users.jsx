@@ -1,26 +1,13 @@
 import React, { useState, useEffect } from "react";
-import AddUser from "./AddUser";
-import {
-  Box,
-  Flex,
-  Text,
-  Heading,
-  Checkbox,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-} from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import axiosClient from "../api/axiosClient";
+import UserTable from "./CollapsibleTable";
+import AddUser from "./AddUser";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Function to fetch users
   const fetchUsers = async () => {
     try {
       const response = await axiosClient.get("/users/get-users");
@@ -37,53 +24,19 @@ const Users = () => {
   };
 
   useEffect(() => {
-    fetchUsers(); // Fetch users when component mounts
+    fetchUsers();
   }, []);
 
-  // Callback function to refresh the user list
-  const handleUserAdded = () => {
-    fetchUsers(); // Refresh user list
-  };
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
-    <Box width={"80%"} p={4}>
+    <Box p={2}>
       <Box bg={"white"} rounded={"lg"} boxShadow={"sm"}>
-        <TableContainer>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>Name</Th>
-                <Th>Email</Th>
-                <Th>Products</Th>
-                <Th>Active</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {users.length > 0 ? (
-                users.map((user) => (
-                  <Tr fontSize={"md"} key={user.id}>
-                    <Td>{user.name}</Td>
-                    <Td>{user.email}</Td>
-                    <Td>{user.products?.length || 0}</Td>
-                    <Td>
-                      <Checkbox isChecked={user.is_active}>Active</Checkbox>
-                    </Td>
-                  </Tr>
-                ))
-              ) : (
-                <Tr>
-                  <Td colSpan="4" textAlign="center">
-                    No users found.
-                  </Td>
-                </Tr>
-              )}
-            </Tbody>
-          </Table>
-        </TableContainer>
+        <UserTable users={users} defaultRowsToShow={2} />{" "}
       </Box>
-      <Flex mt={6} bg={"white"} width={"100%"}>
-        <AddUser onUserAdded={handleUserAdded} />
-      </Flex>
+      <AddUser />
     </Box>
   );
 };

@@ -38,9 +38,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             db.refresh(db_obj)
             return db_obj
         except exc.IntegrityError as error:
-            print(f'An error occurred: {error}')
             db.rollback()
-            raise HTTPException(status_code=500, detail='An error occurred')
+            raise HTTPException(status_code=409, detail='user already exist')
 
     # def create_superuser(self, db, obj_in: CreateSuperUser):
     #     obj_in.hashed_password = get_password_hash(obj_in.hashed_password)
