@@ -7,14 +7,12 @@ import { IoLogoWhatsapp } from "react-icons/io";
 import {
   Box,
   Text,
-  Heading,
   Flex,
   InputGroup,
   InputRightAddon,
   Button,
   Input,
   Link,
-  Divider,
   Icon,
 } from "@chakra-ui/react";
 

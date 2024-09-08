@@ -5,21 +5,7 @@ import Dashboard from "../DashBoard";
 import AddUser from "../AddUser";
 import Users from "../Users";
 
-import {
-  Box,
-  Heading,
-  Link,
-  Text,
-  Flex,
-  Avatar,
-  Divider,
-  Menu,
-  MenuButton,
-  Icon,
-  SimpleGrid,
-  Button,
-  Grid,
-} from "@chakra-ui/react";
+import { Box, Link, Text, Flex, Button, Grid } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 
 const AdminPage = () => {

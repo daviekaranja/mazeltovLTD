@@ -6,7 +6,7 @@ from .core.config import settings
 # from .db.base_class import Base
 # from .db.session import engine
 from .db.initDb import main
-
+from .core.middlewares import JSONResponseMiddleware
 
 
 @asynccontextmanager
