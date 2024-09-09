@@ -17,9 +17,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const { login } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const from = location.state?.from?.pathname || "/manage";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -32,14 +29,14 @@ const Login = () => {
 
       const response = await axiosClient.post("/auth/access-token", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
       });
 
       if (response.status === 200) {
         const { access_token } = response.data;
-        login(access_token); // Call login from AuthProvider
-        navigate(from, { replace: true });
+        login(access_token);
+        // navigate(from, { replace: true });
       }
     } catch (err) {
       // console.error("Error during API request:", err);

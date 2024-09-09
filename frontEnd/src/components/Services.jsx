@@ -35,7 +35,6 @@ const Services = ({ renderButtons }) => {
     fetchProducts();
   }, []);
 
-  // Filter products based on selected category
   const filteredProducts =
     selectedCategory === "All"
       ? localProds
@@ -43,10 +42,18 @@ const Services = ({ renderButtons }) => {
 
   return (
     <Flex p={2} direction={"column"}>
-      <Flex alignItems={"center"} gap={5} justifyContent={"center"} mb={4}>
-        <Text>Filter by category</Text>
+      <Flex
+        bg={"white"}
+        alignItems={"center"}
+        gap={5}
+        justifyContent={"center"}
+        mb={4}
+      >
+        <Text fontSize={"sm"}>Filter by Category</Text>
         <Select
-          width={"200"}
+          p={1}
+          border={"none"}
+          width={200}
           placeholder="Select category"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}

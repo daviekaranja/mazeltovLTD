@@ -25,7 +25,6 @@ const ProductManager = ({ initialProduct }) => {
       image_url: "",
       category: "",
       phone_number: "",
-      owner_id: user.id,
       description: "",
     }
   );

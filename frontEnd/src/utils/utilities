@@ -11,29 +11,6 @@ export const categories = [
   "Office Supplies",
 ];
 
-// export const showErrorToast = async (id, title, description) => {
-//   // Dynamically import `createStandaloneToast` from Chakra UI
-//   const { createStandaloneToast } = await import("@chakra-ui/react");
-//   const { toast } = createStandaloneToast();
-
-//   // Show the error toast
-//   toast({
-//     title,
-//     description,
-//     status: "error",
-//     duration: 5000, // Duration in milliseconds
-//     isClosable: true, // Allow the toast to be closed by the user
-//     position: "top", // Position of the toast on the screen
-//   });
-// };
-
-// utils/utilities.js
-
-/**
- * Shows an error toast notification with a unique ID to ensure
- * only one instance of the toast is visible at a time.
- */
-// utils/utilities.js
 export const showErrorToast = async (id, title, description) => {
   // Dynamically import `createStandaloneToast` from Chakra UI
   const { createStandaloneToast } = await import("@chakra-ui/react");

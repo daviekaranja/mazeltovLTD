@@ -13,9 +13,6 @@ import {
 const Dashboard = () => {
   return (
     <Box p={1} h={50}>
-      <Heading bg={"white"} mb={2} p={4} color={"brand.primary"}>
-        Hello Dan, Welcome
-      </Heading>
       <Box>
         <SimpleGrid
           fontSize={"sm"}
