@@ -6,9 +6,9 @@ const Toast = ({ title, description, status }) => {
   return () =>
     toast({
       title: title,
-      description: description,
-      status: status,
+      description,
       duration: 5000,
+      status,
       isClosable: true,
     });
 };

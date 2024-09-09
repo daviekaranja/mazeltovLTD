@@ -2,18 +2,14 @@ import React, { useState } from "react";
 import ProductManager from "../ProductManager";
 import Services from "../Services";
 import Dashboard from "../DashBoard";
-import AddUser from "../AddUser";
 import Users from "../Users";
+import { useAuth } from "../AuthProvider";
 
-import { Box, Link, Text, Flex, Button, Grid } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { Box, Link, Text, Flex, Button, Grid, Heading } from "@chakra-ui/react";
 
 const AdminPage = () => {
-  const [userData, setUserData] = useState(null);
+  const { user } = useAuth();
   const [navSize, changeNavSize] = useState("large");
-  const tabs = ["Home", "Access", "Products", "Settings"];
-  const [activeTab, setActiveTab] = useState(null);
-
   const CustomButtons = (product) => {
     return (
       <Flex
@@ -37,6 +33,7 @@ const AdminPage = () => {
       </Flex>
     );
   };
+
   const linksComponents = {
     0: <Dashboard />,
     1: () => {
@@ -108,26 +105,30 @@ const AdminPage = () => {
       </Link>
     );
   });
+
+  const { logout } = useAuth();
+
   return (
     <Box color={"gray.500"} bg={"gray.100"}>
-      <Box p={2} bg={"gray.100"}>
+      <Box p={2} bg={"white"}>
         <Flex
           height={50}
           alignItems={"center"}
-          width={300}
+          width={"100%"}
           justifyContent={"space-between"}
         >
-          <HamburgerIcon
-            onClick={() => {
-              navSize === "large"
-                ? changeNavSize("small")
-                : changeNavSize("large");
-            }}
-            boxSize={6}
-          />
           <Text color={"gray.500"} fontWeight={"semibold"} fontSize={"24px"}>
-            Mazeltov Agencies
+            Mazeltov LTD
           </Text>
+          <Text>Hello {user.name}</Text>
+          <Button
+            _hover={{ bg: "blue.600" }}
+            color={"white"}
+            bg={"brand.primary"}
+            onClick={() => logout()}
+          >
+            Logout
+          </Button>
         </Flex>
       </Box>
       <Grid

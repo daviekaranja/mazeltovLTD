@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 
 const AddUser = ({ onUserAdded }) => {
+  const [valid, setValid] = useState(false);
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -33,6 +34,7 @@ const AddUser = ({ onUserAdded }) => {
   const validateUser = (userData) => {
     try {
       userSchema.parse(userData);
+      setValid(false);
       return null;
     } catch (error) {
       if (error.errors) {
@@ -157,7 +159,6 @@ const AddUser = ({ onUserAdded }) => {
           {/* Password */}
           <FormControl isRequired isInvalid={!!formErrors.password}>
             <FormLabel>Password</FormLabel>
-            <FormHelperText>The default password is @Mazeltov24</FormHelperText>
             <Input
               name="password"
               value={user.password}
@@ -166,6 +167,9 @@ const AddUser = ({ onUserAdded }) => {
               type="text"
               placeholder="password"
             />
+            <FormHelperText color={"gray.400"} fontSize={"14px"}>
+              The default password is @Mazeltov24
+            </FormHelperText>
             <FormHelperText color="red.500">
               {formErrors.password}
             </FormHelperText>
@@ -173,6 +177,7 @@ const AddUser = ({ onUserAdded }) => {
         </Flex>
         <Box display={"flex"} p={4} mt={2} mx={"auto"}>
           <Button
+            isDisabled={valid}
             color={"white"}
             bg={"brand.primary"}
             mx={"auto"}

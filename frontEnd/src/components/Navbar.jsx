@@ -76,7 +76,7 @@ const NavBar = () => {
           bg={"white"}
           color={"brand.primary"}
           transition={easeIn}
-          onClick={Toast("Hello", "welcome", "success")}
+          onClick={Toast("title")}
         >
           Buy Airtime
         </Link>
