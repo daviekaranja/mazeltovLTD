@@ -57,7 +57,7 @@ def stk_push(phone_number: str, amount: int, request: Request, token: str):
     "PartyA": 254728404490,
     "PartyB": 174379,
     "PhoneNumber": 254728404490,
-    "CallBackURL": callback_url,
+    "CallBackURL": str(callback_url),
     "AccountReference": "CompanyXLTD",
     "TransactionDesc": "Payment of X"
   }
