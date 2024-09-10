@@ -22,7 +22,6 @@ class Settings(BaseSettings):
     mpesa_token: str
     consumer_key: str
     secret_key: str
-    mpesa_password: str
 
     def get_local_time_with_timezone(self):
         # Define the timezone for Africa/Nairobi
