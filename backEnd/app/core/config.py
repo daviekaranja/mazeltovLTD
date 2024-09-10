@@ -19,7 +19,6 @@ class Settings(BaseSettings):
     ALGORITHM: str
     mpesa_shortcode: str
     mpesa_passkey: str
-    mpesa_token: str
     consumer_key: str
     secret_key: str
 
