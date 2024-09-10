@@ -1,6 +1,9 @@
 import base64
 from datetime import datetime
-from ..core.config import settings
+import requests
+from requests.auth import HTTPBasicAuth
+from fastapi import HTTPException
+from app.core.config import settings
 
 
 def get_timestamp():
@@ -20,27 +23,27 @@ def generate_password():
     return encoded_string
 
 
-import requests
-from requests.auth import HTTPBasicAuth
-import os
-from dotenv import load_dotenv
-
-def get_mpesa_token():
+def get_mpesa_token() -> str:
     # Consumer Key and Consumer Secret from Safaricom Daraja Portal
-    consumer_key = settings
-    consumer_secret = os.getenv("MPESA_CONSUMER_SECRET")
+    consumer_key = settings.consumer_key
+    consumer_secret = settings.secret_key
 
     api_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
 
-    # HTTP Basic Authentication using consumer key and secret
-    response = requests.get(api_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
+    try:
+        response = requests.get(api_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
 
-    if response.status_code == 200:
-        # Return the JSON response which contains the access_token
-        print(f'Acces Token Received: {response.json()}')
-        return response.json()
-    else:
-        # Handle error case
-        raise Exception("Failed to retrieve access token")
+        if response.status_code == 200:
+            token_data = response.json()
+            access_token = token_data.get("access_token")
+            if access_token:
+                return access_token
+            else:
+                raise HTTPException(status_code=500, detail="Access token not found in response")
+        else:
+            error_details = response.json()
+            error_message = error_details.get("error_description", "Failed to retrieve access token")
+            raise HTTPException(status_code=response.status_code, detail=error_message)
 
-
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Request failed: {str(e)}")
