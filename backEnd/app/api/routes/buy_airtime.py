@@ -1,5 +1,5 @@
 import requests
-from fastapi import  HTTPException, APIRouter, Request
+from fastapi import HTTPException, APIRouter, Request
 
 from app.core.config import settings
 from app.utilities.utils import get_timestamp, get_mpesa_token, generate_password
@@ -11,7 +11,7 @@ logger = logging.getLogger('__name__')
 
 
 @router.post("/stk-push")
-def stk_push(phone_number: str, amount: int, request: Request):
+def stk_push(phone_number: str, account_no: int, amount: int, request: Request):
     api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
 
     headers = {
@@ -20,19 +20,19 @@ def stk_push(phone_number: str, amount: int, request: Request):
     }
     callback_url = request.url_for("mpesa_callback")
 
-    payload =  {
-    "BusinessShortCode": 174379,
-    "Password": generate_password(),
-    "Timestamp": get_timestamp(),
-    "TransactionType": "CustomerPayBillOnline",
-    "Amount": amount,
-    "PartyA": int(phone_number),
-    "PartyB": 174379,
-    "PhoneNumber": int(phone_number),
-    "CallBackURL": str(callback_url),
-    "AccountReference": "CompanyXLTD",
-    "TransactionDesc": "Payment of X"
-  }
+    payload = {
+        "BusinessShortCode": 174379,
+        "Password": generate_password(),
+        "Timestamp": get_timestamp(),
+        "TransactionType": "CustomerPayBillOnline",
+        "Amount": amount,
+        "PartyA": int(phone_number),
+        "PartyB": 174379,
+        "PhoneNumber": int(phone_number),
+        "CallBackURL": str(callback_url),
+        "AccountReference": account_no,
+        "TransactionDesc": "Airtime"
+    }
 
     response = requests.post(api_url, json=payload, headers=headers)
 
