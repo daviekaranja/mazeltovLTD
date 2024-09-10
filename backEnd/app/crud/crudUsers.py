@@ -66,9 +66,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return obj
 
     def is_superuser(self, obj: User):
-        if not obj.is_superuser:
-            raise HTTPException(status_code=403, detail="Not enough privileges")
-        return obj
+        return obj.super_user
 
     def activate_user(self, user_obj: User, db: Session):
         if not user_obj.is_active:

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, Union, List
 from datetime import datetime
+from .product import ProductInDb
 
 
 class UserBase(BaseModel):
@@ -20,3 +21,4 @@ class UserResponse(UserBase):
     id: int
     is_active: bool
     super_user: bool
+    products: List[ProductInDb]
