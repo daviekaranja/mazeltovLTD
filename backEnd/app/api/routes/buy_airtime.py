@@ -2,7 +2,7 @@ import requests
 from fastapi import  HTTPException, APIRouter, Request
 
 from app.core.config import settings
-from app.utilities.utils import get_timestamp, get_mpesa_token
+from app.utilities.utils import get_timestamp, get_mpesa_token, generate_password
 
 router = APIRouter()
 import logging
@@ -11,9 +11,7 @@ logger = logging.getLogger('__name__')
 
 
 @router.post("/stk-push")
-def stk_push(phone_number: str, amount: int, request: Request, token: str):
-    if token is None:
-        raise HTTPException(status_code=404, detail='Token Not Found')
+def stk_push(phone_number: str, amount: int, request: Request):
     api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
 
     headers = {
@@ -21,17 +19,16 @@ def stk_push(phone_number: str, amount: int, request: Request, token: str):
         "Content-Type": "application/json"
     }
     callback_url = request.url_for("mpesa_callback")
-    # print(callback_url)
 
     payload =  {
     "BusinessShortCode": 174379,
-    "Password": settings.mpesa_password,
+    "Password": generate_password(),
     "Timestamp": get_timestamp(),
     "TransactionType": "CustomerPayBillOnline",
     "Amount": amount,
     "PartyA": int(phone_number),
     "PartyB": 174379,
-    "PhoneNumber": 254728404490,
+    "PhoneNumber": int(phone_number),
     "CallBackURL": str(callback_url),
     "AccountReference": "CompanyXLTD",
     "TransactionDesc": "Payment of X"
