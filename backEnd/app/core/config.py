@@ -7,8 +7,6 @@ from pydantic import PostgresDsn, EmailStr
 
 
 class Settings(BaseSettings):
-    domain: str = "localhost"
-    project_name: str = 'mazeltovBackend'
     sqlalchemy_url: str
     admin_email: str
     admin_name: str
@@ -22,6 +20,9 @@ class Settings(BaseSettings):
     mpesa_shortcode: str
     mpesa_passkey: str
     mpesa_token: str
+    consumer_key: str
+    secret_key: str
+    mpesa_password: str
 
     def get_local_time_with_timezone(self):
         # Define the timezone for Africa/Nairobi
