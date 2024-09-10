@@ -1,38 +1,13 @@
 import requests
-from fastapi import FastAPI, HTTPException, APIRouter, Request
-from dotenv import load_dotenv
-import os
-
-from requests.auth import HTTPBasicAuth
+from fastapi import  HTTPException, APIRouter, Request
 
 from app.core.config import settings
-from app.utilities.utils import get_timestamp, generate_password
+from app.utilities.utils import get_timestamp, get_mpesa_token
 
 router = APIRouter()
 import logging
 
 logger = logging.getLogger('__name__')
-
-
-# Endpoint to get Mpesa access token
-@router.get('/get-mpesa-token')
-def get_mpesa_token():
-    # Consumer Key and Consumer Secret from Safaricom Daraja Portal
-    consumer_key = settings.consumer_key
-    consumer_secret = settings.consumer_key
-
-    api_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
-
-    # HTTP Basic Authentication using consumer key and secret
-    response = requests.get(api_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
-
-    if response.status_code == 200:
-        # Return the JSON response which contains the access_token
-        print(f'Acces Token Received: {response.json()}')
-        return response.json()
-    else:
-        # Handle error case
-        raise Exception("Failed to retrieve access token")
 
 
 @router.post("/stk-push")
@@ -42,7 +17,7 @@ def stk_push(phone_number: str, amount: int, request: Request, token: str):
     api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
 
     headers = {
-        "Authorization": f"Bearer {token}",
+        "Authorization": f"Bearer {get_mpesa_token()}",
         "Content-Type": "application/json"
     }
     callback_url = request.url_for("mpesa_callback")
