@@ -63,12 +63,16 @@ def stk_push(phone_number: str, amount: int, request: Request, token: str):
   }
 
     response = requests.post(api_url, json=payload, headers=headers)
-    logger.info(response)
 
-    if response.status_code == 200:
-        return {"message": "STK Push initiated", "response": response.json()}
-    else:
-        raise HTTPException(status_code=response.status_code, detail="Failed to initiate STK Push")
+    # Check if the response status code indicates an error
+    if response.status_code != 200:
+        logger.info(response.json())
+        # Extract error details from the response body
+        error_details = response.json()
+        error_message = error_details.get("errorMessage", "Unknown error occurred")
+        raise HTTPException(status_code=response.status_code, detail=error_message)
+
+    return {"message": "STK Push initiated", "response": response.json()}
 
 
 @router.post("/mpesa-callback", name="mpesa_callback")
