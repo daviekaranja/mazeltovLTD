@@ -7,7 +7,7 @@ class ProductBase(BaseModel):
     category: Optional[str] = Field(None, max_length=50)
     price: float = Field(..., gt=0)
     phone_number: str = Field(..., max_length=100)
-    owner_id: int = Field(..., gt=0)
+    owner_id: Optional[int] = Field(..., gt=0)
     image_url: Optional[str] = Field(None, max_length=200)
     description: Optional[str] = Field(None, max_length=500)
 
@@ -22,6 +22,7 @@ class ProductUpdate(ProductBase):
 
 
 class ProductInDb(BaseModel):
+    id: int
     name: str
     price: float
     phone_number: str

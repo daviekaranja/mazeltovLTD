@@ -15,4 +15,4 @@ class Product(Base):
     description = Column(String(500), nullable=False)
     createdAt = Column(DateTime, server_default=func.now(), nullable=False)
 
-
+    owner = relationship("User", back_populates="products")

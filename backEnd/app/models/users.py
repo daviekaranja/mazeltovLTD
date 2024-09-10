@@ -13,4 +13,5 @@ class User(Base):
     super_user = Column(Boolean, default=False)
     createdAt = Column(DateTime, server_default=func.now(), nullable=False)
 
-    products = relationship('Product', backref='user', lazy='dynamic')
+    # Define the relationship to products
+    products = relationship("Product", back_populates="owner")

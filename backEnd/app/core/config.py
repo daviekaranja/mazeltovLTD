@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1200
     secret: str = 'secrets.token_urlsafe()'
     ALGORITHM: str
+    mpesa_shortcode: str
+    mpesa_passkey: str
+    mpesa_token: str
 
     def get_local_time_with_timezone(self):
         # Define the timezone for Africa/Nairobi
