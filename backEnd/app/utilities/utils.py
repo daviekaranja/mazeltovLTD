@@ -25,12 +25,9 @@ from requests.auth import HTTPBasicAuth
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
-
 def get_mpesa_token():
     # Consumer Key and Consumer Secret from Safaricom Daraja Portal
-    consumer_key = os.getenv("MPESA_CONSUMER_KEY")
+    consumer_key = settings
     consumer_secret = os.getenv("MPESA_CONSUMER_SECRET")
 
     api_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
@@ -47,5 +44,3 @@ def get_mpesa_token():
         raise Exception("Failed to retrieve access token")
 
 
-# Usage
-access_token = get_mpesa_token()["access_token"]
