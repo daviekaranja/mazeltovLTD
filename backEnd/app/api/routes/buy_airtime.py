@@ -53,8 +53,8 @@ def stk_push(phone_number: str, amount: int, request: Request, token: str):
     "Password": settings.mpesa_password,
     "Timestamp": get_timestamp(),
     "TransactionType": "CustomerPayBillOnline",
-    "Amount": 1,
-    "PartyA": 254728404490,
+    "Amount": amount,
+    "PartyA": int(phone_number),
     "PartyB": 174379,
     "PhoneNumber": 254728404490,
     "CallBackURL": str(callback_url),
@@ -63,6 +63,7 @@ def stk_push(phone_number: str, amount: int, request: Request, token: str):
   }
 
     response = requests.post(api_url, json=payload, headers=headers)
+    logger.info(response)
 
     if response.status_code == 200:
         return {"message": "STK Push initiated", "response": response.json()}
