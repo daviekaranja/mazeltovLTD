@@ -18,16 +18,16 @@ def stk_push(phone_number: str, account_no: int, amount: int, request: Request):
         "Authorization": f"Bearer {get_mpesa_token()}",
         "Content-Type": "application/json"
     }
-    callback_url = request.url_for("mpesa_callback")
+    callback_url = request.url_for("callback")
 
     payload = {
-        "BusinessShortCode": 174379,
+        "BusinessShortCode": settings.mpesa_shortcode,
         "Password": generate_password(),
         "Timestamp": get_timestamp(),
         "TransactionType": "CustomerPayBillOnline",
         "Amount": amount,
         "PartyA": int(phone_number),
-        "PartyB": 174379,
+        "PartyB": settings.mpesa_shortcode,
         "PhoneNumber": int(phone_number),
         "CallBackURL": str(callback_url),
         "AccountReference": account_no,
@@ -35,8 +35,8 @@ def stk_push(phone_number: str, account_no: int, amount: int, request: Request):
     }
 
     response = requests.post(api_url, json=payload, headers=headers)
-
     # Check if the response status code indicates an error
+    logger.info(response.json())
     if response.status_code != 200:
         logger.info(response.json())
         # Extract error details from the response body
@@ -47,7 +47,7 @@ def stk_push(phone_number: str, account_no: int, amount: int, request: Request):
     return {"message": "STK Push initiated", "response": response.json()}
 
 
-@router.post("/mpesa-callback", name="mpesa_callback")
+@router.post("/callback", name="callback")
 def mpesa_callback(data: dict):
     # Log or store the callback data for further processing
     logger.info("Mpesa callback data:", data)

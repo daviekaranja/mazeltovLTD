@@ -8,7 +8,6 @@ from app.core.config import settings
 
 def get_timestamp():
     time = datetime.now().strftime("%Y%m%d%H%M%S")
-    print(f"TimeStamp: {time}")
     return time
 
 
