@@ -31,7 +31,7 @@ jobs:
       # Copy the dist folder to the backend directory
       - name: Copy dist to backEnd
         run: |
-          cp -r frontEnd/dist ../backEnd/
+          cp -r dist ../backEnd/
 
     # (Optional) If you have a FastAPI deployment step, you can add it here
     # - name: Deploy to server (for example)
