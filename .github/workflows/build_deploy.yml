@@ -24,14 +24,14 @@ jobs:
       # Install dependencies and build frontend
       - name: Install dependencies and build frontend
         run: |
-          cd Frontend
+          cd frontEnd
           npm install
           npm run build
 
       # Copy the dist folder to the backend directory
-      - name: Copy dist to backend
+      - name: Copy dist to backEnd
         run: |
-          cp -r Frontend/dist ../backEnd/dist
+          cp -r FrontEnd/dist ../backEnd/dist
 
     # (Optional) If you have a FastAPI deployment step, you can add it here
     # - name: Deploy to server (for example)
