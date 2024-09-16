@@ -1,7 +1,5 @@
 import axios from "axios";
 import { showErrorToast } from "../utils/utilities";
-import { useState } from "react";
-
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
@@ -12,7 +10,6 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use((request) => {
-  console.log(request.headers);
   return request;
 });
 
