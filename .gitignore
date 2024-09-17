@@ -16,7 +16,6 @@ env.bak/
 venv.bak/
 
 # Vite build output
-dist/
 dist-ssr/
 build/
 node_modules/
