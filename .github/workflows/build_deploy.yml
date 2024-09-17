@@ -21,15 +21,17 @@ jobs:
         with:
           node-version: "21" # Specify the version of Node.js you're using
 
+      - name: Clean old dist folder
+        run: rm -rf frontEnd/dist
+
       # Install dependencies and build frontend
       - name: Install dependencies and build frontend
         run: |
           cd frontEnd
-          ls 
+          ls frontEnd
           npm install
           npm run build
-          ls
-
+          ls frontEnd/dist
 
     # (Optional) If you have a FastAPI deployment step, you can add it here
     # - name: Deploy to server (for example)

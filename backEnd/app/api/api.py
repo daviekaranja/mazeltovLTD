@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .routes import products, users, login, buy_airtime
+from .routes import products, users, login, buy_services
 
 api_router = APIRouter()
 
