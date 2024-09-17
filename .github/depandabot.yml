@@ -1,0 +1,39 @@
+name: Code Scan and Dependabot Checks
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  code_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Install backend dependencies
+        run: pip install -r backEnd/requirements.txt
+      - name: Install frontend dependencies
+        run: |
+          cd frontEnd
+          npm install
+      - name: Run backend tests
+        run: pytest
+      - name: Run frontend tests
+        run: npm run test
+
+  dependabot_update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Dependabot security check
+        run: dependabot check # Add security check action
