@@ -28,11 +28,7 @@ jobs:
       - name: Install dependencies and build frontend
         run: |
           cd frontEnd
-          ls frontEnd
+          ls -la
           npm install
           npm run build
           ls frontEnd/dist
-
-    # (Optional) If you have a FastAPI deployment step, you can add it here
-    # - name: Deploy to server (for example)
-    #   run: <your-deployment-commands>
