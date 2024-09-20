@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Any
 
 from fastapi import HTTPException
 from pydantic import EmailStr
@@ -7,14 +7,14 @@ from sqlalchemy.orm import Session
 from ..core.config import settings
 
 from .base import CRUDBase
-from ..core.security import verify_password, get_password_hash
+from ..core import security
 from ..models.users import User
 from ..schemas.user import UserCreate, UserUpdate, UserResponse
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def create_user(self, db: Session, obj_in: UserCreate) -> User:
-        hashed_password = get_password_hash(obj_in.password)
+        hashed_password = security.get_password_hash(obj_in.password)
 
         # Prepare user data and ensure the hashed password is set correctly
         user_data = obj_in.model_dump()
@@ -54,11 +54,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             raise HTTPException(status_code=404, detail="user not found")
         return user_by_email
 
-    def authenticate(self, db: Session, email: EmailStr, password) -> Type[User]:
-        user = self.get_by_email(db, email)
-        if not verify_password(password, user.hashed_password):
+    def authenticate(self, db: Session, email: EmailStr, password) -> Type[User] | None:
+        db_user = self.get_by_email(db, email)
+        if not security.verify_password(password, db_user.hashed_password):
             return None
-        return user
+        return db_user
 
     def is_active(self, obj: User):
         if not obj.is_active:

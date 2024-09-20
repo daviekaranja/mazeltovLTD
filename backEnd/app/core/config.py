@@ -3,10 +3,12 @@ from datetime import datetime
 from typing import Union
 import pytz
 from pydantic_settings import BaseSettings
-from pydantic import PostgresDsn, EmailStr
+from pydantic import PostgresDsn, EmailStr, ConfigDict
 
 
 class Settings(BaseSettings):
+    model_config = ConfigDict(env_file=".env")  # Correct placement
+
     sqlalchemy_url: str
     admin_email: str
     admin_name: str
@@ -14,9 +16,8 @@ class Settings(BaseSettings):
     frontend_origin: str
     algorithm: str
     api_string: str = '/api/v1'
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1200
+    ACCESS_TOKEN_EXPIRE_SECONDS: int = 3600
     secret: str = 'secrets.token_urlsafe()'
-    ALGORITHM: str
 
     mpesa_shortcode: str
     mpesa_passkey: str
@@ -34,8 +35,8 @@ class Settings(BaseSettings):
 
         return local_time
 
-    class Config:
-        env_file = ".env"  # Optional: For local development only
+    # class Config:
+    #     env_file = ".env"  # Optional: For local development only
 
 
 # Initialize Settings without _env_file for containerization
