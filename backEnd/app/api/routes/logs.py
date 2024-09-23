@@ -17,7 +17,7 @@ async def log_streamer(file_path: str):
                 await asyncio.sleep(1)  # Avoid busy waiting
 
 
-@router.get("/logs")
+@router.get("/log-stream")
 async def stream_logs():
     """Serve logs as a streaming response (real-time updates)"""
     return StreamingResponse(log_streamer("app.log"), media_type="text/event-stream")
