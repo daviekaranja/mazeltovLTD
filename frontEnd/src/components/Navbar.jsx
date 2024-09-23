@@ -4,12 +4,13 @@ import { easeIn } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import Toast from "./Alerts/Toast";
+import BuyAirtime from "./BuyAirtime";
 
 const NavBar = () => {
   const navigate = useNavigate(); // Correctly get the navigate function
 
   const handleNavigation = (path) => {
-    navigate(path); // Use navigate to programmatically change the route
+    navigate(path);
   };
 
   const links = ["Home", "About", "Support"];
@@ -76,7 +77,7 @@ const NavBar = () => {
           bg={"white"}
           color={"brand.primary"}
           transition={easeIn}
-          onClick={Toast("title")}
+          onClick={() => handleNavigation("/deals")}
         >
           Buy Airtime
         </Link>
