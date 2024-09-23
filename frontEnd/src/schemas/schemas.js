@@ -15,4 +15,25 @@ export const productSchema = z.object({
   active: z.boolean(),
 });
 
-// Add other schemas as needed...
+export const PayBillPush = z.object({
+  stkNumber: z
+    .string()
+    .regex(
+      /^2547\d{8}$|^2541\d{7}$/,
+      "stkNumber must be in the format 2547xx xxx xxx or 2541xx xxx xxx"
+    )
+    .max(12),
+
+  amount: z
+    .number()
+    .min(5, "Amount must be at least 5")
+    .max(1000, "Amount must not exceed 1000"),
+
+  rechargeNumber: z
+    .string()
+    .regex(
+      /^07\d{8}$|^01\d{8}$/,
+      "rechargeNumber must be in the format 07xx xxx xxx or 01xx xxx xxx"
+    )
+    .max(12),
+});

@@ -5,11 +5,11 @@ import Footer from "./Footer";
 
 const Layout = ({ children }) => {
   return (
-    <Flex mx={"auto"} direction={"column"} minHeight={"100vh"}>
+    <Flex mx={"auto"} direction={"column"}>
       <Box h={20}>
         <Navbar />
       </Box>
-      <Flex flex={"1"} direction={"column"}>
+      <Flex flex={"1"} direction={"column"} minHeight={"50vh"}>
         {children}
       </Flex>
       <Box as={"footer"} mt={"auto"}>

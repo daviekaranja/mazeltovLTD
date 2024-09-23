@@ -10,13 +10,12 @@ from starlette.responses import FileResponse
 from .api.api import api_router
 from .core.config import settings
 from .db.initDb import main
-
-logger = logging.getLogger(__name__)
+from .utilities.logger import log
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info('Checking a few things')
+    log.info('Checking a few things')
     main()
     yield
     # Shutdown code
@@ -39,14 +38,18 @@ app.include_router(api_router, prefix=settings.api_string)
 # Serve static files
 base_path = Path('../frontEnd/dist')
 
+# Serve static files from /static
 if os.path.exists(base_path):
     app.mount("/static", StaticFiles(directory=base_path, html=True), name="static")
 else:
+    log.info('Static Files Not Found')
     raise HTTPException(status_code=404, detail='Static files not found')
 
 
-# Catch-all route for client-side routing in SPA
-@app.get("/{catch_all:path}")
-async def serve_spa(catch_all: str):
-    logger.info(f'Catch-all route triggered: {catch_all}')
-    return FileResponse(base_path / 'index.html')
+# Catch-all route: Serve the index.html for any other routes
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    index_path = os.path.join(base_path, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    raise HTTPException(status_code=404, detail="Frontend not found")
