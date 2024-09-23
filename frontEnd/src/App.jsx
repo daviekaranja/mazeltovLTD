@@ -6,6 +6,7 @@ import NotFound from "./components/NotFound";
 import ContactForm from "./components/pages/ContactUs";
 import AboutUs from "./components/pages/AboutUs";
 import { AuthProvider } from "./components/AuthProvider";
+import BuyAirtime from "./components/BuyAirtime";
 
 import AdminPage from "./components/pages/Admin";
 import Login from "./components/Login";
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/support" element={<ContactForm />} />
+            <Route path="/deals" element={<BuyAirtime />} />
 
             <Route
               path="/manage"

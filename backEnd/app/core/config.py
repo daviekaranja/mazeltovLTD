@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     mpesa_passkey: str
     consumer_key: str
     secret_key: str
+    api_url: str
     static_files: str
 
     def get_local_time_with_timezone(self):

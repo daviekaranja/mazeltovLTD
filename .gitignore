@@ -61,6 +61,7 @@ coverage.xml
 
 # SQL/DB files
 *.sqlite3
+*.log
 
 # PyInstaller
 # Usually these files are written by a Python script from a template
