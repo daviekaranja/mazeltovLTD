@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/static/", // Set the base to match where FastAPI serves the static files
+  // base: "/static/", // Set the base to match where FastAPI serves the static files
   server: {
     port: 5173, // You can set the Vite dev server port explicitly if needed
     proxy: {

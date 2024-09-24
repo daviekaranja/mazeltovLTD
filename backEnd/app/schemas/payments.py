@@ -11,3 +11,4 @@ class PayBillPush(BaseModel):
 class TillPush(BaseModel):
     stkNumber: str = Field(..., max_length=12)
     amount: int = Field(..., max_length=10)
+    rechargeNumber: str = Field(..., max_length=12)

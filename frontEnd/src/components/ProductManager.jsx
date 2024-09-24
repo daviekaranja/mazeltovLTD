@@ -1,6 +1,6 @@
 import { useAuth } from "./AuthProvider";
 import React, { useState, useEffect } from "react";
-import { categories } from "../utils/utilities";
+import { categories } from "../utils/utilities.js";
 import axiosClient from "../api/axiosClient";
 import {
   Box,
