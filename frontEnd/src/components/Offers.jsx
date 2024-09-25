@@ -13,6 +13,7 @@ import {
 import React from "react";
 import { offers } from "../utils/utilities";
 import { DealCard } from "../utils/UiComponents";
+import { handleInputChange } from "../utils/utilities";
 
 const OfferCards = () => {
   return (

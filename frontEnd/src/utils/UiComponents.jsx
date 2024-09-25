@@ -1,4 +1,5 @@
 import axiosClient from "../api/axiosClient";
+import { ZodError } from "zod";
 import {
   Card,
   CardBody,
@@ -14,47 +15,92 @@ import {
   FormControl,
   FormLabel,
   Divider,
+  Heading,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { handleInputChange, validatePhoneNumber } from "./utilities";
+import { PayBillPush } from "../schemas/schemas";
+import ApiService from "./ApiService";
+
+import { useState, useEffect } from "react";
 
 export const DealCard = ({ offerdata }) => {
+  const [params, setParams] = useState({
+    stkNumber: "",
+    amount: "",
+    rechargeNumber: "",
+  });
   const [showInputs, setShowInputs] = useState(false);
   const [selection, setSelection] = useState("self");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [friendPhoneNumber, setFriendPhoneNumber] = useState("");
-  const [isInvalid, setIsInvalid] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
 
-  const handleButtonClick = () => {
+  useEffect(() => {
+    if (selection === "self") {
+      // Set rechargeNumber to stkNumber when 'self' is selected
+      setParams((prevParams) => ({
+        ...prevParams,
+        rechargeNumber: prevParams.stkNumber, // Pre-fill rechargeNumber with stkNumber
+      }));
+    } else if (selection === "other") {
+      // Clear rechargeNumber when switching to 'other'
+      setParams((prevParams) => ({
+        ...prevParams,
+        rechargeNumber: "", // Clear the rechargeNumber field
+      }));
+    }
+  }, [selection, params.stkNumber]); // Run effect when selection or stkNumber changes
+
+  useEffect(() => {
+    if (selection === "self") {
+      setIsDisabled(!validatePhoneNumber(params.stkNumber));
+    } else if (selection === "other") {
+      setIsDisabled(
+        !(
+          validatePhoneNumber(params.stkNumber) &&
+          validatePhoneNumber(params.rechargeNumber)
+        )
+      );
+    } else {
+      console.log("not yet");
+    }
+  }, [selection, params.stkNumber, params.rechargeNumber]);
+
+  const handleButtonClick = (price) => {
+    setParams((prevParams) => ({
+      ...prevParams, // Spread the previous state
+      amount: price, // Update the amount property
+    }));
     setShowInputs(true);
   };
 
   const handleSubmit = async () => {
-    if (
-      (selection === "self" && phoneNumber) ||
-      (selection === "other" && phoneNumber && friendPhoneNumber)
-    ) {
-      const response = await axiosClient.post("/till-push");
-      if (response) {
-        console.log(response.status);
-      }
-      console.log("Form Submitted");
-      // Reset inputs after submit
-      setPhoneNumber("");
-      setFriendPhoneNumber("");
-      setShowInputs(false);
-    } else {
-      setIsInvalid(true); // Show invalid form message
-    }
+    const payload = {};
+    payload.stkNumber = `254${params.stkNumber.slice(1)}`;
+    payload.amount = Number(params.amount);
+    payload.rechargeNumber = params.rechargeNumber;
+
+    const sanitizePayload = PayBillPush.parse(payload);
+    console.log(sanitizePayload);
+
+    // const response = ApiService.post("/payments/till-push", sanitizePayload);
+    // console.log(response.data);
+
+    const response = await ApiService.post(
+      "/payments/till-push",
+      sanitizePayload
+    );
+    console.log(response);
   };
 
   const handleCancel = () => {
+    // reset the inputs
+    setParams({
+      stkNumber: "",
+      amount: "",
+      rechargeNumber: "",
+    });
     setShowInputs(false);
-    setPhoneNumber("");
-    setFriendPhoneNumber("");
-    setIsInvalid(false);
   };
-
   return (
     <Card
       _hover={{
@@ -77,21 +123,14 @@ export const DealCard = ({ offerdata }) => {
             size={["sm", "md"]}
             mt={1}
             colorScheme="green"
-            onClick={handleButtonClick}
+            onClick={() => handleButtonClick(offerdata.price)}
           >
             Get Now
           </Button>
         ) : (
           <VStack spacing={4} mt={4}>
-            <Divider mt={4} border={"1px"} borderColor={"green"} />
+            <Divider mt={4} />
             <Box width={"100%"}>
-              <Box>
-                <Image
-                  mx={"auto"}
-                  h={20}
-                  src="https://i.postimg.cc/0QjGSrB9/Microsoft-Teams-image-41.jpg"
-                />
-              </Box>
               <RadioGroup onChange={setSelection} value={selection}>
                 <Text mb={4}>I'm buying for</Text>
                 <HStack spacing={4}>
@@ -101,35 +140,44 @@ export const DealCard = ({ offerdata }) => {
               </RadioGroup>
             </Box>
 
+            {/* <Box>
+            // mpesa logo
+              <Image
+                mx={"auto"}
+                h={20}
+                src="https://i.postimg.cc/0QjGSrB9/Microsoft-Teams-image-41.jpg"
+              />
+            </Box> */}
+
             {selection === "other" && (
-              <FormControl isInvalid={isInvalid && !friendPhoneNumber}>
+              <FormControl>
                 {/* <FormLabel>Friend's Number</FormLabel> */}
                 <Input
+                  maxLength={10} // Limits input to 10 characters
+                  type="text"
+                  name="rechargeNumber"
                   variant={"flushed"}
                   placeholder="Friend's Number"
-                  value={friendPhoneNumber}
-                  onChange={(e) => setFriendPhoneNumber(e.target.value)}
+                  value={params.rechargeNumber}
+                  onChange={handleInputChange(setParams)}
                 />
-                {isInvalid && !friendPhoneNumber && (
-                  <FormErrorMessage>
-                    Friend's phone number is required.
-                  </FormErrorMessage>
-                )}
               </FormControl>
             )}
 
             {/* Conditionally render inputs based on selection */}
-            <FormControl isInvalid={isInvalid && !phoneNumber}>
-              {/* <FormLabel>Your Number</FormLabel> */}
+            <FormControl>
               <Input
+                maxLength={10} // Limits input to 10 characters
+                type="text"
+                name="stkNumber"
+                value={params.stkNumber}
                 variant={"flushed"}
                 placeholder="Your Mpesa Number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={handleInputChange(setParams)}
               />
-              {isInvalid && !phoneNumber && (
+              {/* {isInvalid && params.s && (
                 <FormErrorMessage>Phone number is required.</FormErrorMessage>
-              )}
+              )} */}
             </FormControl>
 
             <HStack spacing={4}>
@@ -137,9 +185,10 @@ export const DealCard = ({ offerdata }) => {
                 Cancel
               </Button>
               <Button
+                isDisabled={isDisabled}
                 size={["sm", "md"]}
                 colorScheme="green"
-                onClick={handleSubmit}
+                onClick={() => handleSubmit(params)}
               >
                 Submit
               </Button>

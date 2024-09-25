@@ -39,11 +39,11 @@ app.include_router(api_router, prefix=settings.api_string)
 base_path = Path('../frontEnd/dist')
 
 # Serve static files from /static
-if os.path.exists(base_path):
-    app.mount("/static", StaticFiles(directory=base_path, html=True), name="static")
-else:
-    log.info('Static Files Not Found')
-    raise HTTPException(status_code=404, detail='Static files not found')
+# if os.path.exists(base_path):
+#     app.mount("/static", StaticFiles(directory=base_path, html=True), name="static")
+# else:
+#     log.info('Static Files Not Found')
+#     raise HTTPException(status_code=404, detail='Static files not found')
 
 
 # Catch-all route: Serve the index.html for any other routes

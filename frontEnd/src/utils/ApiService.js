@@ -4,10 +4,10 @@ class ApiService {
   // GET Request
   async get(url, params = {}) {
     try {
-      const response = await axiosClient.get(url, { params });
-      return response.data; // Return the response data
+      const response = await axiosClient.get(url, params);
+      return this.handleSuccess(response); // Handle success and return response data
     } catch (error) {
-      this.handleError(error);
+      return this.handleError(error); // Handle and format errors
     }
   }
 
@@ -15,9 +15,9 @@ class ApiService {
   async post(url, data) {
     try {
       const response = await axiosClient.post(url, data);
-      return response.data;
+      return this.handleSuccess(response);
     } catch (error) {
-      this.handleError(error);
+      return this.handleError(error);
     }
   }
 
@@ -25,9 +25,9 @@ class ApiService {
   async put(url, data) {
     try {
       const response = await axiosClient.put(url, data);
-      return response.data;
+      return this.handleSuccess(response);
     } catch (error) {
-      this.handleError(error);
+      return this.handleError(error);
     }
   }
 
@@ -35,22 +35,42 @@ class ApiService {
   async delete(url, params = {}) {
     try {
       const response = await axiosClient.delete(url, { params });
-      return response.data;
+      return this.handleSuccess(response);
     } catch (error) {
-      this.handleError(error);
+      return this.handleError(error);
     }
+  }
+
+  // Centralized Success Handler
+  handleSuccess(response) {
+    return { success: true, data: response.data }; // Standardize the success response
   }
 
   // Centralized Error Handling
   handleError(error) {
-    if (error.status === 404) {
-      console.error("API endpoint not found");
-    } else if (error.status === 500) {
-      console.error("Internal server error");
+    if (error.response) {
+      // Server responded with an error (e.g., 4xx, 5xx)
+      const { status, data } = error.response;
+      const formattedError = {
+        success: false,
+        statusCode: status,
+        message: data?.message || "Something went wrong.",
+        details: data?.errors || null, // Optional: additional error details
+      };
+      return formattedError;
+    } else if (error.request) {
+      // No response received from the server
+      return {
+        success: false,
+        message: "No response from the server. Please check your network.",
+      };
     } else {
-      console.error(error.message || "Something went wrong");
+      // Other errors (e.g., request setup issues)
+      return {
+        success: false,
+        message: error.message || "An unknown error occurred.",
+      };
     }
-    throw error; // Optionally re-throw error to handle it further up the chain
   }
 }
 
