@@ -19,7 +19,7 @@ export const PayBillPush = z.object({
   stkNumber: z
     .string()
     .regex(
-      /^2547\d{8}$|^2541\d{7}$/,
+      /^2547\d{8}$|^2541\d{8}$/,
       "stkNumber must be in the format 2547xx xxx xxx or 2541xx xxx xxx"
     )
     .max(12),
@@ -27,7 +27,7 @@ export const PayBillPush = z.object({
   amount: z
     .number()
     .min(5, "Amount must be at least 5")
-    .max(1000, "Amount must not exceed 1000"),
+    .max(10000, "Amount must not exceed 1000"),
 
   rechargeNumber: z
     .string()
