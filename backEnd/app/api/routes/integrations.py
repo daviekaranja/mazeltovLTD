@@ -44,7 +44,7 @@ def stk_push(params: PayBillPush, request: Request):
 
 @router.post("/till-push", status_code=200)
 def stk_push(params: TillPush, request: Request):
-    api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+    api_url = settings.api_url
     headers = {
         "Authorization": f"Bearer {get_mpesa_token()}",
         "Content-Type": "application/json"
@@ -78,6 +78,6 @@ def stk_push(params: TillPush, request: Request):
 
 @router.post("/mpesa-callback", name="mpesa_callback")
 def mpesa_callback(data: dict):
-    log.info(f'Received: {data}')
+    log.info(data)
     # Process the callback data here
-    return {"message": "Callback received successfully"}
+    return {"message": data}

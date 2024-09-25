@@ -6,7 +6,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 export default defineConfig({
   plugins: [react()],
-  base: isProduction ? "/static/" : "/", // Set the base path for production
+  base: isProduction ? "/static/" : , // Set the base path for production
   server: {
     port: 5173, // Development server port
     proxy: {
