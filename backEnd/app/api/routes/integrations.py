@@ -18,13 +18,13 @@ def stk_push(params: PayBillPush, request: Request):
     callback_url = request.url_for("mpesa_callback")
 
     payload = {
-        "BusinessShortCode": settings.mpesa_shortcode,
+        "BusinessShortCode": settings.shortcode,
         "Password": generate_password(),  # Generated password for authentication
         "Timestamp": get_timestamp(),
         "TransactionType": 'CustomerPayBillOnline',  # Based on Paybill or Till
         "Amount": params.amount,
         "PartyA": int(params.stkNumber),
-        "PartyB": settings.mpesa_shortcode,  # Same BusinessShortCode for PartyB
+        "PartyB": settings.shortcode,  # Same BusinessShortCode for PartyB
         "PhoneNumber": int(params.stkNumber),
         "CallBackURL": str(callback_url),
         "AccountReference": params.rechargeNumber,
@@ -52,16 +52,16 @@ def stk_push(params: TillPush, request: Request):
     callback_url = request.url_for("mpesa_callback")
 
     payload = {
-        "BusinessShortCode": settings.mpesa_shortcode,  #update to a till
+        "BusinessShortCode": settings.shortcode,  #update to a till
         "Password": generate_password(),  # Generated password for authentication
         "Timestamp": get_timestamp(),
         "TransactionType": 'CustomerPayBillOnline',  # Till
         "Amount": params.amount,
         "PartyA": int(params.stkNumber),
-        "PartyB": settings.mpesa_shortcode,  # Same BusinessShortCode for PartyB
+        "PartyB": settings.shortcode,  # Same BusinessShortCode for PartyB
         "PhoneNumber": int(params.stkNumber),
         "CallBackURL": str(callback_url),
-        "AccountReference": "Deals",
+        "AccountReference": params.rechargeNumber,
         "TransactionDesc": "Data Deals"
     }
 
