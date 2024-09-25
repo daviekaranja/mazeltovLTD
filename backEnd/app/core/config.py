@@ -19,10 +19,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 3600
     secret: str = 'secrets.token_urlsafe()'
 
-    mpesa_shortcode: str
-    mpesa_passkey: str
+    shortcode: str
+    passkey: str
     consumer_key: str
-    secret_key: str
+    customer_secret: str
     api_url: str
     static_files: str
 

@@ -12,8 +12,8 @@ def get_timestamp():
 
 
 def generate_password():
-    shortcode = settings.mpesa_shortcode
-    passkey = settings.mpesa_passkey
+    shortcode = settings.shortcode
+    passkey = settings.passkey
     timestamp = get_timestamp()
 
     data_to_encode = shortcode + passkey + timestamp
@@ -25,7 +25,7 @@ def generate_password():
 def get_mpesa_token() -> str:
     # Consumer Key and Consumer Secret from Safaricom Daraja Portal
     consumer_key = settings.consumer_key
-    consumer_secret = settings.secret_key
+    consumer_secret = settings.customer_secret
 
     api_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
 

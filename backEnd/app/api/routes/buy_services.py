@@ -21,13 +21,13 @@ def stk_push(phone_number: str, account_no: int, amount: int, request: Request):
     callback_url = request.url_for("callback")
 
     payload = {
-        "BusinessShortCode": settings.mpesa_shortcode,
+        "BusinessShortCode": settings.shortcode,
         "Password": generate_password(),
         "Timestamp": get_timestamp(),
         "TransactionType": "CustomerPayBillOnline",
         "Amount": amount,
         "PartyA": int(phone_number),
-        "PartyB": settings.mpesa_shortcode,
+        "PartyB": settings.shortcode,
         "PhoneNumber": int(phone_number),
         "CallBackURL": str(callback_url),
         "AccountReference": account_no,
