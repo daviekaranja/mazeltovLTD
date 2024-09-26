@@ -37,7 +37,7 @@ def get_mpesa_token() -> str:
     # Generate a new token if cached token is missing or expired
     consumer_key = settings.consumer_key
     consumer_secret = settings.customer_secret
-    api_url = settings.oauth_url
+    api_url = settings.api_url
 
     try:
         response = requests.get(api_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
