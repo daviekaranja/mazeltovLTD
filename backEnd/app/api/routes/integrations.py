@@ -4,6 +4,7 @@ from app.core.config import settings
 from app.utilities.utils import get_timestamp, get_mpesa_token, generate_password
 from app.schemas.payments import PayBillPush, TillPush, STKPushResponse
 from app.utilities.logger import log
+from fastapi.encoders import jsonable_encoder
 
 router = APIRouter()
 
@@ -77,7 +78,7 @@ def stk_push(params: TillPush, request: Request):
         error_message = error_details.get("errorMessage", "Unknown error occurred")
         raise HTTPException(status_code=response.status_code, detail=error_message)
 
-    return response
+    return jsonable_encoder(response)
 
 
 @router.get("/stk-push-query/{checkout_request_id}", status_code=200)
