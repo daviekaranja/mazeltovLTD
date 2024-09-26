@@ -55,6 +55,7 @@ coverage.xml
 # Environment variables
 .env
 .env.*.local
+kill-python.cmd
 
 # Jupyter Notebook
 .ipynb_checkpoints/
