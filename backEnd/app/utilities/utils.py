@@ -37,10 +37,10 @@ def get_mpesa_token() -> str:
     # Generate a new token if cached token is missing or expired
     consumer_key = settings.consumer_key
     consumer_secret = settings.customer_secret
-    api_url = settings.api_url
+    token_url = ' https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
 
     try:
-        response = requests.get(api_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
+        response = requests.get(token_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
         log.info(f"Token Response: {response.status_code} - {response.text}")
         if response.status_code == 200:
             token_data = response.json()
