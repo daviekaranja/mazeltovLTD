@@ -95,12 +95,15 @@ async def stk_push_query(checkout_request_id: str):
         "Timestamp": get_timestamp(),
         "CheckoutRequestID": checkout_request_id
     }
+    log.info(f'stk-push Payload: \n {payload}')
 
     # Send query request to Safaricom API
     query_url = "https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query"
     response = requests.post(query_url, json=payload, headers=headers)
-    if response:
-        log.info(response)
+    if response.status_code != 200:
+        log.error(response.json())
+        error_message = response.json().get("errorMessage", "Unknown error occurred")
+        raise HTTPException(status_code=500, detail=error_message)
 
     return response.json()
 
