@@ -78,7 +78,7 @@ def stk_push(params: TillPush, request: Request):
         error_message = error_details.get("errorMessage", "Unknown error occurred")
         raise HTTPException(status_code=response.status_code, detail=error_message)
 
-    return jsonable_encoder(response)
+    return jsonable_encoder(response.json())
 
 
 @router.get("/stk-push-query/{checkout_request_id}", status_code=200)
