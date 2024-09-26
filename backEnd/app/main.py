@@ -46,6 +46,8 @@ else:
     raise HTTPException(status_code=404, detail='Static files not found')
 
 
+
+
 # Catch-all route: Serve the index.html for any other routes
 @app.get("/{full_path:path}")
 async def serve_frontend(full_path: str):
