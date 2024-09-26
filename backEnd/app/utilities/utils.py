@@ -46,6 +46,10 @@ def get_mpesa_token() -> str:
             token_data = response.json()
             access_token = token_data.get("access_token")
             expires_in = token_data.get("expires_in", 3600)  # Default expiry 1 hour if not provided
+
+            # Ensure expires_in is an integer
+            expires_in = int(expires_in)  # Convert to int
+
             _cached_token = access_token
             _token_expiry = datetime.utcnow() + timedelta(seconds=expires_in - 60)  # Cache token, expire 1 min early
             return access_token
