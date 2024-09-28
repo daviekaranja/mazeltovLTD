@@ -1,7 +1,7 @@
 import logging
 import os.path
 from contextlib import asynccontextmanager
-
+from fastapi_offline import FastAPIOffline
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     # Shutdown code
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPIOffline(lifespan=lifespan)
 
 # CORS
 app.add_middleware(
@@ -44,8 +44,6 @@ if os.path.exists(base_path):
 else:
     log.info('Static Files Not Found')
     raise HTTPException(status_code=404, detail='Static files not found')
-
-
 
 
 # Catch-all route: Serve the index.html for any other routes

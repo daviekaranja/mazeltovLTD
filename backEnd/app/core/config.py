@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     shortcode: str
     passkey: str
     consumer_key: str
-    customer_secret: str
+    consumer_secret: str
     api_url: str
     static_files: str
 
