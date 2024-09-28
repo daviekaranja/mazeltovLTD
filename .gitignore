@@ -106,7 +106,8 @@ Thumbs.db
 *.swp
 *.tmp
 *.temp
-*.log
+*.log*
+.cmd
 
 # Linux specific
 *.out

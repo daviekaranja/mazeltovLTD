@@ -56,9 +56,16 @@ class PushParams(BaseModel):
             raise ValueError('rechargeNumber must contain only digits')
         return value
 
-# # Example Usage:
-# try:
-#     params = PushParams(stkNumber="254712345678", amount=100, rechargeNumber="0712345678")
-#     print(params)
-# except ValidationError as e:
-#     print(e)
+
+class TransactionResponse(BaseModel):
+    amount: int
+    phone_number: int
+    mpesa_receipt_number: str
+    createdAt: str
+
+
+class UnsuccessfulTransactions(BaseModel):
+    MerchantRequestID: str
+    CheckoutRequestID: str
+    ResultCode: int
+    ResultDesc: str

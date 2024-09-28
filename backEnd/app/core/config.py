@@ -19,13 +19,15 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 3600
     secret: str = 'secrets.token_urlsafe()'
 
+    # Mpesa Integration
     shortcode: str
     passkey: str
     consumer_key: str
     consumer_secret: str
     api_url: str
-    static_files: str
+    token_url: str
 
+    static_files: str
     def get_local_time_with_timezone(self):
         # Define the timezone for Africa/Nairobi
         nairobi_tz = pytz.timezone('Africa/Nairobi')

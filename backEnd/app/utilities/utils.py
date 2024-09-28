@@ -6,6 +6,11 @@ from fastapi import HTTPException
 from app.core.config import settings
 from .logger import log
 
+from sqlalchemy.orm import Session
+from datetime import datetime
+from ..models.payments import Transaction, UnsuccessfulTransactions
+from ..schemas.payments import UnsuccessfulTransactions as Ts
+
 
 def get_timestamp():
     time = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -13,8 +18,8 @@ def get_timestamp():
 
 
 def generate_password():
-    shortcode = '174379'
-    passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+    shortcode = settings.shortcode
+    passkey = settings.passkey
     timestamp = get_timestamp()
 
     data_to_encode = shortcode + passkey + timestamp
@@ -24,9 +29,9 @@ def generate_password():
 
 
 def get_mpesa_token() -> str:
-    consumer_key = 'vdLEQNBfvk4xl6mKHqAwZalR737rzXujGL2ExNPYfBAJ9AQt'  # Your Consumer Key
-    consumer_secret = 'cDZMgxrLkHG6VCX4miqbD6WtGIV72A3d8a3MD5JNPaKXjlTPWY3xg5ApPR07SsEN'  # Your Consumer Secret
-    token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    consumer_key = settings.consumer_key  # Your Consumer Key
+    consumer_secret = settings.consumer_secret  # Your Consumer Secret
+    token_url = settings.token_url
 
     # Combine the consumer key and secret and encode them
     credentials = f"{consumer_key}:{consumer_secret}"
@@ -54,3 +59,107 @@ def get_mpesa_token() -> str:
 
     except requests.RequestException as e:
         raise HTTPException(status_code=500, detail=f"Request failed: {str(e)}")
+
+
+def process_callback_data(callback_data: dict, db: Session):
+    try:
+        result_code = callback_data['Body']['stkCallback']['ResultCode']
+
+        if result_code is 0:
+            amount = None
+            receipt_number = None
+            transaction_date = None
+            phone_number = None
+            stk_callback = callback_data['Body']['stkCallback']
+            metadata = stk_callback['CallbackMetadata']['Item']
+
+            for item in metadata:
+                if item['Name'] == 'Amount':
+                    amount = item['Value']
+                elif item['Name'] == 'MpesaReceiptNumber':
+                    receipt_number = item['Value']
+                elif item['Name'] == 'TransactionDate':
+                    transaction_date = datetime.strptime(str(item['Value']), "%Y%m%d%H%M%S")
+                elif item['Name'] == 'PhoneNumber':
+                    phone_number = item['Value']
+            # Store the data in the database
+            transaction = Transaction(
+                mpesa_receipt_number=receipt_number,
+                amount=amount,
+                transaction_date=transaction_date,
+                phone_number=phone_number,
+                merchant_request_id=stk_callback['MerchantRequestID'],
+                checkout_request_id=stk_callback['CheckoutRequestID']
+            )
+
+            db.add(transaction)
+            db.commit()
+            db.refresh(transaction)
+            return transaction
+
+        else:
+            data = callback_data['Body']['stkCallback']
+            process_data = Ts(**data)
+            db_obj = UnsuccessfulTransactions(
+                MerchantRequestID=process_data.MerchantRequestID,
+                CheckoutRequestID=process_data.CheckoutRequestID,
+                ResultCode=process_data.ResultCode,
+                ResultDesc=process_data.ResultDesc
+            )
+            db.add(db_obj)
+            db.commit()
+            db.refresh(db_obj)
+            return db_obj
+
+    except Exception  as e:
+        db.rollback()
+        log.info(e)
+
+
+
+
+# def process_callback_data(callback_data: dict, db: Session):
+#     # Extract required fields from the callback data
+#     try:
+#
+#         stk_callback = callback_data['Body']['stkCallback']
+#         metadata = stk_callback['CallbackMetadata']['Item']
+#         result_code = stk_callback['ResultCode']
+#
+#         if result_code == 0 and metadata:
+#             log.info("Successful Transaction")
+#             amount = None
+#             receipt_number = None
+#             transaction_date = None
+#             phone_number = None
+#
+            # for item in metadata:
+            #     if item['Name'] == 'Amount':
+            #         amount = item['Value']
+            #     elif item['Name'] == 'MpesaReceiptNumber':
+            #         receipt_number = item['Value']
+            #     elif item['Name'] == 'TransactionDate':
+            #         transaction_date = datetime.strptime(str(item['Value']), "%Y%m%d%H%M%S")
+            #     elif item['Name'] == 'PhoneNumber':
+            #         phone_number = item['Value']
+#
+            # # Store the data in the database
+            # transaction = Transaction(
+            #     mpesa_receipt_number=receipt_number,
+            #     amount=amount,
+            #     transaction_date=transaction_date,
+            #     phone_number=phone_number,
+            #     merchant_request_id=stk_callback['MerchantRequestID'],
+            #     checkout_request_id=stk_callback['CheckoutRequestID']
+            # )
+            #
+            # db.add(transaction)
+            # db.commit()
+            # db.refresh(transaction)
+            # return transaction
+#         else:
+#             log.info(f"Unsuccessful Transaction: {callback_data}")
+#
+#     except Exception as e:
+#         db.rollback()
+#         log.error(f"Error processing callback data: {str(e)}")
