@@ -13,8 +13,8 @@ def get_timestamp():
 
 
 def generate_password():
-    shortcode = settings.shortcode
-    passkey = settings.passkey
+    shortcode = '174379'
+    passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
     timestamp = get_timestamp()
 
     data_to_encode = shortcode + passkey + timestamp
@@ -23,41 +23,34 @@ def generate_password():
     return encoded_string
 
 
-_cached_token = None
-_token_expiry = None
-
-
 def get_mpesa_token() -> str:
-    global _cached_token, _token_expiry
+    consumer_key = 'vdLEQNBfvk4xl6mKHqAwZalR737rzXujGL2ExNPYfBAJ9AQt'  # Your Consumer Key
+    consumer_secret = 'cDZMgxrLkHG6VCX4miqbD6WtGIV72A3d8a3MD5JNPaKXjlTPWY3xg5ApPR07SsEN'  # Your Consumer Secret
+    token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
 
-    if _cached_token and _token_expiry > datetime.utcnow():
-        log.info(f"Using Cached Token: {_cached_token}")
-        return _cached_token
+    # Combine the consumer key and secret and encode them
+    credentials = f"{consumer_key}:{consumer_secret}"
+    encoded_credentials = base64.b64encode(credentials.encode()).decode()
 
-    # Generate a new token if cached token is missing or expired
-    consumer_key = settings.consumer_key
-    consumer_secret = settings.customer_secret
-    token_url = ' https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    # Set up the headers with Basic Auth
+    headers = {
+        "Authorization": f"Basic {encoded_credentials}",
+        "Content-Type": "application/json"
+    }
 
+    # Make the request
     try:
-        response = requests.get(token_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
-        log.info(f"Token Response: {response.status_code} - {response.text}")
+        response = requests.get(token_url, headers=headers)
         if response.status_code == 200:
+            log.info(f'Access Token Granted: {response.json()}')
             token_data = response.json()
             access_token = token_data.get("access_token")
-            expires_in = token_data.get("expires_in", 3600)  # Default expiry 1 hour if not provided
-
-            # Ensure expires_in is an integer
-            expires_in = int(expires_in)  # Convert to int
-
-            _cached_token = access_token
-            _token_expiry = datetime.utcnow() + timedelta(seconds=expires_in - 60)  # Cache token, expire 1 min early
             return access_token
         else:
+            log.error(f"An Error Occurred: {response.json()}")
             error_details = response.json()
             error_message = error_details.get("error_description", "Failed to retrieve access token")
             raise HTTPException(status_code=response.status_code, detail=error_message)
 
     except requests.RequestException as e:
-        log.error(f"Token Request Failed: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Request failed: {str(e)}")
