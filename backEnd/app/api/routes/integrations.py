@@ -1,11 +1,14 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Depends
 import requests
+from sqlalchemy.orm import Session
+
 from app.core.config import settings
 from app.utilities.utils import get_timestamp, get_mpesa_token, generate_password
-from app.schemas.payments import PayBillPush, PushParams, STKPushResponse
+from app.schemas.payments import PayBillPush, PushParams, STKPushResponse, TransactionResponse
 from app.utilities.logger import log
-from app.utilities.utils import get_mpesa_token
+from app.utilities.utils import get_mpesa_token, process_callback_data
 from fastapi.encoders import jsonable_encoder
+from app.api.dependancies import get_db
 
 from requests.exceptions import RequestException, HTTPError
 from pydantic import ValidationError
@@ -15,7 +18,7 @@ from json import JSONDecodeError
 router = APIRouter()
 
 
-@router.get('/stk-push', status_code=200)
+@router.get('/stk-push', status_code=200, response_model=STKPushResponse)
 def send_stk_push(amount: int, stkNumber: str, rechargeNumber: str, request: Request):
     try:
         params = PushParams(stkNumber=stkNumber, amount=100, rechargeNumber=rechargeNumber)
@@ -30,9 +33,8 @@ def send_stk_push(amount: int, stkNumber: str, rechargeNumber: str, request: Req
     }
 
     callback_url = request.url_for('c2b-callback')
-    log.info(callback_url)
     transaction_type = 'CustomerBuyGoodsOnline'
-    # Payload for the API request
+
     payload = {
         "BusinessShortCode": settings.shortcode,
         "Password": generate_password(),
@@ -40,11 +42,11 @@ def send_stk_push(amount: int, stkNumber: str, rechargeNumber: str, request: Req
         "TransactionType": transaction_type,
         "Amount": amount,
         "PartyA": params.stkNumber,  # same as phone number
-        "PartyB": settings.shortcode,
+        "PartyB": 4760890,  # here you put till number if you're integrating a till
         "PhoneNumber": params.stkNumber,  # phone number to send stk
         "CallBackURL": str(callback_url),
         "AccountReference": rechargeNumber,
-        "TransactionDesc": "Payment of X"
+        "TransactionDesc": "Offers and Data"
     }
 
     api_url = settings.api_url
@@ -94,17 +96,36 @@ async def stk_push_query(checkout_request_id: str):
 
 
 @router.post("/c2b-callback", name="c2b-callback", status_code=200)
-async def mpesa_callback(request: Request):
-    log.info(f"Received callback with headers: {request.headers}")
-
+async def mpesa_callback(request: Request, db: Session = Depends(get_db)):
     try:
-        data = await request.json()  # Await JSON data
-        log.info(f"Callback data: {data}")
-        print(data)  # Debugging print
+        # Attempt to parse JSON data
+        data = await request.json()
+        if not data:
+            raise ValueError("No data received in callback")
 
-        # Return a success response so Safaricom knows it's processed
-        return {"message": "Callback received successfully"}
+        # Ensure the expected fields are present
+        if "Body" not in data or "stkCallback" not in data["Body"]:
+            raise KeyError("Malformed callback data: Missing 'Body' or 'stkCallback'")
+
+        # Extract necessary information from the callback
+        result_code = data["Body"]["stkCallback"].get("ResultCode")
+        if result_code is None:
+            raise KeyError("ResultCode not found in callback data")
+
+        log.info(f"Mpesa Callback received with ResultCode: {result_code}: {data['Body']['stkCallback']}")
+
+        # Process the callback data
+        process_data = process_callback_data(data, db)
+        return jsonable_encoder(process_data)
+
+    except ValueError as ve:
+        log.error(f"ValueError: {ve}")
+        raise HTTPException(status_code=400, detail=str(ve))
+
+    except KeyError as ke:
+        log.error(f"KeyError: {ke} - Callback data might be malformed")
+        raise HTTPException(status_code=422, detail=f"Malformed data: {str(ke)}")
 
     except Exception as e:
-        log.error(f"Error parsing callback data: {e}")
-        raise HTTPException(status_code=400, detail="Invalid callback data format")
+        log.exception(f"Unexpected error occurred while handling the Mpesa callback: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
