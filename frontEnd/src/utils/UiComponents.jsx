@@ -17,6 +17,15 @@ import {
   Divider,
   Heading,
   FormErrorMessage,
+  Spinner,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { handleInputChange, validatePhoneNumber } from "./utilities";
 import { PayBillPush } from "../schemas/schemas";
@@ -25,6 +34,7 @@ import ApiService from "./ApiService";
 import { useState, useEffect } from "react";
 
 export const DealCard = ({ offerdata }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [params, setParams] = useState({
     stkNumber: "",
     amount: "",
@@ -33,6 +43,9 @@ export const DealCard = ({ offerdata }) => {
   const [showInputs, setShowInputs] = useState(false);
   const [selection, setSelection] = useState("self");
   const [isDisabled, setIsDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("Pending");
+  const [requestMessage, setMessage] = useState("");
 
   useEffect(() => {
     if (selection === "self") {
@@ -80,16 +93,24 @@ export const DealCard = ({ offerdata }) => {
     payload.rechargeNumber = params.rechargeNumber;
 
     const sanitizePayload = PayBillPush.parse(payload);
-    console.log(sanitizePayload);
-
-    // const response = ApiService.post("/payments/till-push", sanitizePayload);
-    // console.log(response.data);
+    // console.log(sanitizePayload);
+    setStatus("Pending");
+    setLoading(true);
+    onOpen();
 
     const response = await ApiService.post(
-      "/payments/till-push",
+      "/payments/c2b/stk-push",
       sanitizePayload
     );
-    console.log(response);
+    if (response.success) {
+      setStatus("Request Sent");
+      setMessage("Request Sent Wait Fot Sms Confirmation");
+      setLoading(false);
+    } else {
+      setStatus(response.message);
+      setLoading(false);
+      setMessage("An Error Occured, please try again");
+    }
   };
 
   const handleCancel = () => {
@@ -118,6 +139,39 @@ export const DealCard = ({ offerdata }) => {
             {offerdata.label} @ {offerdata.price}
           </Text>
         </Box>
+        <Box w={"90%"}>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>{status}</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                {loading ? (
+                  <Box
+                    display={"flex"}
+                    flexDirection={"row"}
+                    justifyContent={"center"}
+                  >
+                    <Spinner
+                      thickness="4px"
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      color="green.500"
+                      size="xl"
+                    />
+                  </Box>
+                ) : (
+                  <Text fontWeight={"md"}>{requestMessage}</Text>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button mx={"auto"} colorScheme="green" onClick={onClose}>
+                  Okay
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </Box>
         {!showInputs ? (
           <Button
             size={["sm", "md"]}
@@ -139,16 +193,6 @@ export const DealCard = ({ offerdata }) => {
                 </HStack>
               </RadioGroup>
             </Box>
-
-            {/* <Box>
-            // mpesa logo
-              <Image
-                mx={"auto"}
-                h={20}
-                src="https://i.postimg.cc/0QjGSrB9/Microsoft-Teams-image-41.jpg"
-              />
-            </Box> */}
-
             {selection === "other" && (
               <FormControl>
                 {/* <FormLabel>Friend's Number</FormLabel> */}
@@ -188,7 +232,10 @@ export const DealCard = ({ offerdata }) => {
                 isDisabled={isDisabled}
                 size={["sm", "md"]}
                 colorScheme="green"
-                onClick={() => handleSubmit(params)}
+                onClick={() => {
+                  console.log("Start Spinner");
+                  handleSubmit(params);
+                }}
               >
                 Submit
               </Button>

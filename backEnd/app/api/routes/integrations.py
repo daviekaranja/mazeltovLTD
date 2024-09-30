@@ -18,10 +18,11 @@ from json import JSONDecodeError
 router = APIRouter()
 
 
-@router.get('/stk-push', status_code=200, response_model=STKPushResponse)
-def send_stk_push(amount: int, stkNumber: str, rechargeNumber: str, request: Request):
+@router.post('/stk-push', status_code=200, response_model=STKPushResponse)
+def send_stk_push(params: PushParams, request: Request):
     try:
-        params = PushParams(stkNumber=stkNumber, amount=100, rechargeNumber=rechargeNumber)
+        # params = PushParams(stkNumber=stkNumber, amount=100, rechargeNumber=rechargeNumber)
+        log.info(params)
     except ValidationError as e:
         log.error(f'Validation Error: {e}')
         raise HTTPException(status_code=400, detail=f'Validation Error: {e}')
@@ -40,12 +41,12 @@ def send_stk_push(amount: int, stkNumber: str, rechargeNumber: str, request: Req
         "Password": generate_password(),
         "Timestamp": get_timestamp(),
         "TransactionType": transaction_type,
-        "Amount": amount,
+        "Amount": params.amount,
         "PartyA": params.stkNumber,  # same as phone number
         "PartyB": 4760890,  # here you put till number if you're integrating a till
         "PhoneNumber": params.stkNumber,  # phone number to send stk
         "CallBackURL": str(callback_url),
-        "AccountReference": rechargeNumber,
+        "AccountReference": params.rechargeNumber,
         "TransactionDesc": "Offers and Data"
     }
 

@@ -65,7 +65,7 @@ def process_callback_data(callback_data: dict, db: Session):
     try:
         result_code = callback_data['Body']['stkCallback']['ResultCode']
 
-        if result_code is 0:
+        if result_code == 0:
             amount = None
             receipt_number = None
             transaction_date = None
