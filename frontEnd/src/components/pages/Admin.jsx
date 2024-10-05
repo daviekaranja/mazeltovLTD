@@ -4,12 +4,12 @@ import Services from "../Services";
 import Dashboard from "../DashBoard";
 import Users from "../Users";
 import { useAuth } from "../AuthProvider";
-
-import { Box, Link, Text, Flex, Button, Grid, Heading } from "@chakra-ui/react";
+import { Box, Link, Text, Flex, Button, Grid } from "@chakra-ui/react";
 
 const AdminPage = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [navSize, changeNavSize] = useState("large");
+
   const CustomButtons = (product) => {
     return (
       <Flex
@@ -34,61 +34,41 @@ const AdminPage = () => {
     );
   };
 
+  // Components to render based on index
   const linksComponents = {
-    0: <Dashboard />,
-    1: () => {
-      return (
-        <Box width={"100%"} p={2} rounded={"lg"} h={"70vh"} bg={"gray.50"}>
-          <Box h={"70vh"} overflow={"auto"}>
-            <Services renderButtons={CustomButtons} />
-          </Box>
-
-          <Flex justifyContent={"center"} p={"2"} width={"100%"}>
-            <Button
-              onClick={() => setActiveComponent(<ProductManager />)}
-              color={"white"}
-              bg={"blue.500"}
-            >
-              Add Products
-            </Button>
-          </Flex>
+    0: () => (user.super_user ? <Dashboard /> : <Text>Not Authorized</Text>),
+    1: () => (
+      <Box width={"100%"} p={2} rounded={"lg"} h={"70vh"} bg={"gray.50"}>
+        <Box h={"70vh"} overflow={"auto"}>
+          <Services renderButtons={CustomButtons} />
         </Box>
-      );
-    },
-
-    2: (product) => {
-      <Box>
-        <ProductManager initialProduct={product} />
-      </Box>;
-    },
-    2: <Users />,
+        <Flex justifyContent={"center"} p={"2"} width={"100%"}>
+          <Button
+            onClick={() => setActiveComponent(<ProductManager />)}
+            color={"white"}
+            bg={"blue.500"}
+          >
+            Add Products
+          </Button>
+        </Flex>
+      </Box>
+    ),
+    2: user.super_user ? <Users /> : <Text>Not Authorized</Text>,
   };
+
   const [activeComponent, setActiveComponent] = useState(linksComponents[0]);
 
-  const links = ["Dashboard", "Products", "Roles", "Social", "Settings"];
+  // Links array with their labels
+  const links = [
+    { label: "Dashboard", isVisible: user.super_user }, // Only for superusers
+    { label: "Products", isVisible: true }, // Visible to all
+    { label: "Users", isVisible: user.super_user }, // Only for superusers
+  ];
 
-  const pages = ["Landing", "Hero", "Services", "About"];
-  const pagesMap = pages.map((page, index) => {
-    return (
-      <Link
-        fontSize={"18px"}
-        _hover={{
-          textDecoration: "none",
-          color: "brand.primary",
-        }}
-        _active={{
-          color: "brand.primary",
-          padding: 2,
-        }}
-        key={index}
-      >
-        {page}
-      </Link>
-    );
-  });
-
-  const linksmap = links.map((link, index) => {
-    return (
+  // Dynamically map links based on visibility
+  const linksmap = links
+    .filter((link) => link.isVisible) // Filter visible links based on user.superuser
+    .map((link, index) => (
       <Link
         fontSize={"18px"}
         _hover={{
@@ -101,12 +81,9 @@ const AdminPage = () => {
         key={index}
         onClick={() => setActiveComponent(linksComponents[index])}
       >
-        {link}
+        {link.label}
       </Link>
-    );
-  });
-
-  const { logout } = useAuth();
+    ));
 
   return (
     <Box color={"gray.500"} bg={"gray.100"}>
@@ -149,23 +126,11 @@ const AdminPage = () => {
               {linksmap}
             </Flex>
           </Box>
-          <Text fontSize={"md"} mt={2} color={"gray.400"}>
-            Pages
-          </Text>
-          <Flex
-            mt={2}
-            rounded={"lg"}
-            p={4}
-            gap={2}
-            direction={"column"}
-            bg={"gray.50"}
-          >
-            {pagesMap}
-          </Flex>
         </Flex>
         <Box>{activeComponent}</Box>
       </Grid>
     </Box>
   );
 };
+
 export default AdminPage;

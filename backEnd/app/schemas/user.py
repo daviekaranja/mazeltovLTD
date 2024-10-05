@@ -21,4 +21,4 @@ class UserResponse(UserBase):
     id: int
     is_active: bool
     super_user: bool
-    products: List[ProductInDb]
+    # products: List[ProductInDb]

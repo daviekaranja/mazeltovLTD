@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import ApiService from "./ApiService";
+
 export const categories = [
   "Electronics",
   "Home Appliances",
@@ -76,4 +79,23 @@ export const validatePhoneNumber = (phone, countryCode) => {
 
   // If not valid, return false or handle invalid number case
   return false;
+};
+
+export const FetchProducts = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await ApiService.get("/products/get-products");
+      console.log(response.data);
+      if (response.success) {
+        const data = response.data;
+        setProducts(data);
+      }
+    };
+
+    fetchData(); // Call the function here
+  }, []);
+
+  return products;
 };

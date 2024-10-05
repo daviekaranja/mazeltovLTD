@@ -1,24 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, Spinner } from "@chakra-ui/react";
 import axiosClient from "../api/axiosClient";
 import UserTable from "./CollapsibleTable";
 import AddUser from "./AddUser";
+import ApiService from "../utils/ApiService";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchUsers = async () => {
-    try {
-      const response = await axiosClient.get("/users/get-users");
-      if (response.status === 200) {
-        setUsers(response.data);
-      } else {
-        console.log("Unexpected status code:", response.status);
-      }
-    } catch (error) {
-      console.error(error.response?.data || error.message);
-    } finally {
+    const response = await ApiService.get("/users/get-users");
+    if (response.success) {
+      setUsers(response.data);
       setIsLoading(false);
     }
   };
@@ -28,7 +22,26 @@ const Users = () => {
   }, []);
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return (
+      <Box
+        alignItems={"center"}
+        display={"flex"}
+        flexDirection={"column"}
+        p={4}
+        mt={4}
+        gap={"2"}
+      >
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+
+        <Text>Fetching users, please wait</Text>
+      </Box>
+    );
   }
 
   return (

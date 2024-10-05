@@ -25,7 +25,7 @@ const OfferCards = () => {
       alignItems={"center"}
       p={2}
     >
-      <Accordion allowMultiple defaultIndex={[0]} width={"100%"} px={2}>
+      <Accordion allowMultiple defaultIndex={[0]} width={"100%"} px={[1, 2]}>
         {/* Data Offers Section */}
         <AccordionItem>
           <AccordionButton>
@@ -39,7 +39,7 @@ const OfferCards = () => {
           <AccordionPanel pb={4}>
             <SimpleGrid columns={[1, 2, 4]} spacing={2}>
               {offers.data.map((offer, index) => (
-                <Box key={index}>
+                <Box flex={"1"} key={index}>
                   <DealCard offerdata={offer} />
                 </Box>
               ))}
@@ -60,7 +60,7 @@ const OfferCards = () => {
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
-            <SimpleGrid columns={[1, 2, 4]} spacing={6}>
+            <SimpleGrid columns={[1, 2, 4]} spacing={4}>
               {offers.sms.map((offer, index) => (
                 <Box key={index}>
                   <DealCard offerdata={offer} />

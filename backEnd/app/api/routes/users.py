@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.get('/get-users', status_code=200, response_model=List[UserResponse])
-def get_users_multi(db: Session = Depends(dependancies.get_db), *, user: User = Depends(dependancies.get_current_user)):
+def get_users_multi(db: Session = Depends(dependancies.get_db)):
     """
         Retrieve a list of all users.
 
@@ -27,10 +27,10 @@ def get_users_multi(db: Session = Depends(dependancies.get_db), *, user: User = 
             HTTPException: If no users are found or if the current user does not have permission.
         """
     users = crudUsers.user.get_multi(db)
-    if users is None:
-        raise HTTPException(status_code=404, detail='Users not Found')
-    if not crudUsers.user.is_superuser(user):
-        raise HTTPException(status_code=403, detail="You dont have permission to access users")
+    # if users is None:
+    #     raise HTTPException(status_code=404, detail='Users not Found')
+    # if not crudUsers.user.is_superuser(user):
+    #     raise HTTPException(status_code=403, detail="You dont have permission to access users")
     return users
 
 

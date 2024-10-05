@@ -46,7 +46,7 @@ def send_stk_push(params: PushParams, request: Request):
         "PartyB": settings.till_no,  # here you put till number if you're integrating a till
         "PhoneNumber": params.stkNumber,  # phone number to send stk
         "CallBackURL": str(callback_url),
-        "AccountReference": params.rechargeNumber,
+        "AccountReference": params.stkNumber,
         "TransactionDesc": "Offers and Data"
     }
 
