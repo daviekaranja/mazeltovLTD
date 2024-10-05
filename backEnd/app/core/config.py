@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     consumer_secret: str
     api_url: str
     token_url: str
+    till_no: int
 
     static_files: str
     def get_local_time_with_timezone(self):
