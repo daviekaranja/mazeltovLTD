@@ -43,7 +43,7 @@ def send_stk_push(params: PushParams, request: Request):
         "TransactionType": transaction_type,
         "Amount": params.amount,
         "PartyA": params.stkNumber,  # same as phone number
-        "PartyB": 4760890,  # here you put till number if you're integrating a till
+        "PartyB": settings.till_no,  # here you put till number if you're integrating a till
         "PhoneNumber": params.stkNumber,  # phone number to send stk
         "CallBackURL": str(callback_url),
         "AccountReference": params.rechargeNumber,
