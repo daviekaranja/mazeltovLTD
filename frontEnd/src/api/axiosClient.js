@@ -1,5 +1,6 @@
 import axios from "axios";
 const prod = import.meta.env.PROD;
+import Login from "../components/Login";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -10,11 +11,11 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     // Modify headers
-    const token = localStorage.getItem("authToken"); // Retrieve the token from localStorage (or from another source)
+    const token = localStorage.getItem("authToken");
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`; // Set the Authorization header
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
-    config.headers["Content-Type"] = "application/json"; // Set other custom headers if necessary
+    // config.headers["Content-Type"] = "application/json";
     return config;
   },
   (error) => {
@@ -31,7 +32,6 @@ axiosClient.interceptors.response.use(
   (error) => {
     // Handle the response error
     if (error.response && error.response.status === 401) {
-      // Handle 401 Unauthorized error (e.g., redirect to login)
       console.log("Unauthorized. Redirecting to login...");
     }
     return Promise.reject(error);

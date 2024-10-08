@@ -439,6 +439,8 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useDisclosure,
+  Select,
+  Textarea,
 } from "@chakra-ui/react";
 
 export const DealCard = ({ offerdata }) => {
@@ -484,9 +486,7 @@ export const DealCard = ({ offerdata }) => {
     setStatus(true);
     const payload = params;
     payload.stkNumber = `254${payload.stkNumber.slice(1)}`;
-    console.log(payload);
     const response = await ApiService.post("payments/c2b/stk-push", payload);
-    console.log(response);
   };
 
   const handleCancel = () => {
@@ -612,3 +612,58 @@ export const DealCard = ({ offerdata }) => {
     </Card>
   );
 };
+
+export const InputField = ({
+  label,
+  name,
+  value,
+  onChange,
+  type = "text",
+  onBlur,
+  size,
+}) => (
+  <FormControl isRequired>
+    <FormLabel>{label}</FormLabel>
+    <Input
+      size={size}
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+    />
+  </FormControl>
+);
+
+export const SelectField = ({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  size,
+}) => (
+  <FormControl isRequired>
+    <FormLabel>{label}</FormLabel>
+    <Select
+      size={size}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder="Select category"
+    >
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </Select>
+  </FormControl>
+);
+
+export const TextareaField = ({ label, name, value, onChange, size }) => (
+  <FormControl isRequired>
+    <FormLabel>{label}</FormLabel>
+    <Textarea name={name} size={size} value={value} onChange={onChange} />
+  </FormControl>
+);

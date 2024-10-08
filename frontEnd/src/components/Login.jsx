@@ -10,6 +10,7 @@ import {
   Input,
   Flex,
   Button,
+  Box,
 } from "@chakra-ui/react";
 
 const Login = () => {
@@ -45,49 +46,51 @@ const Login = () => {
   };
 
   return (
-    <Flex mt={6} direction="column" minH="100vh" alignItems="center">
-      <Heading color={"gray.400"}>Please login to continue</Heading>
-      <Flex
-        direction="column"
-        alignItems="center"
-        p={4}
-        rounded="lg"
-        boxShadow="sm"
-        mx="auto"
-      >
-        {error && (
-          <Text p={2} color="red.500">
-            {error}
-          </Text>
-        )}
-        <form onSubmit={handleLogin}>
-          <Flex width="100%" gap={4} direction="column">
-            <FormControl isRequired>
-              <FormLabel>Email</FormLabel>
-              <Input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="user@example.com"
-                type="email"
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Password</FormLabel>
-              <Input
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-              />
-            </FormControl>
-          </Flex>
-          <Button type="submit" mt={4} width="100%">
-            Login
-          </Button>
-        </form>
+    <Box>
+      <Flex mt={6} direction="column" minH="100vh" alignItems="center">
+        <Heading color={"gray.400"}>Please login to continue</Heading>
+        <Flex
+          direction="column"
+          alignItems="center"
+          p={4}
+          rounded="lg"
+          boxShadow="sm"
+          mx="auto"
+        >
+          {error && (
+            <Text p={2} color="red.500">
+              {error}
+            </Text>
+          )}
+          <form onSubmit={handleLogin}>
+            <Flex width="100%" gap={4} direction="column">
+              <FormControl isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="user@example.com"
+                  type="email"
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                />
+              </FormControl>
+            </Flex>
+            <Button type="submit" mt={4} width="100%">
+              Login
+            </Button>
+          </form>
+        </Flex>
       </Flex>
-    </Flex>
+    </Box>
   );
 };
 

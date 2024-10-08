@@ -15,6 +15,7 @@ import {
   AccordionPanel,
   AccordionIcon,
   Text,
+  Button,
 } from "@chakra-ui/react";
 
 const UserTable = ({ users, defaultRowsToShow = 3 }) => {
@@ -31,6 +32,7 @@ const UserTable = ({ users, defaultRowsToShow = 3 }) => {
             <Th width="35%">Email</Th>
             <Th width="15%">Products</Th>
             <Th width="20%">Active</Th>
+            <Th width="20%">Remove</Th>
           </Tr>
         </Thead>
 
@@ -45,6 +47,18 @@ const UserTable = ({ users, defaultRowsToShow = 3 }) => {
                 <Td>{user.products?.length || 0}</Td>
                 <Td>
                   <Checkbox isChecked={user.is_active}>Active</Checkbox>
+                </Td>
+                <Td>
+                  <Button
+                    isDisabled
+                    size={"sm"}
+                    _hover={{
+                      bg: "red",
+                      color: "white",
+                    }}
+                  >
+                    Remove
+                  </Button>
                 </Td>
               </Tr>
             ))
@@ -65,6 +79,18 @@ const UserTable = ({ users, defaultRowsToShow = 3 }) => {
                 <Td>{user.products?.length || 0}</Td>
                 <Td>
                   <Checkbox isChecked={user.is_active}>Active</Checkbox>
+                </Td>
+                <Td>
+                  <Button
+                    isDisabled
+                    size={"sm"}
+                    _hover={{
+                      bg: "red",
+                      color: "white",
+                    }}
+                  >
+                    Remove
+                  </Button>
                 </Td>
               </Tr>
             ))}

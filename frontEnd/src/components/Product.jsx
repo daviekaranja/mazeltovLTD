@@ -10,26 +10,20 @@ import {
   CardBody,
   CardFooter,
 } from "@chakra-ui/react";
+import ProductReview from "./ProductReviewPage";
 import { easeIn } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Product = ({ products, renderButtons }) => {
+  const navigate = useNavigate();
   const addToCart = (product) => {
     const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
     existingCart.push(product);
     localStorage.setItem("cart", JSON.stringify(existingCart));
   };
 
-  const handleOrder = (product) => {
-    const message = `
-      Hello, I'm interested in this product
-      Product Name: ${product.name}
-      Price: Kshs ${product.price}
-      Image: ${product.image_url}
-    `;
-    const whatsappUrl = `https://wa.me/${
-      product.phone_number
-    }?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
+  const handleProductClick = (product) => {
+    navigate(`/product-review/${product.name}`, { state: { product } });
   };
 
   const defaultButtons = (product) => (
@@ -44,7 +38,7 @@ const Product = ({ products, renderButtons }) => {
         add to cart
       </Button>
       <Button
-        onClick={() => handleOrder(product)}
+        onClick={() => handleProductClick(product)}
         size={"md"}
         transition={easeIn}
         bg={"blue.500"}

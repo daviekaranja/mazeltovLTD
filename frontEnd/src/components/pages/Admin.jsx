@@ -5,10 +5,20 @@ import Dashboard from "../DashBoard";
 import Users from "../Users";
 import { useAuth } from "../AuthProvider";
 import { Box, Link, Text, Flex, Button, Grid } from "@chakra-ui/react";
+import ApiService from "../../utils/ApiService";
+import useProducts from "../../hooks/useProducts";
 
 const AdminPage = () => {
+  const { deleteProduct } = useProducts();
   const { user, logout } = useAuth();
   const [navSize, changeNavSize] = useState("large");
+
+  const handleDelete = async (id) => {
+    const response = await deleteProduct(id);
+    if (response.success) {
+      console.log(response);
+    }
+  };
 
   const CustomButtons = (product) => {
     return (
@@ -27,7 +37,11 @@ const AdminPage = () => {
         >
           Update
         </Button>
-        <Button color={"white"} bg={"red"}>
+        <Button
+          color={"white"}
+          bg={"red"}
+          onClick={() => handleDelete(product.id)}
+        >
           Delete
         </Button>
       </Flex>

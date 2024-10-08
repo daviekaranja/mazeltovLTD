@@ -6,12 +6,11 @@ import NotFound from "./components/NotFound";
 import ContactForm from "./components/pages/ContactUs";
 import AboutUs from "./components/pages/AboutUs";
 import { AuthProvider } from "./components/AuthProvider";
-import BuyAirtime from "./components/BuyAirtime";
-import LogViewer from "./components/LogViewer";
 import Sales from "./components/pages/DataAirtimeSales";
+import ProductReview from "./components/ProductReviewPage";
+import Login from "./components/Login";
 
 import AdminPage from "./components/pages/Admin";
-import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectRoute";
 const App = () => {
   return (
@@ -23,7 +22,10 @@ const App = () => {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/support" element={<ContactForm />} />
             <Route path="/deals" element={<Sales />} />
-            <Route path="/logs" element={<LogViewer />} />
+            <Route
+              path="/product-review/:productName"
+              element={<ProductReview />}
+            />
 
             <Route
               path="/manage"

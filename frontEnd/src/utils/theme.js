@@ -17,7 +17,7 @@ const CustomTheme = extendTheme({
   styles: {
     global: {
       "html, body": {
-        bg: "white",
+        bg: "gray.50",
         color: "gray",
         fontFamily: "body",
         fontSize: { base: "md", md: "lg" },

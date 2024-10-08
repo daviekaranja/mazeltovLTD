@@ -10,9 +10,11 @@ export const userSchema = z.object({
 // Product Schema
 export const productSchema = z.object({
   name: z.string().min(3, "Product name must be at least 3 characters long"),
-  price: z.number().min(0, "Price must be a positive number"),
-  stock: z.number().int().min(0, "Stock must be a non-negative integer"),
-  active: z.boolean(),
+  category: z.string(),
+  price: z.number(),
+  phone_number: z.string(),
+  image_url: z.string(),
+  description: z.string(),
 });
 
 export const PayBillPush = z.object({
