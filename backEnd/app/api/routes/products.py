@@ -79,7 +79,8 @@ def get_products_by_user(db: Session = Depends(dependancies.get_db),
 
 
 @router.post('/create_product', status_code=201, response_model=ProductInDb)
-def create_product(user: User = Depends(dependancies.get_current_user), db: Session = Depends(dependancies.get_db), *,
+def create_product(user: User = Depends(dependancies.get_current_user),
+                   db: Session = Depends(dependancies.get_db), *,
                    product: ProductCreate):
     """
            Creates the product
@@ -91,8 +92,10 @@ def create_product(user: User = Depends(dependancies.get_current_user), db: Sess
            - The product details if found and authorized.
            - 401 HTTPException if the user is not authorized.
            """
-    product.owner_id = user.id
-    new_product = crudProducts.product.create(db=db, obj_in=product)
+    # product.owner_id = user.id
+    product_data = jsonable_encoder(product)
+    product_data['owner_id'] = user.id
+    new_product = crudProducts.product.create(db=db, obj_in=product_data)
     return new_product
 
 
@@ -117,7 +120,9 @@ def update_product(db: Session = Depends(dependancies.get_db), *, product_id: in
 
     if crudUsers.user.is_superuser(user) or db_obj.owner_id == user.id:
         try:
-            product = crudProducts.product.update(db, db_obj=db_obj, obj_in=obj_in)
+            obj_data = jsonable_encoder(obj_in)
+            obj_data['owner_id'] = user.id
+            product = crudProducts.product.update(db, db_obj=db_obj, obj_in=obj_data)
             return product
         except Exception as e:
             raise e
