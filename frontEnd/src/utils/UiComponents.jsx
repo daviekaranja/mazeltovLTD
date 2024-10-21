@@ -432,19 +432,20 @@ import {
   Text,
   Toast,
   Box,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
   useDisclosure,
   Select,
   Textarea,
+  Spinner,
 } from "@chakra-ui/react";
 
 export const DealCard = ({ offerdata }) => {
-  const cancelRef = useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [params, setParams] = useState({
     stkNumber: "",
@@ -453,6 +454,7 @@ export const DealCard = ({ offerdata }) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [showInputs, setShowInputs] = useState(false); // Controls input visibility
   const [status, setStatus] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleButtonClick = (price) => {
     setParams((prevParams) => ({
@@ -483,10 +485,16 @@ export const DealCard = ({ offerdata }) => {
   }, [params.stkNumber]);
 
   const handleSubmit = async () => {
-    setStatus(true);
+    // setStatus(true);
     const payload = params;
     payload.stkNumber = `254${payload.stkNumber.slice(1)}`;
+    onOpen();
+    setIsLoading(true);
+    // setStatus(false);
     const response = await ApiService.post("payments/c2b/stk-push", payload);
+    if (response) {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -534,7 +542,45 @@ export const DealCard = ({ offerdata }) => {
           </Flex>
         )}
 
-        {status ? (
+        {/* Modal for displaying loading or success message */}
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent
+            maxW={["90%", "70%", "50%"]} // Set responsive max-width
+            p={[2, 4]}
+          >
+            <ModalHeader>
+              {isLoading ? "Processing Request" : "Request Sent"}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {isLoading ? (
+                <Flex justifyContent="center" alignItems="center">
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="blue.500"
+                    size="xl"
+                  />
+                  {/* Spinner while loading */}
+                </Flex>
+              ) : (
+                "Your request has been sent. Please wait for confirmation."
+              )}
+            </ModalBody>
+
+            <ModalFooter>
+              {!isLoading && (
+                <Button colorScheme="blue" onClick={onClose}>
+                  Okay
+                </Button>
+              )}
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* {status ? (
           <AlertDialog
             isOpen={isOpen}
             leastDestructiveRef={cancelRef}
@@ -558,7 +604,7 @@ export const DealCard = ({ offerdata }) => {
               </AlertDialogContent>
             </AlertDialogOverlay>
           </AlertDialog>
-        ) : null}
+        ) : null} */}
 
         {showInputs ? (
           <VStack p={2} justify={"center"} mt={2} gap={4} direction={"column"}>

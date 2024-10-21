@@ -1,3 +1,4 @@
+import os.path
 import secrets
 from datetime import datetime
 from typing import Union
@@ -28,7 +29,17 @@ class Settings(BaseSettings):
     token_url: str
     till_no: int
 
+    SMTP_SERVER: str
+    SMTP_PORT: int
+    SMTP_EMAIL: str
+    SMTP_PASSWORD: str
+    IMAP_SERVER: str
+    IMAP_PORT: int
+
+    template_path: str = 'app/html_template/'
+
     static_files: str
+
     def get_local_time_with_timezone(self):
         # Define the timezone for Africa/Nairobi
         nairobi_tz = pytz.timezone('Africa/Nairobi')

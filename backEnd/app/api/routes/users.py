@@ -1,4 +1,6 @@
 from typing import List
+
+from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 from app.api import dependancies
@@ -7,6 +9,7 @@ from app.schemas.user import UserResponse, UserUpdate, UserCreate
 from typing import List
 from fastapi.encoders import jsonable_encoder
 from app.models.users import User
+from app.utilities.utils import send_password_reset_mail
 
 router = APIRouter()
 
@@ -125,3 +128,4 @@ def remove_user(db: Session = Depends(dependancies.get_db), *,
 
     else:
         raise HTTPException(status_code=403, detail="You dont have the permissions to remove this user")
+
