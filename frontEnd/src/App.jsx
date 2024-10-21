@@ -9,6 +9,7 @@ import { AuthProvider } from "./components/AuthProvider";
 import Sales from "./components/pages/DataAirtimeSales";
 import ProductReview from "./components/ProductReviewPage";
 import Login from "./components/Login";
+import Policies from "./components/pages/Policies";
 
 import AdminPage from "./components/pages/Admin";
 import ProtectedRoute from "./components/ProtectRoute";
@@ -22,6 +23,7 @@ const App = () => {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/support" element={<ContactForm />} />
             <Route path="/deals" element={<Sales />} />
+            <Route path="/legal/data-policies" element={<Policies />} />
             <Route
               path="/product-review/:productName"
               element={<ProductReview />}

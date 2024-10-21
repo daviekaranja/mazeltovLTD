@@ -98,7 +98,7 @@ const Login = () => {
               )}
               <form onSubmit={handleLogin}>
                 <Flex width="100%" gap={4} direction="column">
-                  <FormControl bg={"white"} isRequired>
+                  <FormControl isRequired>
                     <FormLabel>Email</FormLabel>
                     <Input
                       id="username"
@@ -114,7 +114,6 @@ const Login = () => {
                       <Input
                         bg="white" // Set background color to white
                         focusBorderColor="white"
-                        bg={"white"}
                         type={show ? "text" : "password"}
                         id="password"
                         value={password}

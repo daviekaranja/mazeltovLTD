@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, Cookie
+from fastapi import APIRouter, Depends, HTTPException, Response, Cookie, BackgroundTasks, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
@@ -10,6 +10,7 @@ from app.models.users import User
 from app.schemas.user import UserResponse
 from app.schemas.token import TokenResponse
 from app.core.config import settings
+from app.utilities.utils import send_password_reset_mail
 
 router = APIRouter()
 
@@ -20,7 +21,6 @@ def login(
         db: Session = Depends(deps.get_db),
         form_data: OAuth2PasswordRequestForm = Depends()
 ):
-
     user = crudUsers.user.authenticate(
         db, email=form_data.username, password=form_data.password
     )
@@ -59,13 +59,15 @@ def refresh_token():
     pass
 
 
-@router.post('/reset-password', status_code=200)
-def reset_password(email: EmailStr, db: Session = Depends(deps.get_db)):
+@router.post('/account-recovery', status_code=200)
+def account_recovery(email: EmailStr, request: Request, db: Session = Depends(deps.get_db)):
+    url = request.url_for('reset_password')
     db_user = crudUsers.user.get_by_email(db, email)
-    # TODO: implement send email logic
-    return {'detail': "if an account with that email is found further instructions will be sent to it"}
+    send_password_reset_mail(email=email, username=db_user.name, reset_link=url,  db=db)
+    return {'detail': 'if an account with email is found reset instructions will be sent'}
 
 
-@router.post('/confirm-reset-token')
-def confirm_reset_token():
-    pass
+@router.post("/reset-password", name="reset_password")
+async def reset_password_handler(code: int, request: Request):
+    return code
+

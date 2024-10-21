@@ -1,15 +1,22 @@
 import base64
+import random
 from datetime import datetime, timedelta
+import time
+
 import requests
-from requests.auth import HTTPBasicAuth
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
+from jinja2 import Environment, FileSystemLoader
+from pydantic import EmailStr
+from sqlalchemy.orm import Session
+from sqlalchemy import exc
+
 from app.core.config import settings
 from .logger import log
-
-from sqlalchemy.orm import Session
-from datetime import datetime
+from ..communications.email_client import send_email_internal
 from ..models.payments import Transaction, UnsuccessfulTransactions
 from ..schemas.payments import UnsuccessfulTransactions as Ts
+from app.schemas.security import SecurityCode
+from ..models import security
 
 
 def get_timestamp():
@@ -111,55 +118,49 @@ def process_callback_data(callback_data: dict, db: Session):
             db.refresh(db_obj)
             return db_obj
 
-    except Exception  as e:
+    except Exception as e:
         db.rollback()
         log.info(e)
 
 
+def security_code(db: Session):
+    # should generate and save the code in db
+    """
+    :param request:
+    :param db:
+    :return:
+    """
+    code = random.randrange(100000, 1000000)
+    db_obj = security.SecurityCodes(code=code,
+                                    expires=datetime.utcnow() + timedelta(seconds=3600)
+                                    )
+    # Add the ORM model instance to the session
+    try:
+        db.add(db_obj)
+
+        # Commit the transaction to save the data
+        db.commit()
+
+        # Refresh to get any additional info from the database (e.g., auto-generated id)
+        db.refresh(db_obj)
+        return db_obj.code
+    except exc.IntegrityError as e:
+        log.error("duplicate Data: {e}")
+        db.rollback()
+        return db_obj.code
 
 
-# def process_callback_data(callback_data: dict, db: Session):
-#     # Extract required fields from the callback data
-#     try:
-#
-#         stk_callback = callback_data['Body']['stkCallback']
-#         metadata = stk_callback['CallbackMetadata']['Item']
-#         result_code = stk_callback['ResultCode']
-#
-#         if result_code == 0 and metadata:
-#             log.info("Successful Transaction")
-#             amount = None
-#             receipt_number = None
-#             transaction_date = None
-#             phone_number = None
-#
-            # for item in metadata:
-            #     if item['Name'] == 'Amount':
-            #         amount = item['Value']
-            #     elif item['Name'] == 'MpesaReceiptNumber':
-            #         receipt_number = item['Value']
-            #     elif item['Name'] == 'TransactionDate':
-            #         transaction_date = datetime.strptime(str(item['Value']), "%Y%m%d%H%M%S")
-            #     elif item['Name'] == 'PhoneNumber':
-            #         phone_number = item['Value']
-#
-            # # Store the data in the database
-            # transaction = Transaction(
-            #     mpesa_receipt_number=receipt_number,
-            #     amount=amount,
-            #     transaction_date=transaction_date,
-            #     phone_number=phone_number,
-            #     merchant_request_id=stk_callback['MerchantRequestID'],
-            #     checkout_request_id=stk_callback['CheckoutRequestID']
-            # )
-            #
-            # db.add(transaction)
-            # db.commit()
-            # db.refresh(transaction)
-            # return transaction
-#         else:
-#             log.info(f"Unsuccessful Transaction: {callback_data}")
-#
-#     except Exception as e:
-#         db.rollback()
-#         log.error(f"Error processing callback data: {str(e)}")
+def send_password_reset_mail(email: EmailStr, username, reset_link, db):
+    try:
+        # Load the Jinja2 template
+        env = Environment(loader=FileSystemLoader(settings.template_path))
+        template = env.get_template('password_reset_email.html')
+        # Render the template
+        link = f'{reset_link}?code={security_code(db)}'
+        log.info(link)
+        html_content = template.render(username=username, reset_link=link)
+        send_email_internal(email, 'Password Reset', html_content, html=True)
+        log.info(f'Email Sent Successfully to {email}')
+    except Exception as e:
+        log.error(e)
+        raise HTTPException(status_code=500, detail=str(e))

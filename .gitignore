@@ -51,6 +51,9 @@ pytest_cache/
 coverage.xml
 *.cover
 .hypothesis/
+/__pycache__/
+
+*/__pycache__/*
 
 # Environment variables
 .env
@@ -107,8 +110,22 @@ Thumbs.db
 *.tmp
 *.temp
 *.log*
-.cmd
+*.cmd
+.*db
+
+# Ignore command, database, and log files
+*.cmd
+*.db
+*.log
+
 
 # Linux specific
 *.out
 *.~undo-tree~
+
+# Ignore command, database, and log files
+*.cmd
+*.db
+*.log
+*.log.*
+
