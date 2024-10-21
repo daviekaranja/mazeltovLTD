@@ -6,7 +6,7 @@ export const Terms = () => (
       <iframe
         src="https://drive.google.com/file/d/1sQwAg4wTKV9R9xoNQHM2c7-ZJHnSscxw/preview"
         width="100%"
-        height="600px"
+        height="100vh"
       ></iframe>
     </Box>
   </Box>
@@ -14,12 +14,11 @@ export const Terms = () => (
 
 export const DataPolicy = () => (
   <Box p={5}>
-    <Box>
+    <Box h={"100vh"}>
       <iframe
         src="https://drive.google.com/file/d/1LGtTNrRQKrqYMSlHv5ZfT9p13hsKxSQa/preview"
-        // https://drive.google.com/file/d/1sQwAg4wTKV9R9xoNQHM2c7-ZJHnSscxw/view?usp=sharing
         width="100%"
-        height="600px"
+        height="100%"
       ></iframe>
     </Box>
   </Box>

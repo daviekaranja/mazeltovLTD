@@ -52,9 +52,17 @@ const Footer = () => {
           <Text color={"gray.300"} fontSize={"md"} fontWeight={"bold"}>
             Mazeltov
           </Text>
-          <Text>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Saepe nisi
-            molestias animi voluptatibus impedit
+          <Text noOfLines={4}>
+            Mazeltov Commercial Agencies is a Kenyan-based company committed to
+            providing reliable and trustworthy services across a variety of
+            industries. With a focus on quality, integrity, and customer
+            satisfaction, Mazeltov strives to connect consumers with genuine
+            products and services, ensuring a smooth and secure purchasing
+            experience. The company emphasizes transparent business practices,
+            aiming to build long-lasting relationships with clients by
+            prioritizing their needs and safeguarding their interests. Through
+            its strong service framework, Mazeltov seeks to uphold the highest
+            standards in delivering value to its customers.
           </Text>
         </Box>
         <Flex direction={"column"}>
