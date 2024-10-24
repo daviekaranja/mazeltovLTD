@@ -41,7 +41,7 @@ const Footer = () => {
       </Flex>
       {/* this is the footer object */}
       <Flex
-        justifyContent={"space-evenly"}
+        justifyContent={"space-between"}
         gap={6}
         p={4}
         bg={"gray.800"}
@@ -72,7 +72,7 @@ const Footer = () => {
           <Link>Home</Link>
           <Link>Services</Link>
           <Link>About</Link>
-          <Link>Buy Airtime Online</Link>
+          {/* <Link>Buy Airtime Online</Link> */}
           <Link display={["none", "flex"]} onClick={() => navigate("/manage")}>
             Admin
           </Link>
@@ -83,7 +83,7 @@ const Footer = () => {
           </Text>
           <Flex direction={"column"}>
             <Link>Airtel 4G Mifi</Link>
-            <Link>Buy Airtime</Link>
+            {/* <Link>Buy Airtime</Link> */}
           </Flex>
         </Box>
         <Box>
@@ -122,8 +122,8 @@ const Footer = () => {
         p={{ base: 2, md: 4 }}
         justifyContent={"center"}
       >
-        <Link>Terms and Conditions</Link>
-        <Link>Privacy Policy</Link>
+        <Link href="/legal/data-policies">Terms and Conditions</Link>
+        <Link href="/legal/data-policies">Privacy Policy</Link>
       </Flex>
     </Box>
   );

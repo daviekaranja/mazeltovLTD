@@ -25,6 +25,14 @@ const OfferCards = () => {
       alignItems={"center"}
       p={2}
     >
+      <Box mt={2} pb={2}>
+        <Heading textAlign={"center"} size={["md", "lg"]} color="green.500">
+          Bingwa Sokoni Offers
+        </Heading>
+        <Text color={"green.500"}>
+          Get unmatched deals, Data, Minutes, amd Sms
+        </Text>
+      </Box>
       <Accordion allowMultiple defaultIndex={[0]} width={"100%"} px={[1, 2]}>
         {/* Data Offers Section */}
         <AccordionItem>

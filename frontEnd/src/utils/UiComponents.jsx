@@ -671,6 +671,7 @@ export const InputField = ({
   <FormControl isRequired>
     <FormLabel>{label}</FormLabel>
     <Input
+      variant={"flushed"}
       size={size}
       type={type}
       name={name}

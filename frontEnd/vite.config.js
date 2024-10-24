@@ -15,7 +15,7 @@ export default defineConfig({
     hmr: {
       protocol: "ws", // WebSocket protocol for hot module replacement
       host: "localhost", // Host for HMR
-      port: 5173, // Port for HMR
+      port: 3000, // Port for HMR
     },
   },
 });
