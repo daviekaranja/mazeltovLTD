@@ -1,50 +1,48 @@
 import {
   Drawer,
   DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  useDisclosure,
-  Text,
-  Box,
+  DrawerHeader,
+  DrawerFooter,
+  Button,
+  VStack,
 } from "@chakra-ui/react";
 
-const MobileMenu = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
-};
-
-return (
-  <Box>
-    <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-      Open
-    </Button>
-    <Drawer
-      isOpen={isOpen}
-      placement="right"
-      onClose={onClose}
-      finalFocusRef={btnRef}
-    >
+function MobileMenu({ isOpen, onClose }) {
+  return (
+    <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Create your account</DrawerHeader>
+        <DrawerHeader>Menu</DrawerHeader>
 
         <DrawerBody>
-          <Input placeholder="Type here..." />
+          <VStack align="start" spacing={4}>
+            <Button variant="ghost" width="100%">
+              Home
+            </Button>
+            <Button variant="ghost" width="100%">
+              About
+            </Button>
+            <Button variant="ghost" width="100%">
+              Services
+            </Button>
+            <Button variant="ghost" width="100%">
+              Contact
+            </Button>
+          </VStack>
         </DrawerBody>
 
         <DrawerFooter>
           <Button variant="outline" mr={3} onClick={onClose}>
-            Cancel
+            Close
           </Button>
-          <Button colorScheme="blue">Save</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  </Box>
-);
+  );
+}
 
 export default MobileMenu;

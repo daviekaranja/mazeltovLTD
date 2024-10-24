@@ -1,12 +1,28 @@
 import React from "react";
-import { Box, Flex, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Link,
+  Drawer,
+  DrawerBody,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerFooter,
+  Button,
+  VStack,
+  Text,
+} from "@chakra-ui/react";
 import { easeIn } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import Toast from "./Alerts/Toast";
 import BuyAirtime from "./BuyAirtime";
+import { useDisclosure } from "@chakra-ui/react";
 
 const NavBar = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Managing state for opening/closing
   const navigate = useNavigate(); // Correctly get the navigate function
 
   const handleNavigation = (path) => {
@@ -68,7 +84,8 @@ const NavBar = () => {
         >
           {linksMap}
         </Box>
-        <Link
+        <Box>{/* just a placeholder */}</Box>
+        {/* <Link
           display={{ base: "none", md: "flex" }}
           _hover={{ textDecoration: "none" }}
           padding={2}
@@ -80,12 +97,31 @@ const NavBar = () => {
           onClick={() => handleNavigation("/deals")}
         >
           Buy Airtime
-        </Link>
+        </Link> */}
         <HamburgerIcon
           boxSize={6}
           color={"white"}
           display={{ base: "flex", md: "none" }}
+          onClick={onOpen}
         />
+
+        {/* Mobile Menu Drawer */}
+        <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Menu</DrawerHeader>
+
+            <DrawerBody>
+              {/* Drawer Body containing menu items */}
+              <VStack align="start" spacing={4}>
+                <Link href="/">Home</Link>
+                <Link href="/">Bingwa Sokoni Offers</Link>
+                <Link href="/">Shop</Link>
+              </VStack>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
       </Flex>
     </Box>
   );

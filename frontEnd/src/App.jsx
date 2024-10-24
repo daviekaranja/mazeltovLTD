@@ -8,9 +8,8 @@ import AboutUs from "./components/pages/AboutUs";
 import { AuthProvider } from "./components/AuthProvider";
 import Sales from "./components/pages/DataAirtimeSales";
 import ProductReview from "./components/ProductReviewPage";
-import Login from "./components/Login";
 import Policies from "./components/pages/Policies";
-
+import ResetPassword from "./components/ResetPassword";
 import AdminPage from "./components/pages/Admin";
 import ProtectedRoute from "./components/ProtectRoute";
 const App = () => {
@@ -24,6 +23,10 @@ const App = () => {
             <Route path="/support" element={<ContactForm />} />
             <Route path="/deals" element={<Sales />} />
             <Route path="/legal/data-policies" element={<Policies />} />
+            <Route
+              path="/recovery/reset-password"
+              element={<ResetPassword />}
+            />
             <Route
               path="/product-review/:productName"
               element={<ProductReview />}
