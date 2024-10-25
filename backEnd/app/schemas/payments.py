@@ -41,7 +41,7 @@ class PushParams(BaseModel):
     # Validate amount to be between 5 and 500
     @field_validator('amount')
     def validate_amount(cls, value: int, info: FieldValidationInfo):
-        if not (5 <= value <= 500):
+        if not (1 <= value <= 10000):
             raise ValueError('amount must be between 5 and 500')
         return value
 
