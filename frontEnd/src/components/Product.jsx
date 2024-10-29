@@ -27,8 +27,14 @@ const Product = ({ products, renderButtons }) => {
   };
 
   const defaultButtons = (product) => (
-    <Box p={2} justifyContent={"space-between"} width="100%" display={"flex"}>
-      <Button
+    <Box
+      p={1}
+      bg={"blue.500"}
+      justifyContent={"center"}
+      width="100%"
+      display={"flex"}
+    >
+      {/* <Button
         color={"gray.700"}
         size={"md"}
         transition={easeIn}
@@ -36,7 +42,7 @@ const Product = ({ products, renderButtons }) => {
         onClick={() => addToCart(product)}
       >
         add to cart
-      </Button>
+      </Button> */}
       <Button
         onClick={() => handleProductClick(product)}
         size={"md"}
@@ -73,19 +79,16 @@ const Product = ({ products, renderButtons }) => {
               objectFit="cover"
               transition={"ease-in-out"}
             />
-            <Flex p={2} direction={"column"}>
-              <Text color={"gray.600"} fontSize={[25, 35]}>
+            <Flex p={1} direction={"column"}>
+              <Text color={"gray.600"} fontSize={["md", "lg"]}>
                 {product.name}
               </Text>
-              <Text fontSize={["16px", "20px"]} color="gray.500">
+              <Text fontSize={["md", "lg"]} color="gray.500">
                 Kshs {product.price}
-              </Text>
-              <Text fontSize={"12px"} color="gray.400">
-                Discount: 0.00%
               </Text>
             </Flex>
           </CardBody>
-          <CardFooter p={1}>
+          <CardFooter p={0}>
             {renderButtons ? renderButtons(product) : defaultButtons(product)}
           </CardFooter>
         </Card>

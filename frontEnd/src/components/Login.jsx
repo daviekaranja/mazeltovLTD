@@ -120,7 +120,13 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                       />
                       <InputRightElement pr={2}>
-                        <Button size="sm" onClick={handleClick}>
+                        <Button
+                          p={2}
+                          bg={"transparent"}
+                          size="sm"
+                          onClick={handleClick}
+                          color={"blue.500"}
+                        >
                           {show ? "Hide" : "Show"}
                         </Button>
                       </InputRightElement>

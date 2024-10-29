@@ -8,6 +8,7 @@ import React, { useReducer } from "react";
 import { categories } from "../utils/utilities.js";
 import axiosClient from "../api/axiosClient";
 import { productSchema } from "../schemas/schemas.js";
+import { UploadImages } from "../utils/UiComponents.jsx";
 import {
   Box,
   Button,
@@ -156,7 +157,9 @@ const ProductManager = ({ initialProduct }) => {
           />
         </Flex>
 
+        {/* upload images */}
         <Flex gap={4}>
+          <UploadImages />
           <InputField
             size={"md"}
             label="Image URL"

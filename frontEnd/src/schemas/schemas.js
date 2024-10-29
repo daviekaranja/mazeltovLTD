@@ -28,8 +28,8 @@ export const PayBillPush = z.object({
 
   amount: z
     .number()
-    .min(5, "Amount must be at least 5")
-    .max(10000, "Amount must not exceed 1000"),
+    .min(1, "Amount must be at least 5")
+    .max(10000, "Amount must not exceed 10000"),
 
   // rechargeNumber: z
   //   .string()

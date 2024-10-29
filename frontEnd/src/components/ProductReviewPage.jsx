@@ -35,18 +35,12 @@ const ProductReview = () => {
         gap={2}
       >
         <Box>
-          <Image
-            objectPosition={"center"}
-            h={200}
-            src="https://i.postimg.cc/m2Pr6zG5/download.jpg"
-          />
+          <Image objectPosition={"center"} h={200} src={product.image_url} />
           <Box h={12} mt={1} bg={"gray.50"}></Box>
         </Box>
         <Box>
           <Box p={1} flex={1}>
-            <Text fontSize={["md", "lg"]}>
-              Dp Light LED Rechargeable Bulb With USB - 20 W
-            </Text>
+            <Text fontSize={["md", "lg"]}>{product.name}</Text>
             <Text mt={1} fontSize={"md"} fontWeight={"bold"}>
               Ksh {product.price}
             </Text>
@@ -62,12 +56,7 @@ const ProductReview = () => {
         <Text mb={2} fontSize={"md"}>
           Product Description
         </Text>
-        <Text fontSize={"sm"}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium
-          sapiente iusto praesentium eveniet, odit perferendis dolore, dolores
-          voluptatum eos laborum dolorem ex ipsa excepturi? Id ab suscipit enim
-          quisquam vero?
-        </Text>
+        <Text fontSize={"sm"}>{product.description}</Text>
       </Box>
       <Box flexDirection={"column"} alignItems={"center"} display={"flex"}>
         <Button

@@ -8,7 +8,7 @@ const Hero = () => {
         justify={"center"}
         direction={"column"}
         p={{ base: 2, md: 4, lg: 8 }}
-        bgImage={"https://i.postimg.cc/k49FBtkg/teamcompressed.jpg"}
+        bgImage={"https://imgur.com/RKilqDM.jpg"}
         h={{ base: "350px", md: "400px" }} // Ensure height constraints
         w={"100%"}
         bgSize={"cover"}
