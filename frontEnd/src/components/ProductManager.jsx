@@ -8,7 +8,7 @@ import React, { useReducer } from "react";
 import { categories } from "../utils/utilities.js";
 import axiosClient from "../api/axiosClient";
 import { productSchema } from "../schemas/schemas.js";
-import { UploadImages } from "../utils/UiComponents.jsx";
+import { ImageUploader } from "../utils/UiComponents.jsx";
 import {
   Box,
   Button,
@@ -157,16 +157,23 @@ const ProductManager = ({ initialProduct }) => {
           />
         </Flex>
 
-        {/* upload images */}
+        {/* upload images
+        
+        - select images from the local device
+        - upload to imgur and return the link(s)
+        - the link should be a part of product's data sent to the backend for storage
+        */}
+
         <Flex gap={4}>
-          <UploadImages />
           <InputField
+            type="file"
             size={"md"}
             label="Image URL"
             name="image_url"
             value={state.image_url}
             onChange={handleInputChange}
           />
+
           <SelectField
             size={"md"}
             label="Category"

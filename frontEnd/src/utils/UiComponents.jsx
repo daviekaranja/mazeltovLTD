@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { PayBillPush } from "../schemas/schemas";
+import axiosClient from "../api/axiosClient";
 import ApiService from "./ApiService";
 import {
   Card,
@@ -129,70 +130,6 @@ export const DealCard = ({ offerdata }) => {
           </Flex>
         )}
 
-        {/* Modal for displaying loading or success message */}
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent
-            maxW={["90%", "70%", "50%"]} // Set responsive max-width
-            p={[2, 4]}
-          >
-            <ModalHeader>
-              {isLoading ? "Processing Request" : "Request Sent"}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              {isLoading ? (
-                <Flex justifyContent="center" alignItems="center">
-                  <Spinner
-                    thickness="4px"
-                    speed="0.65s"
-                    emptyColor="gray.200"
-                    color="blue.500"
-                    size="xl"
-                  />
-                  {/* Spinner while loading */}
-                </Flex>
-              ) : (
-                "Your request has been sent. Please wait for confirmation."
-              )}
-            </ModalBody>
-
-            <ModalFooter>
-              {!isLoading && (
-                <Button colorScheme="blue" onClick={onClose}>
-                  Okay
-                </Button>
-              )}
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
-        {/* {status ? (
-          <AlertDialog
-            isOpen={isOpen}
-            leastDestructiveRef={cancelRef}
-            onClose={onClose}
-          >
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Request Sent
-                </AlertDialogHeader>
-
-                <AlertDialogBody>
-                  Your request has been sent. Please wait for confirmation.
-                </AlertDialogBody>
-
-                <AlertDialogFooter>
-                  <Button ref={cancelRef} onClick={onClose}>
-                    Okay
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
-        ) : null} */}
-
         {showInputs ? (
           <VStack p={2} justify={"center"} mt={2} gap={4} direction={"column"}>
             <FormControl>
@@ -302,113 +239,32 @@ export const TextareaField = ({ label, name, value, onChange, size }) => (
   </FormControl>
 );
 
-import axios from "axios";
-import axiosClient from "../api/axiosClient";
+export const ImageUploader = ({ onImageUpload }) => {
+  const [imagePreview, setImagePreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
-export const UploadImages = () => {
-  const [images, setImages] = useState([]);
-  const [uploadStatus, setUploadStatus] = useState(null);
-  const toast = useToast();
-
-  // Handler for selecting multiple images
-  const handleImageChange = (e) => {
-    setImages([...e.target.files]);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
-  // Handler for form submission
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-
-    images.forEach((image) => {
-      formData.append("images", image);
-    });
-
-    try {
-      const response = await axiosClient.post(
-        "http://127.0.0.1:8000/upload-images",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setUploadStatus(response.data.uploaded_images);
-      toast({
-        title: "Images uploaded successfully!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: "Error uploading images.",
-        description: error.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+  const handleUpload = async () => {
+    if (selectedFile) {
+      const imageUrl = await onImageUpload(selectedFile);
+      console.log("Uploaded Image URL:", imageUrl); // Use this for debugging
     }
   };
 
   return (
-    <Box
-      maxW="md"
-      mx="auto"
-      mt={8}
-      p={6}
-      borderWidth="1px"
-      borderRadius="lg"
-      boxShadow="lg"
-    >
-      <form onSubmit={handleUpload}>
-        <VStack spacing={4} align="stretch">
-          <FormControl>
-            <FormLabel>Select Images</FormLabel>
-            <Input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-          </FormControl>
-          <Button
-            colorScheme="teal"
-            type="submit"
-            width="full"
-            disabled={images.length === 0}
-          >
-            Upload Images
-          </Button>
-        </VStack>
-      </form>
-
-      {uploadStatus && (
-        <Box mt={6}>
-          <Text fontSize="lg" fontWeight="bold">
-            Uploaded Images:
-          </Text>
-          <List spacing={2} mt={2}>
-            {uploadStatus.map((img, index) => (
-              <ListItem key={index}>
-                <Text>Filename: {img.filename}</Text>
-                <Text>
-                  Link:
-                  <ChakraLink
-                    href={img.imgur_link}
-                    color="teal.500"
-                    isExternal
-                    ml={1}
-                  >
-                    {img.imgur_link}
-                  </ChakraLink>
-                </Text>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )}
-    </Box>
+    <div>
+      <input type="file" onChange={handleFileChange} />
+      {imagePreview && <img src={imagePreview} alt="Preview" width={100} />}
+      <button onClick={handleUpload}>Upload to Imgur</button>
+    </div>
   );
 };
+
+// export default ImageUploader;
