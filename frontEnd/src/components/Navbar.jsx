@@ -85,7 +85,7 @@ const NavBar = () => {
           {linksMap}
         </Box>
         <Box>{/* just a placeholder */}</Box>
-        <Link
+        {/* <Link
           display={{ base: "none", md: "flex" }}
           _hover={{ textDecoration: "none" }}
           padding={2}
@@ -97,7 +97,7 @@ const NavBar = () => {
           onClick={() => handleNavigation("/deals")}
         >
           Buy Airtime
-        </Link>
+        </Link> */}
         <HamburgerIcon
           boxSize={6}
           color={"white"}
