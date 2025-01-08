@@ -83,7 +83,7 @@ const Footer = () => {
           </Text>
           <Flex direction={"column"}>
             <Link>Airtel 4G Mifi</Link>
-            {/* <Link>Buy Airtime</Link> */}
+            <Link href="/buy-airtime">Buy Airtime</Link>
           </Flex>
         </Box>
         <Box>

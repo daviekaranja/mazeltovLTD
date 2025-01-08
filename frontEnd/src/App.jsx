@@ -12,6 +12,7 @@ import Policies from "./components/pages/Policies";
 import ResetPassword from "./components/ResetPassword";
 import AdminPage from "./components/pages/Admin";
 import ProtectedRoute from "./components/ProtectRoute";
+import BuyAirtime from "./components/BuyAirtime";
 const App = () => {
   return (
     <AuthProvider>
@@ -23,6 +24,7 @@ const App = () => {
             <Route path="/support" element={<ContactForm />} />
             <Route path="/deals" element={<Sales />} />
             <Route path="/legal/data-policies" element={<Policies />} />
+            <Route path="/buy-airtime" element={<BuyAirtime />} />
             <Route
               path="/recovery/reset-password"
               element={<ResetPassword />}

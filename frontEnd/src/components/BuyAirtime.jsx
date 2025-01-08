@@ -114,8 +114,8 @@ const BuyAirtime = () => {
       p={2}
       bg={"white"}
     >
-      <Card boxShadow={"md"} border={"1px"} borderColor={"gray.200"}>
-        <CardHeader bg={"gray.200"}>
+      <Card boxShadow={"md"}>
+        <CardHeader bg={"white"}>
           <Text>Buy airtime across all networks any time any place</Text>
         </CardHeader>
         <CardBody>

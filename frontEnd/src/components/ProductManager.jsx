@@ -8,7 +8,7 @@ import React, { useReducer } from "react";
 import { categories } from "../utils/utilities.js";
 import axiosClient from "../api/axiosClient";
 import { productSchema } from "../schemas/schemas.js";
-import { ImageUploader } from "../utils/UiComponents.jsx";
+import { ImageUpload } from "../utils/UiComponents.jsx";
 import {
   Box,
   Button,
@@ -114,9 +114,9 @@ const ProductManager = ({ initialProduct }) => {
       gap={6}
     >
       <Box mx="auto">
-        <Text mt={2}>
+        <Heading as={"h3"} size={"lg"} color={"brand.primary"} mt={2}>
           {initialProduct ? "Edit Product" : "Add a new product"}
-        </Text>
+        </Heading>
         <Text>
           {initialProduct
             ? "Update the product's details below"
@@ -157,23 +157,11 @@ const ProductManager = ({ initialProduct }) => {
           />
         </Flex>
 
-        {/* upload images
-        
-        - select images from the local device
-        - upload to imgur and return the link(s)
-        - the link should be a part of product's data sent to the backend for storage
-        */}
-
+        <Box p={2}>
+          <Text>Add product photos</Text>
+          <ImageUpload />
+        </Box>
         <Flex gap={4}>
-          <InputField
-            type="file"
-            size={"md"}
-            label="Image URL"
-            name="image_url"
-            value={state.image_url}
-            onChange={handleInputChange}
-          />
-
           <SelectField
             size={"md"}
             label="Category"
@@ -192,18 +180,18 @@ const ProductManager = ({ initialProduct }) => {
           onChange={handleInputChange}
         />
       </Flex>
-
-      <Button
-        mb={2}
-        onClick={handleSaveProduct}
-        bg="brand.primary"
-        mx="auto"
-        width="md"
-        color="white"
-        _hover={{ bg: "blue.500" }}
-      >
-        {initialProduct ? "Update Product" : "Save Product"}
-      </Button>
+      <Flex direction={"row"} gap={""} justify={"space-evenly"}>
+        {/* <Button>Cancel</Button> */}
+        <Button
+          mb={2}
+          onClick={handleSaveProduct}
+          bg="brand.primary"
+          color="white"
+          _hover={{ bg: "blue.500" }}
+        >
+          {initialProduct ? "Update" : "Submit"}
+        </Button>
+      </Flex>
     </Box>
   );
 };

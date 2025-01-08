@@ -14,24 +14,18 @@ import {
   FormLabel,
   Flex,
   Text,
-  Toast,
   Box,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
   Select,
   Textarea,
-  Spinner,
   Link as ChakraLink,
-  List,
-  ListItem,
-  useToast,
+  IconButton,
+  HStack,
+  Progress,
 } from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
+import { useImgurUpload } from "../hooks/useImgurUpload";
+import upload from "/src/images/upload.svg";
 
 export const DealCard = ({ offerdata }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -239,32 +233,262 @@ export const TextareaField = ({ label, name, value, onChange, size }) => (
   </FormControl>
 );
 
-export const ImageUploader = ({ onImageUpload }) => {
-  const [imagePreview, setImagePreview] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+// export const ImageUpload = () => {
+//   const [images, setImages] = useState([]); // Array to hold selected images
+//   const [isFocused, setIsFocused] = useState(false); // Track if the component is focused
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setImagePreview(URL.createObjectURL(file));
+//   // Handle file selection
+//   const handleFileSelect = (event) => {
+//     event.preventDefault();
+//     const file = event.target.files[0];
+//     if (file && images.length < 6) {
+//       const imageUrl = URL.createObjectURL(file);
+//       setImages([
+//         ...images,
+//         { url: imageUrl, status: "idle", progress: 0, file },
+//       ]); // Add new image with default status and progress
+//     }
+//   };
+
+//   // Prevent default behavior for drag-and-drop
+//   const handleDrop = (event) => {
+//     event.preventDefault();
+//     const file = event.dataTransfer.files[0];
+//     if (file && images.length < 6) {
+//       const imageUrl = URL.createObjectURL(file);
+//       setImages([
+//         ...images,
+//         { url: imageUrl, status: "idle", progress: 0, file },
+//       ]);
+//     }
+//   };
+
+//   const handleDragOver = (event) => {
+//     event.preventDefault();
+//   };
+
+//   // Upload function to Imgur
+//   const uploadToImgur = async (index, file) => {
+//     setImages((prevImages) => {
+//       const newImages = [...prevImages];
+//       newImages[index].status = "uploading"; // Change status to uploading
+//       return newImages;
+//     });
+
+//     const formData = new FormData();
+//     formData.append("image", file);
+
+//     try {
+//       const response = await fetch("https://api.imgur.com/3/image", {
+//         method: "POST",
+//         headers: {
+//           Authorization: `Client-ID ${IMGUR_CLIENT_ID}`,
+//         },
+//         body: formData,
+//       });
+//       const data = await response.json();
+
+//       if (data.success) {
+//         // If successful, update the image status and link
+//         setImages((prevImages) => {
+//           const newImages = [...prevImages];
+//           newImages[index].status = "done";
+//           newImages[index].link = data.data.link; // Imgur link
+//           newImages[index].progress = 100; // Set progress to 100%
+//           return newImages;
+//         });
+//         console.log("Uploaded successfully:", data.data.link); // Print the Imgur link to the console
+//       } else {
+//         // If failed, set status to failed
+//         setImages((prevImages) => {
+//           const newImages = [...prevImages];
+//           newImages[index].status = "failed";
+//           return newImages;
+//         });
+//       }
+//     } catch (error) {
+//       console.error("Error uploading image:", error);
+//       setImages((prevImages) => {
+//         const newImages = [...prevImages];
+//         newImages[index].status = "failed";
+//         return newImages;
+//       });
+//     }
+//   };
+
+//   // Handle image removal
+//   const handleRemoveImage = (index) => {
+//     setImages(images.filter((_, i) => i !== index)); // Remove image from array
+//   };
+
+//   // Retry failed upload
+//   const handleRetryUpload = (index) => {
+//     uploadToImgur(index, images[index].file); // Retry the upload for the specific image
+//   };
+
+//   // Handle focus and blur
+//   const handleFocus = () => {
+//     setIsFocused(true); // Set focus state to true when component is focused
+//   };
+
+//   const handleBlur = () => {
+//     setIsFocused(false); // Set focus state to false when component loses focus
+//     // Trigger upload if there are any images that are still "idle"
+//     if (images.some((image) => image.status === "idle")) {
+//       images.forEach((image, index) => {
+//         if (image.status === "idle") {
+//           uploadToImgur(index, image.file); // Start uploading any image that is still idle
+//         }
+//       });
+//     }
+//   };
+
+//   // Helper function to get color based on status
+//   const getColorByStatus = (status) => {
+//     switch (status) {
+//       case "uploading":
+//         return "blue.500";
+//       case "done":
+//         return "green.500";
+//       case "failed":
+//         return "red.500";
+//       default:
+//         return "gray.500";
+//     }
+//   };
+
+//   return (
+//     <VStack spacing={4} align="start" onFocus={handleFocus} onBlur={handleBlur}>
+//       {/* Drop Zone */}
+//       <Box
+//         as="label"
+//         htmlFor="file-input"
+//         border="2px dashed"
+//         borderColor="gray.300"
+//         padding={6}
+//         borderRadius="md"
+//         cursor="pointer"
+//         _hover={{ borderColor: "gray.400" }}
+//         width="full"
+//         textAlign="center"
+//         onDrop={handleDrop} // Add drop handler
+//         onDragOver={handleDragOver} // Prevent default dragover behavior
+//         tabIndex={0} // Ensure the element can lose focus
+//       >
+//         {images.length < 6
+//           ? "Click or drag an image to upload"
+//           : "Maximum 6 images reached"}
+//         <input
+//           id="file-input"
+//           type="file"
+//           accept="image/*"
+//           onChange={handleFileSelect}
+//           style={{ display: "none" }}
+//           disabled={images.length >= 6} // Disable input if max images reached
+//         />
+//       </Box>
+
+//       {/* Image Previews */}
+//       <HStack spacing={4} wrap="wrap">
+//         {images.map((image, index) => (
+//           <Box key={index} position="relative" width="100px">
+//             <Image
+//               src={image.url}
+//               alt={`Selected image ${index + 1}`}
+//               boxSize="100px"
+//               borderRadius="md"
+//             />
+//             {/* Close Button */}
+//             <IconButton
+//               icon={<CloseIcon />}
+//               size="xs"
+//               position="absolute"
+//               top="0"
+//               right="0"
+//               onClick={() => handleRemoveImage(index)}
+//               aria-label="Remove image"
+//             />
+//             {/* Status Placeholder */}
+//             {image.status === "uploading" && (
+//               <Progress size="sm" value={image.progress} colorScheme="blue" />
+//             )}
+//             {image.status === "failed" && (
+//               <Button size="xs" onClick={() => handleRetryUpload(index)}>
+//                 Retry
+//               </Button>
+//             )}
+//             <Text
+//               fontSize="sm"
+//               color={getColorByStatus(image.status)}
+//               textAlign="center"
+//             >
+//               {image.status}
+//             </Text>
+//           </Box>
+//         ))}
+//       </HStack>
+//     </VStack>
+//   );
+// };
+
+export const ImageUpload = ({ onImagesSelected }) => {
+  const [images, setImages] = useState([]); // Array to hold selected images
+  const [isFocused, setIsFocused] = useState(false); // Track if the component is focused
+
+  // Handle file selection
+  const handleFileSelect = (event) => {
+    event.preventDefault();
+    const file = event.target.files[0];
+    if (file && images.length < 6) {
+      const imageUrl = URL.createObjectURL(file);
+      const newImage = { url: imageUrl, status: "idle", progress: 0, file };
+      const updatedImages = [...images, newImage];
+      setImages(updatedImages); // Add new image with default status and progress
+      if (onImagesSelected) {
+        onImagesSelected(updatedImages); // Pass selected images to the parent
+      }
     }
   };
 
-  const handleUpload = async () => {
-    if (selectedFile) {
-      const imageUrl = await onImageUpload(selectedFile);
-      console.log("Uploaded Image URL:", imageUrl); // Use this for debugging
+  // Prevent default behavior for drag-and-drop
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && images.length < 6) {
+      const imageUrl = URL.createObjectURL(file);
+      const newImage = { url: imageUrl, status: "idle", progress: 0, file };
+      const updatedImages = [...images, newImage];
+      setImages(updatedImages);
+      if (onImagesSelected) {
+        onImagesSelected(updatedImages); // Pass selected images to the parent
+      }
     }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
-      {imagePreview && <img src={imagePreview} alt="Preview" width={100} />}
-      <button onClick={handleUpload}>Upload to Imgur</button>
+    <div
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      className={`image-upload ${isFocused ? "focused" : ""}`}
+    >
+      <input
+        type="file"
+        onChange={handleFileSelect}
+        accept="image/*"
+        className="file-input"
+      />
+      <div className="preview-container">
+        {images.map((image, index) => (
+          <div key={index} className="image-preview">
+            <img src={image.url} alt={`Preview ${index}`} />
+            <p>Status: {image.status}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
-
-// export default ImageUploader;

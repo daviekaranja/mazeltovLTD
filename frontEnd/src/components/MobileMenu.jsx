@@ -8,9 +8,12 @@ import {
   DrawerFooter,
   Button,
   VStack,
+  Link,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 function MobileMenu({ isOpen, onClose }) {
+  navigate = useNavigate();
   return (
     <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
       <DrawerOverlay />
@@ -20,6 +23,7 @@ function MobileMenu({ isOpen, onClose }) {
 
         <DrawerBody>
           <VStack align="start" spacing={4}>
+            <Link href="/buy-airtime">Buy Airtime</Link>
             <Button variant="ghost" width="100%">
               Home
             </Button>

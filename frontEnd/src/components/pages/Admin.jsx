@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductManager from "../ProductManager";
 import Services from "../Services";
 import Dashboard from "../DashBoard";
@@ -19,6 +19,11 @@ const AdminPage = () => {
       console.log(response);
     }
   };
+
+  // Scroll to the top when the page loads
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
 
   const CustomButtons = (product) => {
     return (
