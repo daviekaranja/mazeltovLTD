@@ -22,6 +22,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Heading,
 } from "@chakra-ui/react";
 
 // Function to convert local phone number to international format
@@ -106,17 +107,27 @@ const BuyAirtime = () => {
 
   return (
     <Box
+      minH={"100vh"}
       fontSize={"md"}
       mt={4}
-      w={{ base: "100%", md: 350 }}
+      w="100%"
       mx={"auto"}
       color={"gray.500"}
-      p={2}
+      p={[4, 6, 8]}
       bg={"white"}
     >
-      <Card boxShadow={"md"}>
-        <CardHeader bg={"white"}>
-          <Text>Buy airtime across all networks any time any place</Text>
+      <Card
+        boxShadow={"md"}
+        mx={"auto"}
+        border={"1px"}
+        borderColor={"gray.200"}
+        maxW={["100%", 300]}
+      >
+        <CardHeader>
+          <Text>
+            Buy airtime for Safaricom, Airtel and Telkom anytime Delivery is
+            instant
+          </Text>
         </CardHeader>
         <CardBody>
           <Text pb={2}>Buy airtime for</Text>
