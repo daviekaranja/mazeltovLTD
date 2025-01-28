@@ -7,6 +7,7 @@ import { useAuth } from "../AuthProvider";
 import { Box, Link, Text, Flex, Button, Grid } from "@chakra-ui/react";
 import ApiService from "../../utils/ApiService";
 import useProducts from "../../hooks/useProducts";
+import NewProductForm from "../NewProductForm";
 
 const AdminPage = () => {
   const { deleteProduct } = useProducts();
@@ -63,7 +64,8 @@ const AdminPage = () => {
         </Box>
         <Flex justifyContent={"center"} p={"2"} width={"100%"}>
           <Button
-            onClick={() => setActiveComponent(<ProductManager />)}
+            onClick={() => setActiveComponent(<NewProductForm />)}
+            // onClick={() => setActiveComponent(<ProductManager />)}
             color={"white"}
             bg={"blue.500"}
           >

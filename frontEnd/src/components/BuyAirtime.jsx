@@ -1,19 +1,11 @@
-import React, { useState } from "react";
-import { PayBillPush } from "../schemas/schemas"; // Ensure your Zod schema is correctly imported
+import { Link } from "react-router-dom";
+import React from "react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useState } from "react";
 import axiosClient from "../api/axiosClient";
+
 import {
-  Box,
-  Text,
-  FormControl,
-  Input,
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Stack,
-  Radio,
-  RadioGroup,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -22,188 +14,161 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  Heading,
 } from "@chakra-ui/react";
 
-// Function to convert local phone number to international format
-const formatStkNumber = (phone) => {
-  if (/^07\d{8}$/.test(phone) || /^01\d{8}$/.test(phone)) {
-    return `254${phone.slice(1)}`;
-  }
-  return phone;
-};
-
-// Function to validate recharge number format (local 07/01 format)
-const validateRechargeNumber = (phone) => {
-  return /^07\d{8}$/.test(phone) || /^01\d{8}$/.test(phone);
-};
-
 const BuyAirtime = () => {
-  const [recipient, setRecipient] = useState("self");
-  const [data, setData] = useState({
-    rechargeNumber: "",
-    amount: "",
-  });
-  const [mpesaNumber, setMpesaNumber] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleMpesaInputChange = (e) => {
-    setMpesaNumber(e.target.value);
-  };
-
-  const handleSubmitMpesaNumber = async () => {
-    // Assign the value of stkNumber to rechargeNumber based on recipient
-    const rechargeNumber =
-      recipient === "self" ? mpesaNumber : data.rechargeNumber;
-
-    // Convert stkNumber to international format
-    const formattedStkNumber = formatStkNumber(mpesaNumber);
-
-    // Validate rechargeNumber if necessary
-    let formattedRechargeNumber = rechargeNumber;
-    if (recipient === "other") {
-      // If "other", ensure rechargeNumber is in the correct local format
-      if (!validateRechargeNumber(rechargeNumber)) {
-        console.error("Invalid recharge number format");
-        return;
-      }
-    }
-
-    // Construct the payload with the unformatted recharge number for "self"
-    const payload = {
-      rechargeNumber:
-        recipient === "self" ? mpesaNumber : formattedRechargeNumber,
-      stkNumber: formattedStkNumber,
-      amount: Number(data.amount),
-    };
-
-    console.log("Payload before validation:", payload);
-
-    try {
-      // Validate using PayBillPush schema
-      const sanitized = PayBillPush.parse(payload);
-      console.log("Sanitized Data:", sanitized);
-
-      // Proceed with sending the STK push via API call if validation is successful
-      const response = await axiosClient.post(
-        "/payments/paybill-push",
-        sanitized
-      );
-      console.log("STK Push Response: ", response.data);
-
-      onClose(); // Close modal after successful validation and API call
-    } catch (err) {
-      console.error("Validation or API Error: ", err.errors); // Log Zod error details
-    }
-  };
+  const validationSchema = Yup.object().shape({
+    amount: Yup.number()
+      .required("Amount is required")
+      .min(5, "Amount must be at least 5")
+      .max(2500, "Amount must be less than 2500"),
+    phone_number: Yup.string()
+      .matches(
+        /^(07|01)\d{8}$/,
+        "Phone number must start with 07 or 01 and be 10 digits"
+      )
+      .required("Phone number is required"),
+    mpesa_number: Yup.string()
+      .matches(
+        /^(07|01)\d{8}$/,
+        "Phone number must start with 07 or 01 and be 10 digits"
+      )
+      .required("Phone number is required"),
+  });
 
   return (
-    <Box
-      minH={"100vh"}
-      fontSize={"md"}
-      mt={4}
-      w="100%"
-      mx={"auto"}
-      color={"gray.500"}
-      p={[4, 6, 8]}
-      bg={"white"}
-    >
-      <Card
-        boxShadow={"md"}
-        mx={"auto"}
-        border={"1px"}
-        borderColor={"gray.200"}
-        maxW={["100%", 300]}
-      >
-        <CardHeader>
-          <Text>
-            Buy airtime for Safaricom, Airtel and Telkom anytime Delivery is
-            instant
-          </Text>
-        </CardHeader>
-        <CardBody>
-          <Text pb={2}>Buy airtime for</Text>
+    <div className="flex flex-col items-center min-h-screen bg-gray-100">
+      <div className="p-8 mx-auto bg-white text-gray-600 rounded-md border mb-8 border-gray-200 hover:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md w-full md:w-[400px] mt-4">
+        <h3 className="text-2xl text-center font-bold mb-4">Buy Airtime</h3>
+        <p className="text-left text-gray-500 mb-12">
+          Buy airtime across all networks anytime. <br /> You can buy for any
+          number
+        </p>
 
-          <RadioGroup onChange={setRecipient} value={recipient}>
-            <Stack direction="row">
-              <Radio value="self">Self</Radio>
-              <Radio value="other">Other</Radio>
-            </Stack>
-          </RadioGroup>
+        <Formik
+          initialValues={{
+            amount: "",
+            phone_number: "",
+            mpesa_number: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={(values) => {
+            const strippedNumber = values.phone_number.replace(/^0/, ""); // Remove the leading 0
+            const payload = {
+              amount: values.amount,
+              stkNumber: `254${strippedNumber}`,
+            };
+            console.log(payload);
+            const response = axiosClient.post(
+              import.meta.env.VITE_PUSH_URL,
+              payload
+            );
+            console.log(response);
+            onClose(); // Close modal after submission
+          }}
+        >
+          {({ handleSubmit }) => (
+            <>
+              <Form>
+                {/* Amount Field */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="amount"
+                    className="block text-gray-600 font-semibold mb-2"
+                  >
+                    Amount
+                  </label>
+                  <Field
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500"
+                  />
+                  <ErrorMessage
+                    name="amount"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
 
-          {recipient === "other" && (
-            <Box mt={2}>
-              <FormControl>
-                <Input
-                  variant="flushed"
-                  placeholder="Enter phone number"
-                  name="rechargeNumber"
-                  value={data.rechargeNumber}
-                  onChange={handleInputChange}
-                />
-              </FormControl>
-            </Box>
+                {/* Phone Number Field */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="phone_number"
+                    className="block text-gray-600 font-semibold mb-2"
+                  >
+                    Phone Number
+                  </label>
+                  <Field
+                    type="tel"
+                    id="phone_number"
+                    name="phone_number"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500"
+                  />
+                  <ErrorMessage
+                    name="phone_number"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+
+                {/* Button to Open Modal */}
+                <button
+                  type="button"
+                  onClick={onOpen}
+                  className="w-full mb-8 bg-blue-600 font-bold text-white py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
+                >
+                  Next
+                </button>
+              </Form>
+
+              {/* Modal for M-Pesa Number */}
+              <Modal size={"sm"} isOpen={isOpen} isCentered onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader className="text-2xl font-bold">
+                    Enter M-Pesa Number
+                  </ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    {/* Mpesa Number Field */}
+                    <label
+                      htmlFor="mpesa_number"
+                      className="block text-gray-600 font-semibold mb-2"
+                    >
+                      M-Pesa Number
+                    </label>
+                    <Field
+                      type="tel"
+                      id="mpesa_number"
+                      name="mpesa_number"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500"
+                    />
+                    <ErrorMessage
+                      name="mpesa_number"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    {/* Updated Button to Trigger Formik Submission */}
+                    <button
+                      onClick={handleSubmit}
+                      type="submit"
+                      className="w-full bg-green-600 font-bold text-white py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
+                    >
+                      Buy Airtime
+                    </button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </>
           )}
-
-          <Box mt={4}>
-            <FormControl>
-              <Input
-                type="number"
-                variant="flushed"
-                placeholder="Enter amount"
-                name="amount"
-                value={data.amount}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-          </Box>
-        </CardBody>
-
-        <CardFooter>
-          <Box mx={"auto"}>
-            <Button colorScheme="blue" onClick={onOpen}>
-              Next
-            </Button>
-          </Box>
-        </CardFooter>
-      </Card>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent maxW={["90%", "400px"]} mx="auto">
-          <ModalHeader>Pay With Mpesa</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text pb={4} fontSize={["sm", "md"]}>
-              Enter your Mpesa number, you'll get a prompt to confirm the
-              transaction
-            </Text>
-            <FormControl>
-              <Input
-                placeholder="0700 000 000"
-                value={mpesaNumber}
-                onChange={handleMpesaInputChange}
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Box mx={"auto"}>
-              <Button colorScheme="green" onClick={handleSubmitMpesaNumber}>
-                Submit
-              </Button>
-            </Box>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Box>
+        </Formik>
+      </div>
+    </div>
   );
 };
 
