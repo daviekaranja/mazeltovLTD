@@ -14,10 +14,13 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Spinner,
 } from "@chakra-ui/react";
+import { div } from "framer-motion/client";
 
 const BuyAirtime = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(false);
 
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
@@ -60,7 +63,20 @@ const BuyAirtime = () => {
               amount: values.amount,
               stkNumber: `254${strippedNumber}`,
             };
+            setIsLoading(true);
             console.log(payload);
+            try {
+              const response = axiosClient.post(
+                import.meta.env.VITE_PUSH_URL,
+                payload
+              );
+              if (response.status === 200) {
+                setIsLoading(false);
+              }
+              onClose(); // Close modal after submission
+            } catch (error) {
+              console.error("Error:", error);
+            }
             const response = axiosClient.post(
               import.meta.env.VITE_PUSH_URL,
               payload
@@ -151,6 +167,15 @@ const BuyAirtime = () => {
                       component="div"
                       className="text-red-500 text-sm mt-1"
                     />
+
+                    {/* spinner */}
+                    {isLoading && (
+                      <div className="flex justify-center mt-4">
+                        <div className="loader">
+                          <Spinner size="lg" />
+                        </div>
+                      </div>
+                    )}
                   </ModalBody>
                   <ModalFooter>
                     {/* Updated Button to Trigger Formik Submission */}
