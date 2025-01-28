@@ -6,11 +6,11 @@ import Sales from "./pages/DataAirtimeSales";
 
 const Home = () => {
   return (
-    <Box>
+    <div className="text-3xl flex flex-col text-gray-800 space-y-6 w-full justify-evenly">
       <Hero />
       <Sales />
       <Services />
-    </Box>
+    </div>
   );
 };
 
