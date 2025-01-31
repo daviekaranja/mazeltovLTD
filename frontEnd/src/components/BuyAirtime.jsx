@@ -15,12 +15,17 @@ import {
   ModalCloseButton,
   useDisclosure,
   Spinner,
+  shouldForwardProp,
 } from "@chakra-ui/react";
-import { div } from "framer-motion/client";
+import { s, tr } from "framer-motion/client";
 
 const BuyAirtime = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showInput, setShowInput] = useState(true);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
@@ -57,32 +62,36 @@ const BuyAirtime = () => {
             mpesa_number: "",
           }}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
+          onSubmit={async (values) => {
             const strippedNumber = values.phone_number.replace(/^0/, ""); // Remove the leading 0
             const payload = {
               amount: values.amount,
               stkNumber: `254${strippedNumber}`,
             };
+            setShowInput(false);
             setIsLoading(true);
-            console.log(payload);
+            setShowSpinner(true);
+            setShowResult(false);
             try {
-              const response = axiosClient.post(
+              const response = await axiosClient.post(
                 import.meta.env.VITE_PUSH_URL,
                 payload
               );
+              setShowSpinner(false);
               if (response.status === 200) {
-                setIsLoading(false);
+                setIsSuccess(true);
+                // Handle success (perhaps a success message or navigation)
+                onClose();
               }
-              onClose(); // Close modal after submission
+
+              if (response.status !== 200) {
+                setIsSuccess(false);
+                // Handle failure (perhaps a failure message)
+              }
             } catch (error) {
               console.error("Error:", error);
             }
-            const response = axiosClient.post(
-              import.meta.env.VITE_PUSH_URL,
-              payload
-            );
-            console.log(response);
-            onClose(); // Close modal after submission
+            setIsLoading(false);
           }}
         >
           {({ handleSubmit }) => (
@@ -101,6 +110,7 @@ const BuyAirtime = () => {
                     id="amount"
                     name="amount"
                     className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500"
+                    aria-label="Enter the amount"
                   />
                   <ErrorMessage
                     name="amount"
@@ -122,6 +132,7 @@ const BuyAirtime = () => {
                     id="phone_number"
                     name="phone_number"
                     className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500"
+                    aria-label="Enter your phone number"
                   />
                   <ErrorMessage
                     name="phone_number"
@@ -135,54 +146,79 @@ const BuyAirtime = () => {
                   type="button"
                   onClick={onOpen}
                   className="w-full mb-8 bg-blue-600 font-bold text-white py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
+                  aria-label="Proceed to enter M-Pesa number"
                 >
                   Next
                 </button>
               </Form>
-
-              {/* Modal for M-Pesa Number */}
+              {/* Modal for M-Pesa Number 
+               - initially it should show the mpesa number field
+               - when the form is submitted, it should show a spinner
+               - finnaly is should show the results of the request,either success or failure
+              
+              */}
               <Modal size={"sm"} isOpen={isOpen} isCentered onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                  <ModalHeader className="text-2xl font-bold">
-                    Enter M-Pesa Number
-                  </ModalHeader>
+                  <ModalHeader className="text-2xl font-bold"></ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
-                    {/* Mpesa Number Field */}
-                    <label
-                      htmlFor="mpesa_number"
-                      className="block text-gray-600 font-semibold mb-2"
-                    >
-                      M-Pesa Number
-                    </label>
-                    <Field
-                      type="tel"
-                      id="mpesa_number"
-                      name="mpesa_number"
-                      className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500"
-                    />
-                    <ErrorMessage
-                      name="mpesa_number"
-                      component="div"
-                      className="text-red-500 text-sm mt-1"
-                    />
+                    {/* if loading is false, display the input, else hide the input and show the spinner */}
+                    {!isLoading && showInput === true && (
+                      <div>
+                        <p className="text-gray-600 mb-4">
+                          Please enter your M-Pesa number
+                        </p>
+                        {/* Mpesa Number Field */}
+                        <label
+                          htmlFor="mpesa_number"
+                          className="block text-gray-600 font-semibold mb-2"
+                        >
+                          M-Pesa Number
+                        </label>
+                        <Field
+                          type="tel"
+                          id="mpesa_number"
+                          name="mpesa_number"
+                          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500"
+                          aria-label="Enter your M-Pesa number"
+                        />
+                        <ErrorMessage
+                          name="mpesa_number"
+                          component="div"
+                          className="text-red-500 text-sm mt-1"
+                        />
+                      </div>
+                    )}
 
                     {/* spinner */}
-                    {isLoading && (
+                    {showSpinner && (
                       <div className="flex justify-center mt-4">
                         <div className="loader">
-                          <Spinner size="lg" />
+                          <Spinner size="xl" />
                         </div>
                       </div>
+                    )}
+
+                    {showResult && isSuccess === true && (
+                      <p className="text-green-600">
+                        Request sent successfully, check your phone to enter pin
+                      </p>
+                    )}
+                    {showResult && isSuccess === false && (
+                      <p className="text-red-600">
+                        Request failed, please try again
+                      </p>
                     )}
                   </ModalBody>
                   <ModalFooter>
                     {/* Updated Button to Trigger Formik Submission */}
                     <button
                       onClick={handleSubmit}
+                      disabled={isLoading}
                       type="submit"
                       className="w-full bg-green-600 font-bold text-white py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
+                      aria-label="Submit airtime purchase"
                     >
                       Buy Airtime
                     </button>

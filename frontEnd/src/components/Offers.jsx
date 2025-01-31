@@ -12,8 +12,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { offers } from "../utils/utilities";
-import { DealCard } from "../utils/UiComponents";
-import { handleInputChange } from "../utils/utilities";
+import { BingwaCard } from "./BingwaCard";
 
 const OfferCards = () => {
   return (
@@ -32,6 +31,10 @@ const OfferCards = () => {
         <Text color={"green.500"}>
           Get unmatched deals, Data, Minutes, amd Sms
         </Text>
+        <p className="text-sm text-center">
+          {" "}
+          You can buy for self or for another number
+        </p>
       </Box>
       <Accordion allowMultiple defaultIndex={[0]} width={"100%"} px={[1, 2]}>
         {/* Data Offers Section */}
@@ -48,7 +51,8 @@ const OfferCards = () => {
             <SimpleGrid columns={[1, 2, 4]} spacing={2}>
               {offers.data.map((offer, index) => (
                 <Box flex={"1"} key={index}>
-                  <DealCard offerdata={offer} />
+                  {/* <DealCard offerdata={offer} /> */}
+                  <BingwaCard offerdata={offer} />
                 </Box>
               ))}
             </SimpleGrid>
@@ -71,14 +75,12 @@ const OfferCards = () => {
             <SimpleGrid columns={[1, 2, 4]} spacing={4}>
               {offers.sms.map((offer, index) => (
                 <Box key={index}>
-                  <DealCard offerdata={offer} />
+                  <BingwaCard offerdata={offer} />
                 </Box>
               ))}
             </SimpleGrid>
           </AccordionPanel>
         </AccordionItem>
-
-        {/* Minutes Section */}
         <AccordionItem>
           <h2>
             <AccordionButton>
@@ -94,7 +96,7 @@ const OfferCards = () => {
             <SimpleGrid columns={[1, 2, 4]} spacing={6}>
               {offers.minutes.map((offer, index) => (
                 <Box key={index}>
-                  <DealCard offerdata={offer} />
+                  <BingwaCard offerdata={offer} />
                 </Box>
               ))}
             </SimpleGrid>
@@ -117,7 +119,8 @@ const OfferCards = () => {
             <SimpleGrid columns={[1, 2, 4]} spacing={6}>
               {offers.minutesPlusData.map((offer, index) => (
                 <Box key={index}>
-                  <DealCard offerdata={offer} />
+                  {/* <DealCard offerdata={offer} /> */}
+                  <BingwaCard offerdata={offer} />
                 </Box>
               ))}
             </SimpleGrid>
