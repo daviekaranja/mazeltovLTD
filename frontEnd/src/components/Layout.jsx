@@ -7,7 +7,7 @@ import MobileMenu from "./MobileMenu";
 const Layout = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const links = ["Home", "Products", "About", "Support"];
-  const dest = ["/", "/products", "/about", "/support"];
+  const dest = ["/", "/deals", "/about", "/support"];
   return (
     <div className="flex flex-col min-h-screen w-full">
       {/* navbar section */}

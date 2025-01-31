@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ApiService from "./ApiService";
+import { p } from "framer-motion/client";
 
 export const categories = [
   "Electronics",
@@ -33,32 +34,34 @@ export const showErrorToast = async (id, title, description) => {
 
 export const offers = {
   data: [
-    { label: "1GB, 1 HR", price: "19" },
-    { label: "250MB, 24 HRS", price: "20" },
-    { label: "1GB, 24 HRS", price: "99" },
-    { label: "1.25GB, 12:00PM", price: "55" },
-    { label: "2.5 GB, 7 DAYS", price: "300" },
-    { label: "6.5 GB, 7 DAYS", price: "700" },
-    { label: "1.2GB, 30 DAYS", price: "250" },
-    { label: "2.5 GB, 30 DAYS", price: "500" },
-    { label: "10 GB, 30 DAYS", price: "1001" },
-    { label: "350 MB, 7 DAYS", price: "49" },
-    { label: "1.5 GB, 3 HRS", price: "50" },
+    { label: "1GB, 1 HR", price: "19", productID: "005" },
+    { label: "250MB, 24 HRS", price: "20", productID: "006" },
+    { label: "1GB, 24 HRS", price: "99", productID: "007" },
+    { label: "1.25GB, Till Midnight", price: "55", productID: "008" },
+    { label: "2.5 GB, 7 DAYS", price: "300", productID: "003" },
+    { label: "6 GB, 7 DAYS", price: "700", productID: "004" },
+    { label: "1.2GB, 30 DAYS", price: "250", productID: "011" },
+    { label: "2.5 GB, 30 DAYS", price: "500", productID: "012" },
+    { label: "10 GB, 30 DAYS", price: "1001", productID: "016" },
+    { label: "350 MB, 7 DAYS", price: "49", productID: "002" },
+    { label: "1.5 GB, 3 HRS", price: "50", productID: "001" },
   ],
   sms: [
-    { label: "1000SMS, 7 DAYS", price: "30" },
-    { label: "20 SMS, 1 DAY", price: "5" },
-    { label: "200 SMS, 1 DAY", price: "10" },
-    { label: "100 SMS, 7 DAYS", price: "21" },
-    { label: "1500 SMS, 30 DAYS", price: "101" },
-    { label: "3500 SMS, 30 DAYS", price: "201" },
-    { label: "50 FLEX, 12:00pm", price: "51" },
+    { label: "1000SMS, 7 DAYS", price: "30", productID: "010" },
+    { label: "20 SMS, 1 DAY", price: "5", productID: "017" },
+    { label: "200 SMS, 1 DAY", price: "10", productID: "018" },
+    { label: "100 SMS, 7 DAYS", price: "21", productID: "019" },
+    { label: "1500 SMS, 30 DAYS", price: "101", productID: "020" },
+    { label: "3500 SMS, 30 DAYS", price: "201", productID: "021" },
+    { label: "50 FLEX, 12:00pm", price: "51", productID: "009" },
   ],
   minutes: [
-    { label: "300 MIN, 30 DAYS", price: "499" },
-    { label: "800 MIN, 30 DAYS", price: "1000" },
+    { label: "300 MIN, 30 DAYS", price: "499", productID: "013" },
+    { label: "800 MIN, 30 DAYS", price: "1000", productID: "015" },
   ],
-  minutesPlusData: [{ label: "8GB+ 400 MINUTES", price: "999" }],
+  minutesPlusData: [
+    { label: "8GB+ 400 MINUTES", price: "999", productID: "014" },
+  ],
 };
 
 export const handleInputChange = (setData) => (e) => {
