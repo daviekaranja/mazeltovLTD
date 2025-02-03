@@ -126,6 +126,9 @@ const BuyAirtime = () => {
                     className="block text-gray-600 font-semibold mb-2"
                   >
                     Phone Number
+                    <p className="text-xs text-gray-500">
+                      This is the number you are buying airtime for
+                    </p>
                   </label>
                   <Field
                     type="tel"

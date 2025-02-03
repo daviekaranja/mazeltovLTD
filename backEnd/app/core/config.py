@@ -19,9 +19,11 @@ class Settings(BaseSettings):
     api_string: str = '/api/v1'
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 3600
     secret: str = 'secrets.token_urlsafe()'
+    bingwa_url: str
 
     # Mpesa Integration
     shortcode: str
+    paybill: int
     passkey: str
     consumer_key: str
     consumer_secret: str
@@ -38,7 +40,14 @@ class Settings(BaseSettings):
 
     template_path: str = 'app/html_template/'
 
+    imgur_client_id: str
+    imgur_client_secret: str
+
     static_files: str
+    cors_origins: str
+
+    def parse_origins(self):
+        return self.cors_origins.split(',')
 
     def get_local_time_with_timezone(self):
         # Define the timezone for Africa/Nairobi

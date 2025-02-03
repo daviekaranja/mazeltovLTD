@@ -48,7 +48,7 @@ const OfferCards = () => {
             <AccordionIcon />
           </AccordionButton>
           <AccordionPanel pb={4}>
-            <SimpleGrid columns={[1, 2, 4]} spacing={2}>
+            <SimpleGrid columns={[1, 2, 4]} spacing={4}>
               {offers.data.map((offer, index) => (
                 <Box flex={"1"} key={index}>
                   {/* <DealCard offerdata={offer} /> */}

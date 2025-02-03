@@ -1,13 +1,15 @@
-from fastapi import FastAPI, HTTPException, APIRouter, Query, Request
-from fastapi.responses import PlainTextResponse
-from sse_starlette import EventSourceResponse
-from typing import Optional
-import os
-import time
-from collections import deque
-from fastapi import FastAPI, Request, APIRouter
 import asyncio
-from typing import List
+import os
+from typing import Optional
+
+# from fastapi import
+import requests
+from fastapi import FastAPI, Request, APIRouter
+from fastapi import File, UploadFile, Depends, HTTPException
+from fastapi.responses import PlainTextResponse
+from sqlalchemy.orm import Session  # assuming SQLAlchemy for DB management
+from sse_starlette import EventSourceResponse
+from app.utilities.utils import upload_image_to_imgur
 
 router = APIRouter()
 
@@ -85,7 +87,7 @@ async def message_stream(request: Request):
                         # Yield each new line as an event
                         for line in new_lines:
                             yield {
-                                "data": line.strip() # Remove any trailing newline characters
+                                "data": line.strip()  # Remove any trailing newline characters
                             }
                     else:
                         await asyncio.sleep(stream_delay)  # No new lines, wait and check again
@@ -102,3 +104,24 @@ async def message_stream(request: Request):
                 await asyncio.sleep(stream_delay)  # Wait before trying again
 
     return EventSourceResponse(event_generator())
+
+
+@router.post("/upload-images", status_code=200)
+async def upload_images(images: list[UploadFile] = File(...)):
+    imgur_links = []
+    if images is not None:
+        for image in images:
+            # Upload each image to Imgur
+            try:
+                imgur_link = upload_image_to_imgur(image)
+                imgur_links.append(imgur_link)
+                # Save each link to the database
+                # save_image_link(db, image.filename, imgur_link)
+            except HTTPException as e:
+                raise e
+
+        return {"uploaded_images": [{"filename": image.filename, "imgur_link": link} for image, link in
+                                    zip(images, imgur_links)]}
+
+    else:
+        return None

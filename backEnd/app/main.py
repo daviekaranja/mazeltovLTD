@@ -22,15 +22,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPIOffline(lifespan=lifespan)
-
-origins = [
-    "http://localhost:5173",  # Frontend origin
-]
+print(settings.parse_origins())
 
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.parse_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

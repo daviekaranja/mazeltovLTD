@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import time
 
 import requests
-from fastapi import HTTPException, Request
+from fastapi import HTTPException, Request, UploadFile
 from jinja2 import Environment, FileSystemLoader
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
@@ -20,52 +20,95 @@ from ..models import security
 
 
 def get_timestamp():
-    time = datetime.now().strftime("%Y%m%d%H%M%S")
-    return time
+    return datetime.now().strftime("%Y%m%d%H%M%S")
 
 
 def generate_password():
-    shortcode = settings.shortcode
+    shortcode = settings.paybill
     passkey = settings.passkey
     timestamp = get_timestamp()
 
-    data_to_encode = shortcode + passkey + timestamp
+    data_to_encode = str(shortcode) + passkey + str(timestamp)
     encoded_string = base64.b64encode(data_to_encode.encode()).decode('utf-8')
 
     return encoded_string
 
 
-def get_mpesa_token() -> str:
-    consumer_key = settings.consumer_key  # Your Consumer Key
-    consumer_secret = settings.consumer_secret  # Your Consumer Secret
-    token_url = settings.token_url
+def get_mpesa_token_v2() -> str:
+    consumer_key = 'G6varFea7otRUkBZEBlGEbnRzt4qgamL9YN1cvE6n2VnGs8O'
+    consumer_secret = 'QiM4LJzWs5EJwCVnOw9TxH6COMbegRs8gJhpxAzsaXM7NRROfGVh9oGEBt3QQ2GC'
 
-    # Combine the consumer key and secret and encode them
     credentials = f"{consumer_key}:{consumer_secret}"
     encoded_credentials = base64.b64encode(credentials.encode()).decode()
 
-    # Set up the headers with Basic Auth
-    headers = {
-        "Authorization": f"Basic {encoded_credentials}",
-        "Content-Type": "application/json"
-    }
-
-    # Make the request
     try:
-        response = requests.get(token_url, headers=headers)
-        if response.status_code == 200:
-            log.info(f'Access Token Granted: {response.json()}')
-            token_data = response.json()
-            access_token = token_data.get("access_token")
-            return access_token
-        else:
-            log.error(f"An Error Occurred: {response.json()}")
-            error_details = response.json()
-            error_message = error_details.get("error_description", "Failed to retrieve access token")
-            raise HTTPException(status_code=response.status_code, detail=error_message)
+        response = requests.get(
+            "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+            headers={'Authorization': f"Basic {encoded_credentials}"}
+        )
 
-    except requests.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Request failed: {str(e)}")
+        if response.status_code == 200:
+            log.info(f"Access Token Granted: {response.json()}")
+            return response.json().get('access_token')
+
+    except Exception as e:
+        # Catching unexpected errors like network issues
+        log.error(f"Request Failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error during request: {e}")
+# def get_mpesa_token_v2() -> str:
+#     consumer_key = settings.consumer_key
+#     consumer_secret = settings.consumer_secret
+#     token_url = settings.token_url
+#
+#     # Encode credentials
+#     credentials = f"{consumer_key}:{consumer_secret}"
+#     encoded_credentials = base64.b64encode(credentials.encode()).decode()
+#     log.debug(f"Encoded Credentials: {encoded_credentials}")
+#
+#     headers = {
+#         "Authorization": f"Basic {encoded_credentials}",
+#         "Content-Type": "application/json"
+#     }
+#
+#     log.debug(headers)
+#     try:
+#         response = requests.request(method='GET', url=token_url, headers=headers, timeout=10)
+#         log.debug(f"Raw Response: {response.text}")  # Log raw response for debugging
+#
+#         # Check if response is JSON before parsing
+#         if "application/json" in response.headers.get("Content-Type", ""):
+#             response_data = response.json()
+#         else:
+#             log.info(response)
+#             log.error(f"Non-JSON Response (Status {response.status_code}): {response.text}")
+#             raise HTTPException(status_code=500, detail="Invalid response format from Safaricom API")
+#
+#         # Handle successful response
+#         if response.status_code == 200:
+#             access_token = response_data.get("access_token")
+#             if access_token:
+#                 log.info("Access Token Granted Successfully")
+#                 return access_token
+#             else:
+#                 log.error("Access Token Missing in Response")
+#                 raise HTTPException(status_code=500, detail="Access token missing in Safaricom response")
+#
+#         # Handle known API errors
+#         error_message = response_data.get("error_description", "Failed to retrieve access token")
+#         log.error(f"Safaricom API Error {response.status_code}: {error_message}")
+#         raise HTTPException(status_code=response.status_code, detail=error_message)
+#
+#     except requests.Timeout:
+#         log.error("Request Timed Out")
+#         raise HTTPException(status_code=504, detail="Request to Safaricom API timed out")
+#
+#     except requests.ConnectionError as e:
+#         log.error(f"Connection Error: {e}")
+#         raise HTTPException(status_code=503, detail="Failed to connect to Safaricom API")
+#
+#     except requests.RequestException as e:
+#         log.error(f"Unexpected Request Error: {e}")
+#         raise HTTPException(status_code=500, detail="Unexpected error during request")
 
 
 def process_callback_data(callback_data: dict, db: Session):
@@ -164,3 +207,22 @@ def send_password_reset_mail(email: EmailStr, username, reset_link, db):
     except Exception as e:
         log.error(e)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+def upload_image_to_imgur(image_file: UploadFile) -> str:
+    headers = {'Authorization': f'Client-ID {settings.imgur_client_id}'}
+    files = {'image': (image_file.filename, image_file.file, image_file.content_type)}
+
+    response = requests.post("https://api.imgur.com/3/upload", headers=headers, files=files)
+
+    if response.status_code == 200:
+        return response.json()['data']['link']  # Get the Imgur link
+    else:
+        print("Error:", response.json())
+        raise HTTPException(status_code=500, detail="Failed to upload image to Imgur")
+
+
+# import requests
+# ​
+# response = requests.request("GET", 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', headers = { 'Authorization': 'Basic d1d6R01XcUdiRThTalRqdFRKeEF0RThXaXUwcVlDbWxqQWxzdUpsRWRtcXY3Q1h3OlNxMHJMMkpXYXN4R1hqbG84MVRHdURMNFU3VzdRZTlLQzVOdkxpU1lSVFVXVEduckpvSkRvN0czek94WWVxYTY=' })
+# print(response.text.encode('utf8'))
