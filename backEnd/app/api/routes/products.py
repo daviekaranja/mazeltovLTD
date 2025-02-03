@@ -2,10 +2,11 @@ from typing import List
 
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.encoders import jsonable_encoder
 from app.api import dependancies
 from app.crud import crudProducts, crudUsers
+from app.models.products import ProductImage
 from app.models.users import User
 from app.schemas.product import ProductCreate, ProductUpdate, ProductInDb
 
@@ -130,6 +131,29 @@ def update_product(db: Session = Depends(dependancies.get_db), *, product_id: in
         raise HTTPException(status_code=403, detail="You do not have permission to update this product")
 
 
+@router.post("/products/upload-images/{product_id}")
+async def upload_images(product_id: int, files: List[UploadFile] = File(...),
+                        db: Session = Depends(dependancies.get_db)):
+    max_images = 6
+    max_image_size_mb = 1
+    prod = crudProducts.product.get(db, id=product_id)
+    if not prod:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    if len(files) > max_images:
+        raise HTTPException(status_code=400, detail="You can only upload a maximum of 6 images")
+
+    for file in files:
+        contents = await file.read()
+        if len(contents) > max_image_size_mb * 1048576:
+            raise HTTPException(status_code=400, detail="Each image must be smaller than 1MB.")
+        image = ProductImage(product_id=product_id, image_data=contents)
+        db.add(image)
+
+    db.commit()
+    return {"message": "Images uploaded successfully"}
+
+
 @router.delete('/remove-product/{product_id}', status_code=204)
 def remove_product(*, product_id, db: Session = Depends(dependancies.get_db),
                    user: User = Depends(dependancies.get_current_user)):
@@ -154,4 +178,3 @@ def remove_product(*, product_id, db: Session = Depends(dependancies.get_db),
         return del_product
     else:
         raise HTTPException(status_code=403, detail="You do not have permission to remove this product")
-

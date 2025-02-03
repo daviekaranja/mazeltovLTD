@@ -22,6 +22,7 @@ class Settings(BaseSettings):
 
     # Mpesa Integration
     shortcode: str
+    paybill: int
     passkey: str
     consumer_key: str
     consumer_secret: str
@@ -38,7 +39,14 @@ class Settings(BaseSettings):
 
     template_path: str = 'app/html_template/'
 
+    imgur_client_id: str
+    imgur_client_secret: str
+
     static_files: str
+    cors_origins: str
+
+    def parse_origins(self):
+        return self.cors_origins.split(',')
 
     def get_local_time_with_timezone(self):
         # Define the timezone for Africa/Nairobi

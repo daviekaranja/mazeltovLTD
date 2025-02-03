@@ -3,60 +3,58 @@ import requests
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.utilities.utils import get_timestamp, get_mpesa_token, generate_password
+from app.utilities.utils import get_timestamp, generate_password
 from app.schemas.payments import PayBillPush, PushParams, STKPushResponse, TransactionResponse
 from app.utilities.logger import log
-from app.utilities.utils import get_mpesa_token, process_callback_data
+from app.utilities.utils import get_mpesa_token_v2, process_callback_data
 from fastapi.encoders import jsonable_encoder
 from app.api.dependancies import get_db
 
 from requests.exceptions import RequestException, HTTPError
-from pydantic import ValidationError
-import json
 from json import JSONDecodeError
 
 router = APIRouter()
 
+@router.post('/bingwa-proxy', status_code=200)
+def bingwa_api_proxy():
+    pass
 
-@router.post('/stk-push', status_code=200, response_model=STKPushResponse)
+
+@router.post('/buy-airtime-stk-push', status_code=200, response_model=STKPushResponse,
+             description='paybill payment for buying airtime')
 def send_stk_push(params: PushParams, request: Request):
-    try:
-        # params = PushParams(stkNumber=stkNumber, amount=100, rechargeNumber=rechargeNumber)
-        log.info(params)
-    except ValidationError as e:
-        log.error(f'Validation Error: {e}')
-        raise HTTPException(status_code=400, detail=f'Validation Error: {e}')
-
     # Headers for the API request
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': f'Bearer {get_mpesa_token()}'  # Pass the token dynamically
+        'Authorization': f'Bearer {get_mpesa_token_v2()}'  # Pass the token dynamically
     }
 
+    log.debug(f'headers: {headers}')
+
     callback_url = request.url_for('c2b-callback')
-    transaction_type = 'CustomerBuyGoodsOnline'
+    transaction_type = 'CustomerPayBillOnline'
 
     payload = {
-        "BusinessShortCode": settings.shortcode,
+        "BusinessShortCode": settings.paybill,
         "Password": generate_password(),
         "Timestamp": get_timestamp(),
         "TransactionType": transaction_type,
         "Amount": params.amount,
-        "PartyA": params.stkNumber,  # same as phone number
-        "PartyB": settings.till_no,  # here you put till number if you're integrating a till
-        "PhoneNumber": params.stkNumber,  # phone number to send stk
+        "PartyA": params.stkNumber,
+        "PartyB": settings.paybill,
+        "PhoneNumber": params.stkNumber,
         "CallBackURL": str(callback_url),
-        "AccountReference": params.stkNumber,
-        "TransactionDesc": "Offers and Data"
+        "AccountReference": params.rechargeNumber,
+        "TransactionDesc": "Buy Airtime"
     }
 
-    api_url = settings.api_url
     # Make the POST request
     try:
-        response = requests.post(api_url, headers=headers, json=payload)
+        response = requests.post(settings.api_url, headers=headers, json=payload)
         response.raise_for_status()  # Raise an exception for 4xx/5xx errors
 
         try:
+            log.info(response.json())
             return response.json()
         except JSONDecodeError as e:
             log.error(f"Failed to parse JSON response: {e}")
@@ -72,7 +70,7 @@ def send_stk_push(params: PushParams, request: Request):
 @router.get("/stk-push-query/{checkout_request_id}", status_code=200)
 async def stk_push_query(checkout_request_id: str):
     headers = {
-        "Authorization": f"Bearer {get_mpesa_token()}",
+        "Authorization": f"Bearer {get_mpesa_token_v2()}",  # Updated to use get_mpesa_token_v2
         "Content-Type": "application/json"
     }
 
@@ -130,3 +128,4 @@ async def mpesa_callback(request: Request, db: Session = Depends(get_db)):
     except Exception as e:
         log.exception(f"Unexpected error occurred while handling the Mpesa callback: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
