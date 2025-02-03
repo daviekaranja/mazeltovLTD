@@ -15,11 +15,6 @@ from json import JSONDecodeError
 
 router = APIRouter()
 
-@router.post('/bingwa-proxy', status_code=200)
-def bingwa_api_proxy():
-    pass
-
-
 @router.post('/buy-airtime-stk-push', status_code=200, response_model=STKPushResponse,
              description='paybill payment for buying airtime')
 def send_stk_push(params: PushParams, request: Request):

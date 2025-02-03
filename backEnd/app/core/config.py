@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     api_string: str = '/api/v1'
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 3600
     secret: str = 'secrets.token_urlsafe()'
+    bingwa_url: str
 
     # Mpesa Integration
     shortcode: str

@@ -39,17 +39,14 @@ export const BingwaCard = ({ offerdata }) => {
     setErrorMessage("");
 
     try {
-      const response = await fetch(
-        "https://www.bingwastore.co.ke/api/data/form.php",
-        {
-          method: "POST",
-          headers: {
-            "X-API-KEY": "Hf3GDsIb4xLHUDVfpSPaSHKjYCIxDA0O",
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: payload,
-        }
-      );
+      const response = await fetch(import.meta.env.VITE_PROXY_URL, {
+        method: "POST",
+        headers: {
+          "X-API-KEY": import.meta.env.VITE_API_KEY,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: payload,
+      });
 
       if (response.ok) {
         setSuccessMessage("Payment processed successfully!");
@@ -57,6 +54,7 @@ export const BingwaCard = ({ offerdata }) => {
         setErrorMessage("Payment failed. Please try again.");
       }
     } catch (error) {
+      console.error(error);
       setErrorMessage("Request failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -68,7 +66,7 @@ export const BingwaCard = ({ offerdata }) => {
   };
 
   return (
-    <div className="w-full md:w-[350px] bg-white mx-auto p-4 border border-gray-300 rounded-lg shadow-lg hover:shadow-xl transition-all ease-in-out duration-300">
+    <div className="w-full bg-white mx-auto p-4 border border-gray-300 rounded-lg shadow-lg hover:shadow-xl transition-all ease-in-out duration-300">
       <div className="text-center mb-4">
         <img
           className="h-12 mx-auto"
@@ -85,7 +83,7 @@ export const BingwaCard = ({ offerdata }) => {
           <div className="mt-4 p-4">
             <button
               onClick={handleButtonClick}
-              className="w-full py-2 text-2xl bg-green-600 text-white font-semibold rounded-md hover:bg-green-600 transition duration-200"
+              className="px-4 py-2 text-xl bg-green-600 text-white font-semibold rounded-md hover:bg-green-600 transition duration-200"
             >
               Get Now
             </button>

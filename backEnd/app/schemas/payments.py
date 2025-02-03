@@ -64,6 +64,13 @@ class TransactionResponse(BaseModel):
     createdAt: str
 
 
+class ProxyPayload(BaseModel):
+    paying_number: str
+    amount: int
+    rechargeNumber: str
+    username: str
+    productID: str
+
 class UnsuccessfulTransactions(BaseModel):
     MerchantRequestID: str
     CheckoutRequestID: str
