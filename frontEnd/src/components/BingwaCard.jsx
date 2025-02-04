@@ -55,7 +55,7 @@ export const BingwaCard = ({ offerdata }) => {
 
       console.log("Full Response:", data); // Debugging
 
-      if (response.ok && data.status === 706) {
+      if (Number(String(data.code).trim()) === 706) {
         setSuccessMessage(
           "Request successful, Enter Mpesa pin to confirm Payment."
         );
