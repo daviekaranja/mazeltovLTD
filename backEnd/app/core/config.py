@@ -20,16 +20,15 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 3600
     secret: str = 'secrets.token_urlsafe()'
     bingwa_url: str
+    version: str
 
     # Mpesa Integration
-    shortcode: str
     paybill: int
     passkey: str
     consumer_key: str
     consumer_secret: str
     api_url: str
     token_url: str
-    till_no: int
 
     SMTP_SERVER: str
     SMTP_PORT: int

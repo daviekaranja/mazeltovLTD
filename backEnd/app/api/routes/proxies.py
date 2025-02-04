@@ -50,7 +50,7 @@ async def bingwa_api_proxy(request: Request, x_api_key: str = Header(None)):
 
     if res_code == "706":
         log.info("Request successful, sending STK Push")
-        return {"status": "success", "message": message}
+        return {"status": "success",'code': res_code,  "message": message}
     else:
         log.error(f"Request failed: {response_data}")
-        return {"status": "failed", "message": message}
+        return {"status": "failed", "code": res_code, "message": message}
