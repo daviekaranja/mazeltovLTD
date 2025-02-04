@@ -39,22 +39,31 @@ export const BingwaCard = ({ offerdata }) => {
     setErrorMessage("");
 
     try {
-      const response = await fetch(import.meta.env.VITE_PROXY_URL, {
-        method: "POST",
-        headers: {
-          "X-API-KEY": import.meta.env.VITE_API_KEY,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: payload,
-      });
+      const response = await fetch(
+        "https://www.mazeltov.co.ke/api/v1/proxy/bingwa-proxy",
+        {
+          method: "POST",
+          headers: {
+            "X-API-KEY": import.meta.env.VITE_API_KEY,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: payload,
+        }
+      );
 
-      if (response.ok) {
-        setSuccessMessage("Payment processed successfully!");
+      const data = await response.json(); // Extract JSON from response
+
+      console.log("Full Response:", data); // Debugging
+
+      if (response.ok && data.status === 706) {
+        setSuccessMessage(
+          "Request successful, Enter Mpesa pin to confirm Payment."
+        );
       } else {
-        setErrorMessage("Payment failed. Please try again.");
+        setErrorMessage(`Request failed: ${data.message || "Unknown error"}`);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Request Error:", error);
       setErrorMessage("Request failed. Please try again.");
     } finally {
       setIsLoading(false);
