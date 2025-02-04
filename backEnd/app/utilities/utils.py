@@ -35,15 +35,16 @@ def generate_password():
 
 
 def get_mpesa_token_v2() -> str:
-    consumer_key = 'G6varFea7otRUkBZEBlGEbnRzt4qgamL9YN1cvE6n2VnGs8O'
-    consumer_secret = 'QiM4LJzWs5EJwCVnOw9TxH6COMbegRs8gJhpxAzsaXM7NRROfGVh9oGEBt3QQ2GC'
+    consumer_key = settings.consumer_key
+    consumer_secret = settings.consumer_secret
 
     credentials = f"{consumer_key}:{consumer_secret}"
     encoded_credentials = base64.b64encode(credentials.encode()).decode()
+    log.info(encoded_credentials)
 
     try:
         response = requests.get(
-            "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+            settings.token_url,
             headers={'Authorization': f"Basic {encoded_credentials}"}
         )
 
@@ -55,60 +56,6 @@ def get_mpesa_token_v2() -> str:
         # Catching unexpected errors like network issues
         log.error(f"Request Failed: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error during request: {e}")
-# def get_mpesa_token_v2() -> str:
-#     consumer_key = settings.consumer_key
-#     consumer_secret = settings.consumer_secret
-#     token_url = settings.token_url
-#
-#     # Encode credentials
-#     credentials = f"{consumer_key}:{consumer_secret}"
-#     encoded_credentials = base64.b64encode(credentials.encode()).decode()
-#     log.debug(f"Encoded Credentials: {encoded_credentials}")
-#
-#     headers = {
-#         "Authorization": f"Basic {encoded_credentials}",
-#         "Content-Type": "application/json"
-#     }
-#
-#     log.debug(headers)
-#     try:
-#         response = requests.request(method='GET', url=token_url, headers=headers, timeout=10)
-#         log.debug(f"Raw Response: {response.text}")  # Log raw response for debugging
-#
-#         # Check if response is JSON before parsing
-#         if "application/json" in response.headers.get("Content-Type", ""):
-#             response_data = response.json()
-#         else:
-#             log.info(response)
-#             log.error(f"Non-JSON Response (Status {response.status_code}): {response.text}")
-#             raise HTTPException(status_code=500, detail="Invalid response format from Safaricom API")
-#
-#         # Handle successful response
-#         if response.status_code == 200:
-#             access_token = response_data.get("access_token")
-#             if access_token:
-#                 log.info("Access Token Granted Successfully")
-#                 return access_token
-#             else:
-#                 log.error("Access Token Missing in Response")
-#                 raise HTTPException(status_code=500, detail="Access token missing in Safaricom response")
-#
-#         # Handle known API errors
-#         error_message = response_data.get("error_description", "Failed to retrieve access token")
-#         log.error(f"Safaricom API Error {response.status_code}: {error_message}")
-#         raise HTTPException(status_code=response.status_code, detail=error_message)
-#
-#     except requests.Timeout:
-#         log.error("Request Timed Out")
-#         raise HTTPException(status_code=504, detail="Request to Safaricom API timed out")
-#
-#     except requests.ConnectionError as e:
-#         log.error(f"Connection Error: {e}")
-#         raise HTTPException(status_code=503, detail="Failed to connect to Safaricom API")
-#
-#     except requests.RequestException as e:
-#         log.error(f"Unexpected Request Error: {e}")
-#         raise HTTPException(status_code=500, detail="Unexpected error during request")
 
 
 def process_callback_data(callback_data: dict, db: Session):

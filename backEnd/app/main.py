@@ -13,16 +13,23 @@ from .db.initDb import main
 from .utilities.logger import log
 
 
+payload = {
+        "Backend": f"Mazeltov: {settings.version}",
+        "Languages": ["Python", "JavaScript", "HTML", "CSS", "React"],
+        "Developer": [{"Davie Karanja": "https://github.com/davie-karanja"},
+                      {"NetHub": "https://www.nethub.co.ke"}],
+        "Maintained By": {"NetHub":"https://www.nethub.co.ke"}
+    }
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    log.info('Checking a few things')
+    log.info(payload)
     main()
     yield
     # Shutdown code
 
 
 app = FastAPIOffline(lifespan=lifespan)
-print(settings.parse_origins())
 
 # CORS
 app.add_middleware(
@@ -54,3 +61,7 @@ async def serve_frontend(full_path: str):
     if os.path.exists(index_path):
         return FileResponse(index_path)
     raise HTTPException(status_code=404, detail="Frontend not found")
+
+@app.get('/', status_code=200)
+def home():
+    return payload

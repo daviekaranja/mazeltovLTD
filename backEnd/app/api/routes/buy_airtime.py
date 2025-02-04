@@ -1,3 +1,5 @@
+from typing import Callable
+
 from fastapi import APIRouter, HTTPException, Request, Depends
 import requests
 from sqlalchemy.orm import Session
@@ -17,7 +19,7 @@ router = APIRouter()
 
 @router.post('/buy-airtime-stk-push', status_code=200, response_model=STKPushResponse,
              description='paybill payment for buying airtime')
-def send_stk_push(params: PushParams, request: Request):
+def send_stk_push( request: Request):
     # Headers for the API request
     headers = {
         'Content-Type': 'application/json',
@@ -29,19 +31,19 @@ def send_stk_push(params: PushParams, request: Request):
     callback_url = request.url_for('c2b-callback')
     transaction_type = 'CustomerPayBillOnline'
 
-    payload = {
-        "BusinessShortCode": settings.paybill,
-        "Password": generate_password(),
-        "Timestamp": get_timestamp(),
-        "TransactionType": transaction_type,
-        "Amount": params.amount,
-        "PartyA": params.stkNumber,
-        "PartyB": settings.paybill,
-        "PhoneNumber": params.stkNumber,
-        "CallBackURL": str(callback_url),
-        "AccountReference": params.rechargeNumber,
-        "TransactionDesc": "Buy Airtime"
-    }
+    payload =   {
+    "BusinessShortCode": 174379,
+    "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwMjAzMTU0OTM5",
+    "Timestamp": "20250203154939",
+    "TransactionType": "CustomerPayBillOnline",
+    "Amount": 1,
+    "PartyA": 254728404490,
+    "PartyB": 174379,
+    "PhoneNumber": 254728404490,
+    "CallBackURL": "https://mydomain.com/path",
+    "AccountReference": "CompanyXLTD",
+    "TransactionDesc": "Payment of X"
+  }
 
     # Make the POST request
     try:
@@ -60,6 +62,10 @@ def send_stk_push(params: PushParams, request: Request):
     except RequestException as e:
         log.error(f"HTTP request error: {e}")
         raise HTTPException(status_code=500, detail="Failed to connect to M-Pesa API")
+
+@router.get('/get-mpesa-token', status_code=200)
+def get_mpesa_token():
+    return get_mpesa_token_v2
 
 
 @router.get("/stk-push-query/{checkout_request_id}", status_code=200)
