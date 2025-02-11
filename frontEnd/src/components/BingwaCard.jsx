@@ -27,8 +27,8 @@ export const BingwaCard = ({ offerdata }) => {
 
   const handleSubmit = async (values) => {
     const payload = new URLSearchParams({
-      paying_number: `254${values.payingNumber.slice(1)}`,
-      receiving_number: `254${values.receivingNumber.slice(1)}`,
+      paying_number: values.payingNumber,
+      receiving_number: values.receivingNumber,
       amount: offerdata.price,
       username: "mazeltov",
       productID: offerdata.productID,
@@ -39,8 +39,12 @@ export const BingwaCard = ({ offerdata }) => {
     setErrorMessage("");
 
     try {
+      const isProduction = process.env.NODE_ENV === "production";
+
       const response = await fetch(
-        "https://www.mazeltov.co.ke/api/v1/proxy/bingwa-proxy",
+        isProduction
+          ? import.meta.env.VITE_PROXY_URL
+          : "http://127.0.0.1:8000/api/v1/proxy/bingwa-proxy",
         {
           method: "POST",
           headers: {
@@ -72,6 +76,8 @@ export const BingwaCard = ({ offerdata }) => {
 
   const handleCancel = () => {
     setShowInputs(false);
+    setSuccessMessage("");
+    setErrorMessage("");
   };
 
   return (
