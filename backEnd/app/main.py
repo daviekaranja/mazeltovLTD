@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os.path
 from contextlib import asynccontextmanager
@@ -16,11 +17,21 @@ from app.utilities.utils import ping_self
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # any sync startup work
     main()
-    await ping_self()
-    yield
-    # Shutdown code
 
+    # schedule ping_self as a background task
+    ping_task = asyncio.create_task(ping_self())
+
+    # now yield immediately so FastAPI can start
+    yield
+
+    # on shutdown, cancel the background pinger
+    ping_task.cancel()
+    try:
+        await ping_task
+    except asyncio.CancelledError:
+        log.info("ping_self task cancelled")
 
 app = FastAPIOffline(lifespan=lifespan)
 
@@ -57,4 +68,6 @@ async def serve_frontend(full_path: str):
 
 @app.get('/', status_code=200)
 def home():
-    return payload
+    return {
+        "message": "Welcome to the FastAPI application!"
+    }
