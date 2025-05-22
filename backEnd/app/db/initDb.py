@@ -6,7 +6,6 @@ from sqlalchemy import exc
 from ..schemas.user import UserCreate
 from .session import SessionLocal, init_db
 
-
 def create_super_user(session: Session):
     try:
         superuser = session.query(User).filter(User.email == settings.admin_email).one()
