@@ -27,3 +27,12 @@ class ProductImage(Base):
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     product = relationship("Product", back_populates="images")
+
+
+class BingwaOffers(Base):
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    category = Column(String, nullable=False)
+    price = Column(Integer, nullable=False)
+    expiry = Column(String, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)

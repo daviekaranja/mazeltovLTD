@@ -30,6 +30,12 @@ class Settings(BaseSettings):
     api_url: str
     token_url: str
 
+    # BINGWA PAYBILL INTEGRATION
+    BINGWA_MPESA_SHORTCODE: str
+    BINGWA_MPESA_PASSKEY: str
+    BINGWA_MPESA_CONSUMER_KEY: str
+    BINGWA_MPESA_CONSUMER_SECRET: str
+
     SMTP_SERVER: str
     SMTP_PORT: int
     SMTP_EMAIL: str
@@ -44,6 +50,8 @@ class Settings(BaseSettings):
 
     static_files: str
     cors_origins: str
+    mpesa_base_url: str
+    DOMAIN: str
 
     def parse_origins(self):
         return self.cors_origins.split(',')

@@ -1,10 +1,10 @@
-import base64
+import asyncio
 import random
 from datetime import datetime, timedelta
-import time
 
+import httpx
 import requests
-from fastapi import HTTPException, Request, UploadFile
+from fastapi import HTTPException, UploadFile, FastAPI
 from jinja2 import Environment, FileSystemLoader
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
@@ -13,105 +13,111 @@ from sqlalchemy import exc
 from app.core.config import settings
 from .logger import log
 from ..communications.email_client import send_email_internal
-from ..models.payments import Transaction, UnsuccessfulTransactions
+# from ..models.payments import Transaction, UnsuccessfulTransactions
 from ..schemas.payments import UnsuccessfulTransactions as Ts
-from app.schemas.security import SecurityCode
 from ..models import security
+import random
+from datetime import datetime, timedelta
+
+import requests
+from fastapi import HTTPException, UploadFile
+from jinja2 import Environment, FileSystemLoader
+from pydantic import EmailStr
+from sqlalchemy import exc
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from .logger import log
+from ..communications.email_client import send_email_internal
+from ..models import security
+# from ..models.payments import Transaction, UnsuccessfulTransactions
+from ..schemas.payments import UnsuccessfulTransactions as Ts
 
 
-def get_timestamp():
-    return datetime.now().strftime("%Y%m%d%H%M%S")
-
-
-def generate_password():
-    shortcode = settings.paybill
-    passkey = settings.passkey
-    timestamp = get_timestamp()
-
-    data_to_encode = str(shortcode) + passkey + str(timestamp)
-    encoded_string = base64.b64encode(data_to_encode.encode()).decode('utf-8')
-
-    return encoded_string
-
-
-def get_mpesa_token_v2() -> str:
-    consumer_key = settings.consumer_key
-    consumer_secret = settings.consumer_secret
-
-    credentials = f"{consumer_key}:{consumer_secret}"
-    encoded_credentials = base64.b64encode(credentials.encode()).decode()
-    log.info(encoded_credentials)
-
-    try:
-        response = requests.get(
-            settings.token_url,
-            headers={'Authorization': f"Basic {encoded_credentials}"}
-        )
-
-        if response.status_code == 200:
-            log.info(f"Access Token Granted: {response.json()}")
-            return response.json().get('access_token')
-
-    except Exception as e:
-        # Catching unexpected errors like network issues
-        log.error(f"Request Failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Unexpected error during request: {e}")
-
-
-def process_callback_data(callback_data: dict, db: Session):
-    try:
-        result_code = callback_data['Body']['stkCallback']['ResultCode']
-
-        if result_code == 0:
-            amount = None
-            receipt_number = None
-            transaction_date = None
-            phone_number = None
-            stk_callback = callback_data['Body']['stkCallback']
-            metadata = stk_callback['CallbackMetadata']['Item']
-
-            for item in metadata:
-                if item['Name'] == 'Amount':
-                    amount = item['Value']
-                elif item['Name'] == 'MpesaReceiptNumber':
-                    receipt_number = item['Value']
-                elif item['Name'] == 'TransactionDate':
-                    transaction_date = datetime.strptime(str(item['Value']), "%Y%m%d%H%M%S")
-                elif item['Name'] == 'PhoneNumber':
-                    phone_number = item['Value']
-            # Store the data in the database
-            transaction = Transaction(
-                mpesa_receipt_number=receipt_number,
-                amount=amount,
-                transaction_date=transaction_date,
-                phone_number=phone_number,
-                merchant_request_id=stk_callback['MerchantRequestID'],
-                checkout_request_id=stk_callback['CheckoutRequestID']
-            )
-
-            db.add(transaction)
-            db.commit()
-            db.refresh(transaction)
-            return transaction
-
-        else:
-            data = callback_data['Body']['stkCallback']
-            process_data = Ts(**data)
-            db_obj = UnsuccessfulTransactions(
-                MerchantRequestID=process_data.MerchantRequestID,
-                CheckoutRequestID=process_data.CheckoutRequestID,
-                ResultCode=process_data.ResultCode,
-                ResultDesc=process_data.ResultDesc
-            )
-            db.add(db_obj)
-            db.commit()
-            db.refresh(db_obj)
-            return db_obj
-
-    except Exception as e:
-        db.rollback()
-        log.info(e)
-
+#
+# def get_timestamp():
+#     return datetime.now().strftime("%Y%m%d%H%M%S")
+#
+#
+# def generate_password():
+#     shortcode = settings.paybill
+#     passkey = settings.passkey
+#     timestamp = get_timestamp()
+#
+#     data_to_encode = str(shortcode) + passkey + str(timestamp)
+#     encoded_string = base64.b64encode(data_to_encode.encode()).decode('utf-8')
+#
+#     return encoded_string
+#
+#
+# def get_mpesa_token_v2(consumer_key: str, consumer_secret: str):
+#     url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+#     response = requests.get(url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
+#     log.info(response.text)
+#     if response.status_code == 200:
+#         log.info(f"Access Token Granted: {response.json()}")
+#         token = response.json()['access_token']
+#         return token
+#
+#     else:
+#         log.error(f"Failed to get token: {response.status_code} - {response.text}")
+#         raise HTTPException(status_code=response.status_code, detail="Failed to get token")
+#
+#
+# def process_callback_data(callback_data: dict, db: Session):
+#     try:
+#         result_code = callback_data['Body']['stkCallback']['ResultCode']
+#
+#         if result_code == 0:
+#             amount = None
+#             receipt_number = None
+#             transaction_date = None
+#             phone_number = None
+#             stk_callback = callback_data['Body']['stkCallback']
+#             metadata = stk_callback['CallbackMetadata']['Item']
+#
+#             for item in metadata:
+#                 if item['Name'] == 'Amount':
+#                     amount = item['Value']
+#                 elif item['Name'] == 'MpesaReceiptNumber':
+#                     receipt_number = item['Value']
+#                 elif item['Name'] == 'TransactionDate':
+#                     transaction_date = datetime.strptime(str(item['Value']), "%Y%m%d%H%M%S")
+#                 elif item['Name'] == 'PhoneNumber':
+#                     phone_number = item['Value']
+#             # Store the data in the database
+#             transaction = Transaction(
+#                 mpesa_receipt_number=receipt_number,
+#                 amount=amount,
+#                 transaction_date=transaction_date,
+#                 phone_number=phone_number,
+#                 merchant_request_id=stk_callback['MerchantRequestID'],
+#                 checkout_request_id=stk_callback['CheckoutRequestID']
+#             )
+#
+#             db.add(transaction)
+#             db.commit()
+#             db.refresh(transaction)
+#             return transaction
+#
+#         else:
+#             data = callback_data['Body']['stkCallback']
+#             process_data = Ts(**data)
+#             db_obj = UnsuccessfulTransactions(
+#                 MerchantRequestID=process_data.MerchantRequestID,
+#                 CheckoutRequestID=process_data.CheckoutRequestID,
+#                 ResultCode=process_data.ResultCode,
+#                 ResultDesc=process_data.ResultDesc
+#             )
+#             db.add(db_obj)
+#             db.commit()
+#             db.refresh(db_obj)
+#             return db_obj
+#
+#     except Exception as e:
+#         db.rollback()
+#         log.info(e)
+#
 
 def security_code(db: Session):
     # should generate and save the code in db
@@ -168,8 +174,24 @@ def upload_image_to_imgur(image_file: UploadFile) -> str:
         print("Error:", response.json())
         raise HTTPException(status_code=500, detail="Failed to upload image to Imgur")
 
+from app.utilities.logger import log
 
-# import requests
-# ​
-# response = requests.request("GET", 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', headers = { 'Authorization': 'Basic d1d6R01XcUdiRThTalRqdFRKeEF0RThXaXUwcVlDbWxqQWxzdUpsRWRtcXY3Q1h3OlNxMHJMMkpXYXN4R1hqbG84MVRHdURMNFU3VzdRZTlLQzVOdkxpU1lSVFVXVEduckpvSkRvN0czek94WWVxYTY=' })
-# print(response.text.encode('utf8'))
+
+BASE_URL = settings.DOMAIN  # Set this statically
+
+async def ping_self():
+    await asyncio.sleep(5)  # Wait for the server to start
+    full_url = f"{BASE_URL}/health"
+
+    async with httpx.AsyncClient() as client:
+        while True:
+            try:
+                response = await client.get(full_url)
+                log.info(f"Ping response: {response.status_code}")
+            except Exception as e:
+                log.error(f"Ping failed: {e}")
+
+            sleep_minutes = random.randint(5, 14)
+            await asyncio.sleep(sleep_minutes * 60)
+
+
