@@ -17,6 +17,7 @@ from ..models.payments import Transaction, UnsuccessfulTransactions
 from ..schemas.payments import UnsuccessfulTransactions as Ts
 from app.schemas.security import SecurityCode
 from ..models import security
+from requests.auth import HTTPBasicAuth
 
 
 def get_timestamp():
@@ -34,28 +35,18 @@ def generate_password():
     return encoded_string
 
 
-def get_mpesa_token_v2() -> str:
-    consumer_key = settings.consumer_key
-    consumer_secret = settings.consumer_secret
+def get_mpesa_token_v2(consumer_key: str, consumer_secret: str):
+    url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    response = requests.get(url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
+    log.info(response.text)
+    if response.status_code == 200:
+        log.info(f"Access Token Granted: {response.json()}")
+        token = response.json()['access_token']
+        return token
 
-    credentials = f"{consumer_key}:{consumer_secret}"
-    encoded_credentials = base64.b64encode(credentials.encode()).decode()
-    log.info(encoded_credentials)
-
-    try:
-        response = requests.get(
-            settings.token_url,
-            headers={'Authorization': f"Basic {encoded_credentials}"}
-        )
-
-        if response.status_code == 200:
-            log.info(f"Access Token Granted: {response.json()}")
-            return response.json().get('access_token')
-
-    except Exception as e:
-        # Catching unexpected errors like network issues
-        log.error(f"Request Failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Unexpected error during request: {e}")
+    else:
+        log.error(f"Failed to get token: {response.status_code} - {response.text}")
+        raise HTTPException(status_code=response.status_code, detail="Failed to get token")
 
 
 def process_callback_data(callback_data: dict, db: Session):

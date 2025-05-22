@@ -14,7 +14,7 @@ from .utilities.logger import log
 
 
 payload = {
-        "Backend": f"Mazeltov: {settings.version}",
+        "BackendVersion": settings.version,
         "Languages": ["Python", "JavaScript", "HTML", "CSS", "React"],
         "Developer": [{"Davie Karanja": "https://github.com/davie-karanja"},
                       {"NetHub": "https://www.nethub.co.ke"}],

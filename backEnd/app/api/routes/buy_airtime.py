@@ -64,8 +64,16 @@ def send_stk_push( request: Request):
         raise HTTPException(status_code=500, detail="Failed to connect to M-Pesa API")
 
 @router.get('/get-mpesa-token', status_code=200)
-def get_mpesa_token():
-    return get_mpesa_token_v2
+def get_mpesa_token(consumer_key: str, consumer_secret: str):
+    token = get_mpesa_token_v2(consumer_key, consumer_secret)
+    if token is not None:
+        return {
+            'status': 'success',
+            'message': 'Token generated successfully',
+            'access_token': token
+        }
+    else:
+        raise HTTPException(status_code=500, detail='failed to generate token')
 
 
 @router.get("/stk-push-query/{checkout_request_id}", status_code=200)
