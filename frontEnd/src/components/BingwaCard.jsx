@@ -26,13 +26,11 @@ export const BingwaCard = ({ offerdata }) => {
   });
 
   const handleSubmit = async (values) => {
-    const payload = new URLSearchParams({
+    const payload = {
       paying_number: values.payingNumber,
       receiving_number: values.receivingNumber,
       amount: offerdata.price,
-      username: "mazeltov",
-      productID: offerdata.productID,
-    });
+    };
 
     setIsLoading(true);
     setSuccessMessage("");
@@ -44,14 +42,13 @@ export const BingwaCard = ({ offerdata }) => {
       const response = await fetch(
         isProduction
           ? import.meta.env.VITE_PROXY_URL
-          : "http://127.0.0.1:8000/api/v1/proxy/bingwa-proxy",
+          : "http://127.0.0.1:8000/api/v1/payments/stk-push",
         {
           method: "POST",
           headers: {
-            "X-API-KEY": import.meta.env.VITE_API_KEY,
-            "Content-Type": "application/x-www-form-urlencoded",
+            "Content-Type": "application/json",
           },
-          body: payload,
+          body: JSON.stringify(payload),
         }
       );
 
@@ -59,9 +56,9 @@ export const BingwaCard = ({ offerdata }) => {
 
       console.log("Full Response:", data); // Debugging
 
-      if (Number(String(data.code).trim()) === 706) {
+      if (data.status_code === "0000" ) {
         setSuccessMessage(
-          "Request successful, Enter Mpesa pin to confirm Payment."
+          data.message || "Request successful. Please wait for confirmation."
         );
       } else {
         setErrorMessage(`Request failed: ${data.message || "Unknown error"}`);
@@ -91,7 +88,7 @@ export const BingwaCard = ({ offerdata }) => {
       </div>
       <div className="text-center">
         <p className="text-green-600 font-semibold text-lg">
-          {offerdata.label} @ {offerdata.price}
+          {offerdata.label} @ Kshs {offerdata.price}
         </p>
 
         {!showInputs && (

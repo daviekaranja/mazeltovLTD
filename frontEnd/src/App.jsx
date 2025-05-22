@@ -10,9 +10,10 @@ import Sales from "./components/pages/DataAirtimeSales";
 import ProductReview from "./components/ProductReviewPage";
 import Policies from "./components/pages/Policies";
 import ResetPassword from "./components/ResetPassword";
-import AdminPage from "./components/pages/Admin";
+import AdminPage from "./components/pages/DashBoardPage";
 import ProtectedRoute from "./components/ProtectRoute";
 import BuyAirtime from "./components/BuyAirtime";
+import DashboardPage from "./components/pages/DashBoardPage";
 const App = () => {
   return (
     <AuthProvider>
@@ -33,15 +34,7 @@ const App = () => {
               path="/product-review/:productName"
               element={<ProductReview />}
             />
-
-            <Route
-              path="/manage"
-              element={
-                <ProtectedRoute>
-                  <AdminPage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/manage" element={<DashboardPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
