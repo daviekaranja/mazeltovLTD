@@ -20,6 +20,10 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
+from app.models.users import User
+from app.models.products import Product, ProductImage, BingwaOffers
+from app.models.payments import MpesaTransaction
+from app.models.security import SecurityCodes
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 

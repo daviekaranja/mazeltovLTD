@@ -11,20 +11,13 @@ from .api.api import api_router
 from .core.config import settings
 from .db.initDb import main
 from .utilities.logger import log
+from app.utilities.utils import ping_self
 
-
-payload = {
-        "BackendVersion": settings.version,
-        "Languages": ["Python", "JavaScript", "HTML", "CSS", "React"],
-        "Developer": [{"Davie Karanja": "https://github.com/davie-karanja"},
-                      {"NetHub": "https://www.nethub.co.ke"}],
-        "Maintained By": {"NetHub":"https://www.nethub.co.ke"}
-    }
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    log.info(payload)
     main()
+    await ping_self()
     yield
     # Shutdown code
 

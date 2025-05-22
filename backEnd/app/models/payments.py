@@ -3,23 +3,17 @@ from sqlalchemy.orm import relationship
 from ..db.base_class import Base
 from sqlalchemy.sql import func
 
-
-class Transaction(Base):
+class MpesaTransaction(Base):
+    __tablename__ = "mpesa_transactions"
     id = Column(Integer, primary_key=True, index=True)
-    mpesa_receipt_number = Column(String, unique=True, index=True)
-    phone_number = Column(String, index=True)
-    amount = Column(Integer)
-    merchant_request_id = Column(String)
-    checkout_request_id = Column(String)
-    transaction_date = Column(DateTime)
-    createdAt = Column(DateTime, server_default=func.now(), nullable=False)
-
-
-class UnsuccessfulTransactions(Base):
-    id = Column(Integer, primary_key=True, index=True)
-    MerchantRequestID = Column(String, nullable=False)
-    CheckoutRequestID = Column(String, nullable=False)
-    ResultCode = Column(String, nullable=False)
-    ResultDesc = Column(String, nullable=False)
-    createdAt = Column(DateTime, server_default=func.now(), nullable=False)
-
+    merchant_request_id = Column(String, nullable=False, index=True)
+    checkout_request_id = Column(String, nullable=False, index=True)
+    status = Column(String, nullable=False, index=True)  # e.g., "success", "failed", "pending"
+    mpesa_receipt_number = Column(String, unique=True, index=True, nullable=True)
+    phone_number         = Column(String, index=True, nullable=True)
+    amount               = Column(Integer, nullable=True)
+    transaction_date     = Column(DateTime, nullable=True)
+    result_code = Column(Integer, nullable=False, index=True)
+    result_desc = Column(String, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False, index=True)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False, index=True)
