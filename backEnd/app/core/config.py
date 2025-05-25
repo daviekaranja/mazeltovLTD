@@ -52,6 +52,7 @@ class Settings(BaseSettings):
     cors_origins: str
     mpesa_base_url: str
     DOMAIN: str
+    BINGWA_MPESA_CALLBACK: str
 
     def parse_origins(self):
         return self.cors_origins.split(',')

@@ -43,7 +43,7 @@ async def initiate_stk_push(payload: AirtimeTopUpRequest):
         dict: A dictionary containing the response from the STK push.
     """
     password, timestamp = client.generate_password()
-    callback = 'https://5bd6-129-222-187-84.ngrok-free.app/api/v1/payments/callback'
+    callback = settings.BINGWA_MPESA_CALLBACK
 
     access_token = await client.fetch_token()
     shortcode = settings.BINGWA_MPESA_SHORTCODE
@@ -59,7 +59,7 @@ async def initiate_stk_push(payload: AirtimeTopUpRequest):
         "PhoneNumber": payload.paying_number,
         "CallBackURL": callback,
         "AccountReference": payload.receiving_number,
-        "TransactionDesc": "Payment of X"
+        "TransactionDesc": "Bingwa Airtime Top Up",
     }
 
     try:
