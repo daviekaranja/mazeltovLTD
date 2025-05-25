@@ -61,7 +61,7 @@ export const offers = {
     { label: "UNLIMITED WEEKLY SMS", price: "54", productID: "023" },
   ],
   minutes: [
-    { label: "20MINS FOR 1 HOUR", price: "18", productID: "024" },
+    // { label: "20MINS FOR 1 HOUR", price: "18", productID: "024" },
     { label: "20MINS/50 KREDO TILL MIDNIGHT", price: "22", productID: "025" },
     { label: "30MINS FOR 3 HOURS", price: "26", productID: "028" },
     { label: "50 MINS TILL MIDNIGHT", price: "51", productID: "029" },
