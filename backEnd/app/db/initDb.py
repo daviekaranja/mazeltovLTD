@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.crud.crudUsers import user
-from app.models.users import User
+from app.models.models import User
 from app.core.config import settings
 from sqlalchemy import exc
 from ..schemas.user import UserCreate

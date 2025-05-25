@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, Union, List
 from datetime import datetime
-from .product import ProductInDb
+
 
 
 class UserBase(BaseModel):

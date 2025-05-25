@@ -8,7 +8,7 @@ from ..core.config import settings
 
 from .base import CRUDBase
 from ..core import security
-from ..models.users import User
+from app.models.models import User
 from ..schemas.user import UserCreate, UserUpdate, UserResponse
 
 

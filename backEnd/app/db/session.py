@@ -4,8 +4,8 @@ from sqlalchemy.orm import sessionmaker
 import os
 from ..core.config import settings
 from .base_class import Base
-from ..models import users, products
 
+from app.models.models import MpesaTransaction,  SecurityCodes, User
 
 def create_data_folder(data_dir):
     if not os.path.exists(data_dir):

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.api import dependancies as deps
 from app.core.security import create_access_token
 from app.crud import crudUsers
-from app.models.users import User
+from app.models.models import User
 from app.schemas.user import UserResponse
 from app.schemas.token import TokenResponse
 from app.core.config import settings
