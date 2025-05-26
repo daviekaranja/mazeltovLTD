@@ -5,7 +5,7 @@ import os
 from ..core.config import settings
 from .base_class import Base
 
-from app.models.models import MpesaTransaction,  SecurityCodes, User
+from app.models.models import MpesaTransaction,  SecurityCode, User
 
 def create_data_folder(data_dir):
     if not os.path.exists(data_dir):

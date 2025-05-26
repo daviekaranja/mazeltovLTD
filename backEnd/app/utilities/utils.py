@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from .logger import log
 from ..communications.email_client import send_email_internal
-from app.models.models import SecurityCodes
+from app.models.models import SecurityCode
 
 
 def security_code(db: Session):
@@ -28,7 +28,7 @@ def security_code(db: Session):
     :return:
     """
     code = random.randrange(100000, 1000000)
-    db_obj = SecurityCodes(code=code,
+    db_obj = SecurityCode(code=code,
                                     expires=datetime.utcnow() + timedelta(seconds=3600)
                                     )
     # Add the ORM model instance to the session

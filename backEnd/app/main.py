@@ -13,6 +13,8 @@ from .core.config import settings
 from .db.initDb import main
 from .utilities.logger import log
 from app.utilities.utils import ping_self
+from app.utilities import seed_offers
+
 
 
 @asynccontextmanager

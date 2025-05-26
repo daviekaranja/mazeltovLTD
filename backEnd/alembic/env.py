@@ -2,6 +2,7 @@ from logging.config import fileConfig
 from app.db.session import engine
 from app.db.session import Base
 from app.core.config import settings
+from sqlmodel import SQLModel
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -20,12 +21,9 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-from app.models.users import User
-from app.models.products import Product, ProductImage, BingwaOffers
-from app.models.payments import MpesaTransaction
-from app.models.security import SecurityCodes
+from app.models.models import User, BingwaOffer, OfferCategory, SecurityCode, MpesaTransaction
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = SQLModel.metadata
 
 
 # other values from the config, defined by the needs of env.py,

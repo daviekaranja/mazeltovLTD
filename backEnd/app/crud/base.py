@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import exc
 
 from app.db.base_class import Base
+from app.utilities.logger import logger
+
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
@@ -51,12 +53,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
+            logger.info(f"Created new {self.model.__name__} with ID: {db_obj.id}")
             return db_obj
         except exc.IntegrityError as e:
             # user already exist, no need to recreate
             db.rollback()
-            # logger.error('Integrity error: %s', e)
-            # raise HTTPException(status_code=409, detail=f'An error occurred, check the data your submitting')
+            logger.error('Integrity error: %s', e)
+            raise HTTPException(status_code=409, detail=f'An error occurred, check the data your submitting')
 
     def update(
         self,
