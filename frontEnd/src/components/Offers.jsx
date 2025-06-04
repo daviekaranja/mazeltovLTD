@@ -33,13 +33,17 @@ const OfferCards = () => {
   const filteredOffers = offers.filter((offer) => offer.category === activeTab);
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-green-50 to-white flex flex-col items-center py-8 px-2">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl mx-auto p-6 md:p-10 mb-8 text-center space-y-4 border border-green-100">
+    <div className="w-full min-h-screen bg-gradient-to-br from-green-50 to-white flex flex-col items-center py-4 px-2">
+      <div className="w-full  bg-white rounded-2xl shadow-md mx-auto p-6 md:p-10 mb-8 text-center space-y-4 border border-green-100">
         <h1 className="text-green-700 font-extrabold text-2xl md:text-3xl tracking-tight">
           Bingwa Sokoni Offers
         </h1>
         <p className="text-gray-600 text-base md:text-lg">
-          Get unmatched deals on <span className="font-semibold text-green-600">Data</span>, <span className="font-semibold text-green-600">Minutes</span>, and <span className="font-semibold text-green-600">SMS</span>. Buy for yourself or another number.
+          Get unmatched deals on{" "}
+          <span className="font-semibold text-green-600">Data</span>,{" "}
+          <span className="font-semibold text-green-600">Minutes</span>, and{" "}
+          <span className="font-semibold text-green-600">SMS</span>. Buy for
+          yourself or another number.
         </p>
 
         {/* Tabs */}
@@ -77,7 +81,7 @@ const OfferCards = () => {
         </div>
       </div>
 
-      <div className="w-full max-w-5xl">
+      <div className="w-full">
         {filteredOffers.length === 0 ? (
           <div className="flex justify-center items-center h-40 text-gray-400 text-lg">
             No offers available for this category.

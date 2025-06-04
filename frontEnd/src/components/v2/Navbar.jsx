@@ -114,27 +114,13 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 inset-x-0 z-50 bg-white backdrop-blur-lg shadow-lg border-b border-blue-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="h-16 flex items-center justify-between">
+        <div className=" mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="h-20 flex items-center justify-between">
             {/* Logo */}
             <Link
               to="/"
               className="flex items-center gap-2 text-xl font-bold text-blue-500 hover:text-blue-600 transition-colors select-none tracking-wide"
             >
-              <span className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-100 to-blue-200 flex items-center justify-center shadow-md">
-                {/* svg icon */}
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" fill="#60A5FA" opacity=".18" />
-                  <path
-                    d="M8 15c1.333-2 6.667-2 8 0"
-                    stroke="#3B82F6"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="9" cy="10" r="1.2" fill="#3B82F6" />
-                  <circle cx="15" cy="10" r="1.2" fill="#3B82F6" />
-                </svg>
-              </span>
               Mazeltov
             </Link>
 

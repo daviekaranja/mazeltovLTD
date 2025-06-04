@@ -4,7 +4,7 @@ import Sales from "./pages/DataAirtimeSales";
 
 const Home = () => {
   return (
-    <div className="text-3xl flex flex-col text-gray-800 space-y-6 w-full justify-evenly">
+    <div className="text-3xl  flex flex-col text-gray-800 space-y-6 w-full justify-evenly">
       <Hero />
       <Sales />
     </div>

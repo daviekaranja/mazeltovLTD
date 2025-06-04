@@ -11,11 +11,10 @@ const Layout = ({ children }) => {
   const dest = ["/", "/deals", "/about", "/support"];
   return (
     <div className="flex flex-col min-h-screen w-full">
-      {/* Navbar section */}
 
       <Navbar />
 
-      <main className="flex-1 mt-24 w-full">{children}</main>
+      <main className="flex-1 mt-20 w-full">{children}</main>
       <Footer />
     </div>
   );
