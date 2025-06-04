@@ -4,9 +4,9 @@ from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
 from app.api import dependancies as deps
-from app.core.security import create_access_token
+from app.core.security import create_access_token, validate_access_token
 from app.crud import crudUsers
-from app.models.users import User
+from app.models.models import User
 from app.schemas.user import UserResponse
 from app.schemas.token import TokenResponse
 from app.core.config import settings
@@ -44,21 +44,6 @@ def get_current_user(current_user: User = Depends(deps.get_current_user)):
     return current_user
 
 
-@router.post('/logout', status_code=200)
-def user_logout(user: User = Depends(deps.get_current_user)):
-    """
-    logs out the current user
-    :param user:
-    :return :
-    """
-    pass
-
-
-@router.post('/refresh-token', status_code=200)
-def refresh_token():
-    pass
-
-
 @router.post('/account-recovery', status_code=200)
 def account_recovery(email: EmailStr, request: Request, db: Session = Depends(deps.get_db)):
     url = request.url_for('reset_password')
@@ -68,6 +53,17 @@ def account_recovery(email: EmailStr, request: Request, db: Session = Depends(de
 
 
 @router.post("/reset-password", name="reset_password")
-async def reset_password_handler(code: int, request: Request):
-    return code
+async def reset_password_handler(token: str,  db: Session = Depends(deps.get_db)):
+    """ Endpoint to reset password using a token.
+    """
+    # Validate the token and reset the password
+    try:
+        token_data = validate_access_token(token)
+        user = crudUsers.user.get(db, id=int(token_data.sub))
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        # Here you would typically reset the password, but for this example, we just return the user
+        return user
+    except HTTPException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
 

@@ -15,18 +15,20 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@headlessui/react": "^2.2.0",
-    "@hookform/resolvers": "^3.9.0",
+    "@hookform/resolvers": "^3.10.0",
     "axios": "^1.7.5",
     "formik": "^2.4.6",
     "framer-motion": "^11.3.24",
+    "lucide-react": "^0.511.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
-    "react-hook-form": "^7.53.0",
+    "react-hook-form": "^7.57.0",
     "react-icons": "^5.4.0",
     "react-router-dom": "^6.26.1",
+    "react-toastify": "^11.0.5",
     "yup": "^1.6.1",
-    "zod": "^3.23.8"
+    "zod": "^3.25.49"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

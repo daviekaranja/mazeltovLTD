@@ -8,7 +8,7 @@ from app.crud import crudUsers
 from app.schemas.user import UserResponse, UserUpdate, UserCreate
 from typing import List
 from fastapi.encoders import jsonable_encoder
-from app.models.users import User
+from app.models.models import User
 from app.utilities.utils import send_password_reset_mail
 
 router = APIRouter()
