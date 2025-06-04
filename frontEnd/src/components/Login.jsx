@@ -1,330 +1,151 @@
-// import React, { useState } from "react";
-// import { useNavigate, useLocation } from "react-router-dom";
-// import { useAuth } from "./AuthProvider";
-// import axiosClient from "../api/axiosClient";
-// import {
-//   FormControl,
-//   FormLabel,
-//   Text,
-//   Heading,
-//   HStack,
-//   Input,
-//   Flex,
-//   Button,
-//   Box,
-//   StackDivider,
-//   Link,
-//   InputGroup,
-//   InputRightElement,
-// } from "@chakra-ui/react";
-
-// const Login = () => {
-//   const [show, setShow] = React.useState(false);
-//   const handleClick = () => setShow(!show);
-
-//   const [username, setUsername] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState(null);
-//   const { login } = useAuth();
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//     setError(null);
-
-//     try {
-//       const formData = new FormData();
-//       formData.append("username", username.trim());
-//       formData.append("password", password.trim());
-
-//       const response = await axiosClient.post("/auth/access-token", formData, {
-//         headers: {
-//           "Content-Type": "application/x-www-form-urlencoded",
-//         },
-//       });
-
-//       if (response.status === 200) {
-//         const { access_token } = response.data;
-//         login(access_token);
-//         // navigate(from, { replace: true });
-//       }
-//     } catch (err) {
-//       // console.error("Error during API request:", err);
-//       setError(err.response?.statusText || "Login failed");
-//     }
-//   };
-
-//   return (
-//     <Box mt={4} h={"100vh"}>
-//       {/* main box */}
-//       <Box
-//         display={"flex"}
-//         flexDirection={"column"}
-//         alignItems={"center"}
-//         p={4}
-//         h={400}
-//         rounded={"lg"}
-//         width={"70%"}
-//         mx={"auto"}
-//         mt={4}
-//         bg={"white"}
-//         border={"1px"}
-//         borderColor={"gray.200"}
-//       >
-//         <HStack
-//           w={"100%"}
-//           h={"100%"}
-//           justifyContent={"center"}
-//           p={2}
-//           // divider={<StackDivider borderColor={"gray.200"} />}
-//         >
-//           <Box p={2} maxW={"50%"}>
-//             <Heading size={"lg"} mt={1}>
-//               Mazeltov Commercial <br /> Agencies
-//             </Heading>
-//             <Text mt={2}>Please Log in to continue</Text>
-//           </Box>
-//           <Box flex={"1"}>
-//             <Flex // input box
-//               bg={"white"}
-//               direction="column"
-//               alignItems="center"
-//               rounded="lg"
-//               mx="auto"
-//             >
-//               {error && (
-//                 <Text p={2} color="red.500">
-//                   {error}
-//                 </Text>
-//               )}
-//               <form onSubmit={handleLogin}>
-//                 <Flex width="100%" gap={4} direction="column">
-//                   <FormControl isRequired>
-//                     <FormLabel>Email</FormLabel>
-//                     <Input
-//                       id="username"
-//                       value={username}
-//                       onChange={(e) => setUsername(e.target.value)}
-//                       placeholder="user@example.com"
-//                       type="email"
-//                     />
-//                   </FormControl>
-//                   <FormControl isRequired>
-//                     <FormLabel>Password</FormLabel>
-//                     <InputGroup size={"md"}>
-//                       <Input
-//                         bg="white" // Set background color to white
-//                         focusBorderColor="white"
-//                         type={show ? "text" : "password"}
-//                         id="password"
-//                         value={password}
-//                         onChange={(e) => setPassword(e.target.value)}
-//                       />
-//                       <InputRightElement pr={2}>
-//                         <Button
-//                           p={2}
-//                           bg={"transparent"}
-//                           size="sm"
-//                           onClick={handleClick}
-//                           color={"blue.500"}
-//                         >
-//                           {show ? "Hide" : "Show"}
-//                         </Button>
-//                       </InputRightElement>
-//                     </InputGroup>
-//                   </FormControl>
-//                 </Flex>
-//                 <Flex width={"100%"} justifyContent={"center"} p={2}>
-//                   <Button
-//                     type="submit"
-//                     size={"md"}
-//                     mt={4}
-//                     colorScheme="blue"
-//                     bg={"brand.primary"}
-//                   >
-//                     Login
-//                   </Button>
-//                 </Flex>
-//                 <Flex mt={2} justifyContent={"space-between"} direction={"row"}>
-//                   <Link fontSize={"xs"} color={"brand.primary"}>
-//                     create account?
-//                   </Link>
-//                   <Link fontSize={"xs"} color={"brand.primary"}>
-//                     forgot password?
-//                   </Link>
-//                 </Flex>
-//               </form>
-//             </Flex>
-//           </Box>
-//         </HStack>
-//         <Text color={"gray.400"} fontSize={"xs"}>
-//           By using our services you agree to our{" "}
-//           <Link fontSize={"xs"} color={"brand.primary"}>
-//             Terms and Conditions
-//           </Link>
-//         </Text>
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default Login;
-
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "./AuthProvider";
+import { useNavigate } from "react-router-dom";
 import axiosClient from "../api/axiosClient";
-import {
-  FormControl,
-  FormLabel,
-  Text,
-  Heading,
-  HStack,
-  Input,
-  Flex,
-  Button,
-  Box,
-  Link,
-  InputGroup,
-  InputRightElement,
-} from "@chakra-ui/react";
+import { toast } from "react-toastify"; // or use shadcn/ui toast
+
+const loginSchema = z.object({
+  username: z.string().email({ message: "Valid email is required" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
+});
 
 const Login = () => {
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
+  const { login, user } = useAuth();
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState("");
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const { login } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
-  // Scroll to the top when the page loads
-  useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to the top of the page
-  }, []);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError(null);
+  const onSubmit = async (data) => {
+    setServerError("");
 
     try {
-      const formData = new FormData();
-      formData.append("username", username.trim());
-      formData.append("password", password.trim());
+      const formData = new URLSearchParams();
+      formData.append("username", data.username);
+      formData.append("password", data.password);
 
       const response = await axiosClient.post("/auth/access-token", formData, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
 
-      if (response.status === 200) {
-        const { access_token } = response.data;
-        login(access_token);
-        // navigate(from, { replace: true });
-      }
+      const token = response?.data?.access_token;
+      if (!token) throw new Error("No token received");
+
+      login(token); // sets user/token in context
+
+      toast.success("Login successful");
+      setTimeout(() => {
+        if (user) {
+          navigate("/manage");
+        } else {
+          // fallback in case user is set asynchronously
+          navigate("/manage");
+        }
+      }, 500);
     } catch (err) {
-      setError(err.response?.statusText || "Login failed");
+      const message =
+        err.response?.data?.detail ||
+        err.response?.statusText ||
+        "Login failed";
+      setServerError(message);
+      toast.error(message);
     }
   };
 
   return (
-    <Box mt={4} h={"100vh"}>
-      <Box
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        p={4}
-        h={400}
-        rounded={"lg"}
-        width={"70%"}
-        mx={"auto"}
-        mt={4}
-        bg={"white"}
-        border={"1px"}
-        borderColor={"gray.200"}
-      >
-        <HStack w={"100%"} h={"100%"} justifyContent={"center"} p={2}>
-          <Box p={2} maxW={"50%"}>
-            <Heading size={"lg"} mt={1}>
-              Mazeltov Commercial <br /> Agencies
-            </Heading>
-            <Text mt={2}>Please Log in to continue</Text>
-          </Box>
-          <Box flex={"1"}>
-            <Flex direction="column" alignItems="center" rounded="lg" mx="auto">
-              {error && (
-                <Text p={2} color="red.500">
-                  {error}
-                </Text>
-              )}
-              <form onSubmit={handleLogin}>
-                <Flex width="100%" gap={4} direction="column">
-                  <FormControl isRequired>
-                    <FormLabel>Email</FormLabel>
-                    <Input
-                      id="username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      placeholder="user@example.com"
-                      type="email"
-                    />
-                  </FormControl>
-                  <FormControl isRequired>
-                    <FormLabel>Password</FormLabel>
-                    <InputGroup size={"md"}>
-                      <Input
-                        bg="white"
-                        focusBorderColor="white"
-                        type={show ? "text" : "password"}
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                      <InputRightElement pr={2}>
-                        <Button
-                          p={2}
-                          bg={"transparent"}
-                          size="sm"
-                          onClick={handleClick}
-                          color={"blue.500"}
-                        >
-                          {show ? "Hide" : "Show"}
-                        </Button>
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-                </Flex>
-                <Flex width={"100%"} justifyContent={"center"} p={2}>
-                  <Button
-                    type="submit"
-                    size={"md"}
-                    mt={4}
-                    colorScheme="blue"
-                    bg={"brand.primary"}
-                  >
-                    Login
-                  </Button>
-                </Flex>
-                <Flex mt={2} justifyContent={"space-between"} direction={"row"}>
-                  <Link fontSize={"xs"} color={"brand.primary"}>
-                    create account?
-                  </Link>
-                  <Link fontSize={"xs"} color={"brand.primary"}>
-                    forgot password?
-                  </Link>
-                </Flex>
-              </form>
-            </Flex>
-          </Box>
-        </HStack>
-        <Text color={"gray.400"} fontSize={"xs"}>
-          By using our services you agree to our{" "}
-          <Link fontSize={"xs"} color={"brand.primary"}>
-            Terms and Conditions
-          </Link>
-        </Text>
-      </Box>
-    </Box>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md space-y-6">
+        <h1 className="text-xl font-semibold text-center">Welcome Back</h1>
+        <p className="text-sm text-gray-500 text-center">
+          Sign in to your dashboard
+        </p>
+
+        {serverError && (
+          <div className="text-red-600 text-sm text-center">{serverError}</div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              {...register("username")}
+              type="email"
+              className="mt-1 w-full border rounded-md px-3 py-2 text-sm shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              placeholder="user@example.com"
+            />
+            {errors.username && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.username.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                {...register("password")}
+                type={showPassword ? "text" : "password"}
+                className="mt-1 w-full border rounded-md px-3 py-2 text-sm shadow-sm focus:ring-blue-500 focus:border-blue-500 pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-blue-600 text-white py-2 rounded-md text-sm hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {isSubmitting ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <div className="flex justify-between text-xs text-blue-600 mt-4">
+          <a href="#" className="hover:underline">
+            Create account?
+          </a>
+          <a href="#" className="hover:underline">
+            Forgot password?
+          </a>
+        </div>
+
+        <p className="text-center text-gray-400 text-xs mt-6">
+          By using our services, you agree to our{" "}
+          <a href="#" className="text-blue-600 underline">
+            Terms & Conditions
+          </a>
+        </p>
+      </div>
+    </div>
   );
 };
 

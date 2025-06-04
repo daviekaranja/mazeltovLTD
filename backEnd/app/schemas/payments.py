@@ -23,6 +23,7 @@ class TransactionResponse(BaseModel):
 class AirtimeTopUpRequest(BaseModel):
     paying_number: str
     receiving_number: str
+    offer_id: int = Field(..., gt=0, description="Offer ID must be a positive integer")
     amount: int = Field(..., gt=0, description="Must be a positive integer")
 
     @field_validator("paying_number", "receiving_number", mode="before")

@@ -93,3 +93,38 @@ def delete_bingwa_offer(
         return {"detail": "Offer deleted successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@router.get("/sales-summary", status_code=200)
+def get_sales_summary(db: Session = Depends(get_db)):
+    """
+    Endpoint to get sales summary.
+    """
+    try:
+        summary = bingwa.get_sales_summary(db)
+        return summary
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+@router.get("/top-selling-offers", status_code=200)
+def get_top_selling_offers(db: Session = Depends(get_db)):
+    """
+    Endpoint to get top selling offers.
+    """
+    try:
+        top_offers = bingwa.get_top_selling_offers(db)
+        return top_offers
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@router.get("/daily-sales-summary", status_code=200)
+def get_daily_sales_summary(db: Session = Depends(get_db)):
+    """
+    Endpoint to get daily sales summary.
+    """
+    try:
+        daily_summary = bingwa.get_daily_sales_summary(db)
+        return daily_summary
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")

@@ -7,7 +7,8 @@ import ContactForm from "./components/pages/ContactUs";
 import AboutUs from "./components/pages/AboutUs";
 import { AuthProvider } from "./components/AuthProvider";
 import Sales from "./components/pages/DataAirtimeSales";
-import ProductReview from "./components/ProductReviewPage";
+import Login from "./components/Login";
+// import ProductReview from "./components/ProductReviewPage";
 import Policies from "./components/pages/Policies";
 import ResetPassword from "./components/ResetPassword";
 import AdminPage from "./components/pages/DashBoardPage";
@@ -22,6 +23,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/support" element={<ContactForm />} />
             <Route path="/deals" element={<Sales />} />
             <Route path="/legal/data-policies" element={<Policies />} />
@@ -30,11 +32,19 @@ const App = () => {
               path="/recovery/reset-password"
               element={<ResetPassword />}
             />
-            <Route
+            {/* <Route
               path="/product-review/:productName"
               element={<ProductReview />}
+            /> */}
+            <Route
+              path="/manage"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
             />
-            <Route path="/manage" element={<DashboardPage />} />
+            {/* <Route path="/manage" element={<DashboardPage />} /> */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

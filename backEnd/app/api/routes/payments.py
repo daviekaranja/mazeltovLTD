@@ -62,6 +62,7 @@ async def initiate_stk_push(payload: AirtimeTopUpRequest, db: Session = Depends(
             checkout_request_id=response["CheckoutRequestID"],
             status="Pending",
             mpesa_receipt_number=None,
+            offer_id=payload.offer_id,
             receiving_number=payload.receiving_number,
             paying_number=payload.paying_number,
             amount=payload.amount,
@@ -92,20 +93,11 @@ async def stk_push_callback(request: Request, db: Session = Depends(get_db)):
         result_desc = callback.get("ResultDesc")
 
         mpesa_receipt = None
-        amount = None
-        paying_number = None
-        transaction_date = None
 
         if result_code == 0 and "CallbackMetadata" in callback:
             for item in callback["CallbackMetadata"]["Item"]:
                 if item["Name"] == "MpesaReceiptNumber":
                     mpesa_receipt = item["Value"]
-                elif item["Name"] == "Amount":
-                    amount = int(item["Value"])
-                elif item["Name"] == "PhoneNumber":
-                    paying_number = str(item["Value"])
-                elif item["Name"] == "TransactionDate":
-                    transaction_date = datetime.strptime(str(item["Value"]), "%Y%m%d%H%M%S")
 
         # 1. Fetch original transaction from DB
         trans = transaction.get_by_merchant_request_id(db, merchant_request_id)

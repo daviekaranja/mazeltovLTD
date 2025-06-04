@@ -16,6 +16,7 @@ class MpesaTransactionBase(BaseModel):
     merchant_request_id: str = Field(..., description="Safaricom MerchantRequestID")
     checkout_request_id: str = Field(..., description="Safaricom CheckoutRequestID")
     status: TransactionStatus
+    offer_id: int                  = Field(..., gt=0, description="Offer ID for the transaction")
     mpesa_receipt_number: Optional[str] = Field(None, description="Receipt number for successful txns")
     receiving_number: Optional[str]    = Field(None, description="MSISDN that received airtime/payment")
     paying_number: Optional[str]       = Field(None, description="MSISDN that funded the txn")
