@@ -2,6 +2,9 @@ import asyncio
 import logging
 import os.path
 from contextlib import asynccontextmanager
+
+from alembic import command
+from alembic.config import Config
 from fastapi_offline import FastAPIOffline
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,12 +18,40 @@ from .utilities.logger import log
 from app.utilities.utils import ping_self
 from app.utilities import seed_offers
 
+def create_bingwa():
+    return seed_offers
+
+
+def migrate_and_startup():
+    # 1) locate your alembic.ini (adjust if yours live elsewhere)
+    base_dir = Path(__file__).parent.parent
+    alembic_cfg_path = base_dir / "alembic.ini"
+    # backEnd / alembic.ini
+
+    if not alembic_cfg_path.exists():
+        raise RuntimeError(f"Cannot find alembic.ini at {alembic_cfg_path}")
+
+    # 2) create a Config object and optionally override the DB URL
+    alembic_cfg = Config(str(alembic_cfg_path))
+
+    # ‣ If you want to override the url in code, you can do:
+    # db_url = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost/dbname")
+    # alembic_cfg.set_main_option("sqlalchemy.url", db_url)
+
+    # 3) run the upgrade
+    command.upgrade(alembic_cfg, "head")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Run Alembic migrations off the loop
+    await asyncio.to_thread(migrate_and_startup)
+
     # any sync startup work
-    main()
+    await asyncio.to_thread(main)
+    
+    # seed offers
+    await asyncio.to_thread(create_bingwa)
 
     # schedule ping_self as a background task
     ping_task = asyncio.create_task(ping_self())
