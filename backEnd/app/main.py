@@ -47,11 +47,12 @@ async def lifespan(app: FastAPI):
         log.info("ping_self task cancelled")
 
 app = FastAPIOffline(lifespan=lifespan)
+logger.info(settings.parse_origins())
 
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8000"],
+    allow_origins=settings.parse_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
