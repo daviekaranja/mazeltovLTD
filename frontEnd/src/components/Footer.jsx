@@ -161,7 +161,7 @@ const Footer = () => {
         <div>
           &copy; {new Date().getFullYear()} Mazeltov. All rights reserved.
         </div>
-        <div className="hidden md:block">Version: 1.2.5</div>
+        <div className="hidden md:block">Version: 1.2.6</div>
       </div>
     </footer>
   );

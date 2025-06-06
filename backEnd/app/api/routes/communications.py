@@ -18,9 +18,6 @@ async def send_email(recipient: str = Query(...), subject: str = Query(...), bod
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post('/send-sms')
-def send_sms():
-    pass
 
 templates = Jinja2Templates(directory=settings.template_path)
 

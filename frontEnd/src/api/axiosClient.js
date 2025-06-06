@@ -1,6 +1,5 @@
 import axios from "axios";
 const prod = import.meta.env.PROD;
-import Login from "../components/Login";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
