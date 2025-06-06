@@ -21,7 +21,9 @@ const OfferCards = () => {
     const fetchOffers = async () => {
       try {
         // const response = await fetch(apiUrl);
-        const { data } = await axiosClient.get(`/bingwa/get-all`);
+        const { data } = await axiosClient.get(
+          `https://www.mazeltov.co.ke/api/v1/bingwa/get-all`
+        );
         if (!data) {
           throw new Error("Failed to fetch offers");
         }
