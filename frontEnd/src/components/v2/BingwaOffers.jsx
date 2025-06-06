@@ -10,6 +10,7 @@ const categories = [
   { key: "minutesPlusData", label: "Minutes + Data" },
 ];
 const itemsPerPage = 5;
+// const baseUrl = "https://www.mazeltov.co.ke/api/v1";
 
 function FeedbackModal({ message, show, onClose }) {
   useEffect(() => {
@@ -39,9 +40,13 @@ export default function BingwaOffers() {
 
   const fetchOffers = async (cat = state.category) => {
     try {
-      const url = cat === "all" ? `/bingwa/get-all` : `/bingwa/offers-by-category/${cat}`;
+      const url =
+        cat === "all" ? `/bingwa/get-all` : `/bingwa/offers-by-category/${cat}`;
+      console.log(url);
       const { data } = await axiosClient.get(url);
-      setState((s) => ({ ...s, offers: data, page: 1 }));
+      if (data.length < 0) {
+        setState((s) => ({ ...s, offers: data, page: 1 }));
+      }
     } catch (e) {
       console.error(e);
     }
@@ -57,7 +62,10 @@ export default function BingwaOffers() {
         ...s,
         form: null,
         editingId: null,
-        modal: { show: true, msg: editingId ? "Offer updated!" : "Offer created!" },
+        modal: {
+          show: true,
+          msg: editingId ? "Offer updated!" : "Offer created!",
+        },
       }));
       fetchOffers(category);
     } catch (e) {
@@ -74,11 +82,16 @@ export default function BingwaOffers() {
     }
   };
 
-  useEffect(() => { fetchOffers(state.category); }, [state.category]);
+  useEffect(() => {
+    fetchOffers(state.category);
+  }, [state.category]);
 
   const { offers, category, form, editingId, modal, page } = state;
   const totalPages = Math.ceil(offers.length / itemsPerPage) || 1;
-  const paginated = offers.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const paginated = offers.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
   const set = (obj) => setState((s) => ({ ...s, ...obj }));
 
@@ -86,11 +99,25 @@ export default function BingwaOffers() {
     <div className="p-8 max-w-4xl mx-auto space-y-8 bg-gradient-to-br from-white via-slate-50 to-indigo-50 rounded-2xl shadow-xl border border-slate-200">
       <header className="flex items-center justify-between mb-2">
         <div>
-          <h2 className="text-3xl font-extrabold text-indigo-900 tracking-tight">Bingwa Offers</h2>
-          <p className="text-slate-500 mt-1 text-base">Manage and customize your Bingwa offers with ease.</p>
+          <h2 className="text-3xl font-extrabold text-indigo-900 tracking-tight">
+            Bingwa Offers
+          </h2>
+          <p className="text-slate-500 mt-1 text-base">
+            Manage and customize your Bingwa offers with ease.
+          </p>
         </div>
         <button
-          onClick={() => set({ form: { price: "", label: "", validity: "", category: category === "all" ? "" : category }, editingId: null })}
+          onClick={() =>
+            set({
+              form: {
+                price: "",
+                label: "",
+                validity: "",
+                category: category === "all" ? "" : category,
+              },
+              editingId: null,
+            })
+          }
           className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-base font-semibold px-5 py-2.5 rounded-lg shadow-lg transition-all duration-150"
         >
           <MdAdd size={22} /> New Offer
@@ -100,11 +127,15 @@ export default function BingwaOffers() {
         {categories.map((cat) => (
           <button
             key={cat.key}
-            onClick={() => set({ category: cat.key, form: null, editingId: null })}
+            onClick={() =>
+              set({ category: cat.key, form: null, editingId: null })
+            }
             className={`px-5 py-2 text-base rounded-full capitalize font-medium transition-all duration-150
-              ${category === cat.key
-                ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow"
-                : "bg-slate-100 text-slate-600 hover:bg-indigo-50"}`}
+              ${
+                category === cat.key
+                  ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow"
+                  : "bg-slate-100 text-slate-600 hover:bg-indigo-50"
+              }`}
           >
             {cat.label}
           </button>
@@ -131,7 +162,10 @@ export default function BingwaOffers() {
             )}
             {paginated.length === 0 && (
               <tr>
-                <td colSpan={4} className="text-center py-8 text-slate-400 font-medium">
+                <td
+                  colSpan={4}
+                  className="text-center py-8 text-slate-400 font-medium"
+                >
                   No offers found in this category.
                 </td>
               </tr>
@@ -148,7 +182,9 @@ export default function BingwaOffers() {
               ) : (
                 <tr
                   key={offer.id}
-                  className={`border-b border-slate-100 hover:bg-indigo-50 transition-all duration-100 ${idx % 2 ? "bg-slate-50" : "bg-white"}`}
+                  className={`border-b border-slate-100 hover:bg-indigo-50 transition-all duration-100 ${
+                    idx % 2 ? "bg-slate-50" : "bg-white"
+                  }`}
                 >
                   <td className="p-4 text-indigo-700 font-semibold">
                     <span className="bg-indigo-50 px-3 py-1 rounded-lg text-indigo-800 shadow-sm">
@@ -159,7 +195,9 @@ export default function BingwaOffers() {
                   <td className="p-4">{offer.validity}</td>
                   <td className="p-4 flex gap-2 justify-center whitespace-nowrap">
                     <button
-                      onClick={() => set({ editingId: offer.id, form: { ...offer } })}
+                      onClick={() =>
+                        set({ editingId: offer.id, form: { ...offer } })
+                      }
                       className="flex items-center gap-1 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded-lg font-medium transition"
                     >
                       <MdEdit /> Edit
@@ -186,7 +224,8 @@ export default function BingwaOffers() {
           Prev
         </button>
         <span className="font-medium">
-          Page <span className="text-indigo-700">{page}</span> of <span className="text-indigo-700">{totalPages}</span>
+          Page <span className="text-indigo-700">{page}</span> of{" "}
+          <span className="text-indigo-700">{totalPages}</span>
         </span>
         <button
           onClick={() => set({ page: Math.min(page + 1, totalPages) })}

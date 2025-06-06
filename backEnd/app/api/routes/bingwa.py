@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session
 
 from app.api.dependancies import get_db
@@ -21,6 +23,21 @@ def get_all_bingwa(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
+@router.get("/offers-by-category/{category}", status_code=200)
+def get_offers_by_category(
+    category: OfferCategory, db: Session = Depends(get_db)
+):
+    """
+    Endpoint to get offers by category.
+    """
+    try:
+        offers = bingwa.get_offers_by_category(db, category=category)
+        if not offers:
+            raise HTTPException(status_code=404, detail="No offers found in this category")
+        return offers
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
 @router.post("/create", status_code=201)
 def create_bingwa_offer(
     bingwa_create: BingwaCreate, db: Session = Depends(get_db)
@@ -35,7 +52,6 @@ def create_bingwa_offer(
     except Exception as e:
         logger.error(f"Error creating Bingwa offer: {str(e)}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-
 
 
 
@@ -61,20 +77,6 @@ def update_bingwa_offer(
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
-@router.get("/offers-by-category/{category}", status_code=200)
-def get_offers_by_category(
-    category: OfferCategory, db: Session = Depends(get_db)
-):
-    """
-    Endpoint to get offers by category.
-    """
-    try:
-        offers = bingwa.get_offers_by_category(db, category=category)
-        if not offers:
-            raise HTTPException(status_code=404, detail="No offers found in this category")
-        return offers
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
 @router.delete("/delete/{offer_id}", status_code=204)

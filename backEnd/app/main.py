@@ -13,6 +13,7 @@ from pathlib import Path
 from starlette.responses import FileResponse
 from .api.api import api_router
 from .core.config import settings
+from .db.backend_prestart import logger
 from .db.initDb import main
 from .utilities.logger import log
 from app.utilities.utils import ping_self
@@ -21,35 +22,14 @@ from app.utilities import seed_offers
 def create_bingwa():
     return seed_offers
 
-
-def migrate_and_startup():
-    # 1) locate your alembic.ini (adjust if yours live elsewhere)
-    base_dir = Path(__file__).parent.parent
-    alembic_cfg_path = base_dir / "alembic.ini"
-    # backEnd / alembic.ini
-
-    if not alembic_cfg_path.exists():
-        raise RuntimeError(f"Cannot find alembic.ini at {alembic_cfg_path}")
-
-    # 2) create a Config object and optionally override the DB URL
-    alembic_cfg = Config(str(alembic_cfg_path))
-
-    # ‣ If you want to override the url in code, you can do:
-    # db_url = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost/dbname")
-    # alembic_cfg.set_main_option("sqlalchemy.url", db_url)
-
-    # 3) run the upgrade
-    command.upgrade(alembic_cfg, "head")
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run Alembic migrations off the loop
-    await asyncio.to_thread(migrate_and_startup)
+    # await asyncio.to_thread(migrate_and_startup)
 
     # any sync startup work
     await asyncio.to_thread(main)
-    
+
     # seed offers
     await asyncio.to_thread(create_bingwa)
 
@@ -71,7 +51,7 @@ app = FastAPIOffline(lifespan=lifespan)
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.parse_origins(),
+    allow_origins=["http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -104,3 +84,5 @@ def home():
     return {
         "message": "Welcome to the FastAPI application!"
     }
+
+
