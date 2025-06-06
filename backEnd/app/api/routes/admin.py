@@ -15,9 +15,11 @@ from app.utilities.logger import logger
 
 
 
-async def migrate_and_startup():
+async def migrate_and_startup(base_dir: Path = None ):
     # 1) locate your alembic.ini (adjust if yours live elsewhere)
-    base_dir = Path(__file__).parent.parent.parent.parent
+    if base_dir is None:
+        logger.info("Migration is being done from the admin panel")
+        base_dir = Path(__file__).parent.parent.parent.parent
     alembic_cfg_path = base_dir / "alembic.ini"
     logger.info(f"alembic ini baseurl: {alembic_cfg_path}")
     # backEnd / alembic.ini

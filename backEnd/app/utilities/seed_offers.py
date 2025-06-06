@@ -70,7 +70,7 @@ def seed_offers(session: Session) -> int:
 
 if __name__ == "__main__":
     # Create tables
-    SQLModel.metadata.create_all(engine)
+    # SQLModel.metadata.create_all(engine)
 
     # Seed
     with Session(engine) as session:
