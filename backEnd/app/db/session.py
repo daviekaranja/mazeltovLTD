@@ -4,6 +4,9 @@ from sqlalchemy.orm import sessionmaker
 import os
 from ..core.config import settings
 from .base_class import Base
+from sqlmodel import SQLModel
+from app.utilities.logger import logger
+from app.models.models import User, MpesaTransaction, BingwaOffer, SecurityCode
 
 from app.models.models import MpesaTransaction,  SecurityCode, User
 
@@ -25,4 +28,5 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
+    logger.info("Creating Tables")
+    SQLModel.metadata.create_all(bind=engine)
