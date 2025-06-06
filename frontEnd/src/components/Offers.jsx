@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BingwaCard } from "./BingwaCard";
+import axiosClient from "../api/axiosClient";
 
 // Tabs and types
 const TABS = [
@@ -19,8 +20,14 @@ const OfferCards = () => {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+        // const response = await fetch(apiUrl);
+        const { data } = await axiosClient.get(`/bingwa/get-all`);
+        if (!data) {
+          throw new Error("Failed to fetch offers");
+        }
+        if (data.length < 0) {
+          setOffers(data);
+        }
         setOffers(data);
       } catch (error) {
         console.error("Failed to fetch offers:", error);

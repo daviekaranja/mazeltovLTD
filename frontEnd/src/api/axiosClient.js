@@ -1,38 +1,32 @@
 import axios from "axios";
-const prod = import.meta.env.PROD;
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const isProd = import.meta.env.PROD;
+const apiUrl = isProd
+  ? import.meta.env.VITE_API_URL
+  : "http://localhost:8000/api/v1";
 
+console.log(apiUrl);
 const axiosClient = axios.create({
-  baseURL: prod ? "/api/v1" : apiUrl, // Set the base path for production
+  baseURL: apiUrl,
 });
 
 axiosClient.interceptors.request.use(
   (config) => {
-    // Modify headers
     const token = localStorage.getItem("authToken");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
-    console.log("Request:", config);
-    // config.headers["Content-Type"] = "application/json";
     return config;
   },
-  (error) => {
-    // Handle request error
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Add a response interceptor (optional)
 axiosClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Handle the response error
-    if (error.response && error.response.status === 401) {
+    if (error.response?.status === 401) {
       console.log("Unauthorized. Redirecting to login...");
+      // Optionally, trigger a logout or redirect here
     }
     return Promise.reject(error);
   }
