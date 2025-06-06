@@ -49,7 +49,6 @@ def seed_superuser():
     log.info("🌱 Checking for default superuser...")
     with Session(engine) as session:
         user = crudUsers.user.get_by_email(session, settings.admin_email)
-
         if not user:
             user_obj = UserCreate(
                 name=settings.admin_name,
