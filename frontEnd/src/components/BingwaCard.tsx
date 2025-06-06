@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const stkPushUrl: string = import.meta.env.VITE_STK_PUSH_URL;
+// TypeScript declaration for Vite env variables
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string;
+  // add other env variables here if needed
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
+const apiUrl: string = `${import.meta.env.VITE_API_URL}/payments/stk-push`;
+console.log(apiUrl);
 
 type OfferCardProps = {
   label: string;
@@ -42,7 +53,7 @@ export const BingwaCard: React.FC<OfferCardProps> = ({
     setErrorMessage("");
 
     try {
-      const res = await fetch(stkPushUrl, {
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

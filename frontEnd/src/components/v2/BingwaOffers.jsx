@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MdDelete, MdEdit, MdSave, MdClose, MdAdd } from "react-icons/md";
 import axiosClient from "../../api/axiosClient";
 
@@ -10,7 +10,10 @@ const categories = [
   { key: "minutesPlusData", label: "Minutes + Data" },
 ];
 const itemsPerPage = 5;
-// const baseUrl = "https://www.mazeltov.co.ke/api/v1";
+const baseUrl = import.meta.env.VITE_API_URL;
+if (!baseUrl) {
+  throw new Error("API URL is not defined");
+}
 
 function FeedbackModal({ message, show, onClose }) {
   useEffect(() => {
@@ -41,12 +44,12 @@ export default function BingwaOffers() {
   const fetchOffers = async (cat = state.category) => {
     try {
       const url =
-        cat === "all" ? `/bingwa/get-all` : `/bingwa/offers-by-category/${cat}`;
-      console.log(url);
+        cat === "all"
+          ? `${baseUrl}/bingwa/get-all`
+          : `${baseUrl}/bingwa/offers-by-category/${cat}`;
+
       const { data } = await axiosClient.get(url);
-      if (data.length < 0) {
-        setState((s) => ({ ...s, offers: data, page: 1 }));
-      }
+      setState((s) => ({ ...s, offers: data, page: 1 }));
     } catch (e) {
       console.error(e);
     }

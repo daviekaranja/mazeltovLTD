@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from starlette.responses import FileResponse
 from .api.api import api_router
+from .api.routes.admin import migrate_and_startup
 from .core.config import settings
 from .db.backend_prestart import logger
 from .db.initDb import main
@@ -19,20 +20,10 @@ from .utilities.logger import log
 from app.utilities.utils import ping_self
 from app.utilities import seed_offers
 
-def create_bingwa():
-    return seed_offers
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run Alembic migrations off the loop
-    # await asyncio.to_thread(migrate_and_startup)
-
-    # any sync startup work
-    await asyncio.to_thread(main)
-
-    # seed offers
-    await asyncio.to_thread(create_bingwa)
-
     # schedule ping_self as a background task
     ping_task = asyncio.create_task(ping_self())
 
@@ -47,7 +38,6 @@ async def lifespan(app: FastAPI):
         log.info("ping_self task cancelled")
 
 app = FastAPIOffline(lifespan=lifespan)
-logger.info(settings.parse_origins())
 
 # CORS
 app.add_middleware(

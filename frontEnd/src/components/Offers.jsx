@@ -10,7 +10,10 @@ const TABS = [
   { key: "minutesPlusData", label: "Minutes + Data" },
 ];
 
-const apiUrl = import.meta.env.VITE_BINGWA_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
+if (!apiUrl) {
+  throw new Error("API URL is not defined");
+}
 
 // Offer type definition removed because interfaces are not supported in .jsx files.
 
@@ -19,11 +22,11 @@ const OfferCards = () => {
   const [offers, setOffers] = useState([]);
   useEffect(() => {
     const fetchOffers = async () => {
+      const url = `${apiUrl}/bingwa/get-all`;
+      console.log(url);
       try {
         // const response = await fetch(apiUrl);
-        const { data } = await axiosClient.get(
-          `https://www.mazeltov.co.ke/api/v1/bingwa/get-all`
-        );
+        const { data } = await axiosClient.get(`${apiUrl}/bingwa/get-all`);
         if (!data) {
           throw new Error("Failed to fetch offers");
         }
