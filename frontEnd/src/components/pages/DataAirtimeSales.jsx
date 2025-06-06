@@ -41,10 +41,10 @@ const Sales = () => {
               clipRule="evenodd"
             />
           </svg>
-          <span className="text-sm">
+          {/* <span className="text-sm">
             Please note you can only buy once per day. Once a deal is depleted,
             you have to wait until the next day.
-          </span>
+          </span> */}
         </div>
       </div>
     </div>
