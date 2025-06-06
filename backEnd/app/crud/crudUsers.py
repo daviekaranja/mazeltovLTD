@@ -51,7 +51,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         try:
             user_by_email = db.query(self.model).filter(self.model.email == email).one()
         except exc.NoResultFound as error:
-            raise HTTPException(status_code=404, detail="user not found")
+            return None
         return user_by_email
 
     def authenticate(self, db: Session, email: EmailStr, password) -> Type[User] | None:
